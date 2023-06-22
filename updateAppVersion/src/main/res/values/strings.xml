@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="network_connection_unavailable">Network Connection Unavailable</string>
+    <string name="timeout_error_message">Request timeout, please try again.</string>
+    <string name="err_occurred_msg">An error occurred while loading, Please try again...</string>
+    <string name="label_ok">OK</string>
+</resources>

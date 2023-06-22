@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hokuapps.biometricauthentication">
+    <application>
+        <activity android:name="com.hokuapps.biometricauthentication.BiometricAuthentication"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
+    </application>
+</manifest>

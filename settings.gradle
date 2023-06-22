@@ -1,0 +1,30 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {url "https://plugins.gradle.org/m2/"}
+    }
+}
+rootProject.name = "HokuNativeShell"
+include ':app'
+include ':authenticateWithTouchID'
+include ':shareAppData'
+include ':loginNativeCallV2'
+include ':logoutNativeCall'
+include ':getCurrentLocationDetails'
+include ':calendarOprations'
+include ':updateAppVersion'
+include ':getNetworkStatus'
+include ':handlePushNotification'
+include ':loadNativeFileUpload:imageeditlibrary'
+include ':loadNativeFileUpload'
+include ':loadNativeFileUpload:sandriosCamera'

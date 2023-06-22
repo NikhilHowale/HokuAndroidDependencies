@@ -1,0 +1,166 @@
+plugins {
+    id 'com.android.application'
+    id 'com.google.firebase.crashlytics'
+}
+
+android {
+    namespace 'com.hokuapps.hokunativeshell'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.hokuapps.hokunativeshell"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+         debug {
+             debuggable true
+             minifyEnabled true
+             shrinkResources true
+             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    flavorDimensions "api"
+    productFlavors{
+
+        def DB_VERSION = '43'
+
+        pearlistaProd {
+
+            applicationId "com.pearlista"
+            versionCode 4
+            versionName "1.0.3"
+
+            buildConfigField 'String', 'COFIG_REST_API_HOST', '"https://login.hokuapps.com"'
+            buildConfigField 'String', 'SOCKET_HOST', '"https://socket.hokuapps.com"'
+            buildConfigField 'String', 'FILE_HOST', '"https://files.hokuapps.com"'
+            buildConfigField 'String', 'APP_FILE_HOST', '"https://devfiles.hokuapps.com"'
+            buildConfigField 'String', 'INTEGRATION_HOST', '"https://integration.hokuapps.com"'
+            buildConfigField 'String', 'REST_API_HOST', '"https://login.hokuapps.com"'
+            buildConfigField 'String', 'ELASTIC_SEARCH_HOST', '"https://login.hokuapps.com"'
+
+            buildConfigField "String", "AUTHORITY", "\"${applicationId}.database\""
+            buildConfigField 'int', 'DB_VERSION', DB_VERSION
+
+            buildConfigField 'int', 'APP_DEFAULT_THEME', '4'
+            buildConfigField 'String', 'DOMAIN_NAME', '"hokuapps.com"'
+
+            buildConfigField 'String', 'SENDER_ID', '"  148108515282 "'
+            buildConfigField 'String', 'DB_NAME', '"Pearlista"'
+            buildConfigField 'String', 'DEFAULT_TEMPLATE_SUB_DOMAIN', '"pearlista"'
+
+            resValue 'string', 'app_name', 'Perlista'
+
+            buildConfigField 'boolean', 'IS_DEFAULT_USER_LOGIN', 'false'
+            buildConfigField 'String', 'APP_URL_CONTENT_TYPE', '"https://apps.hokuapps.com"'
+            buildConfigField 'boolean', 'IS_HIDE_NOTE', 'false'
+
+            buildConfigField 'boolean', 'IS_HIDE_POST', 'false'
+            buildConfigField 'boolean', 'IS_HIDE_FILE_SECTION', 'true'
+
+
+            buildConfigField 'boolean', 'LOAD_HTML_DIRECTLY', 'true'
+            buildConfigField 'String', 'HEADER_COLOR', '"#FFFFFF"'
+            dimension "api"
+        }
+
+        milestoneProd {
+
+            applicationId "com.milestone"
+            versionCode 23
+            versionName "1.0.22"
+
+            buildConfigField 'String', 'COFIG_REST_API_HOST', '"https://milestoneorg.hokuapps.com"'
+            buildConfigField 'String', 'SOCKET_HOST', '"https://socket.hokuapps.com"'
+            buildConfigField 'String', 'FILE_HOST', '"https://files.hokuapps.com"'
+            buildConfigField 'String', 'APP_FILE_HOST', '"https://devfiles.hokuapps.com"'
+            buildConfigField 'String', 'INTEGRATION_HOST', '"https://integration.hokuapps.com"'
+            buildConfigField 'String', 'REST_API_HOST', '"https://api.hokuapps.com"'
+            buildConfigField 'String', 'ELASTIC_SEARCH_HOST', '"https://milestoneorg.hokuapps.com"'
+            buildConfigField "String", "AUTHORITY", "\"${applicationId}.database\""
+
+            buildConfigField 'int', 'DB_VERSION', DB_VERSION
+            buildConfigField 'int', 'APP_DEFAULT_THEME', '6'
+
+            buildConfigField 'String', 'DOMAIN_NAME', '"hokuapps.com"'
+            buildConfigField 'String', 'SENDER_ID', '"759752763502"'
+            buildConfigField 'String', 'DB_NAME', '"milestonedb"'
+            buildConfigField 'String', 'DEFAULT_TEMPLATE_SUB_DOMAIN', '"milestoneorg"'
+
+            resValue 'string', 'app_name', 'MSTAR'
+            resValue 'string', 'private_policy_url', '"https://www.hokuapps.com/privacy-policy/"'
+            resValue 'string', 'terms_url', '"https://www.hokuapps.com/terms-of-service/"'
+
+            //use to login for default user
+            buildConfigField 'boolean', 'IS_DEFAULT_USER_LOGIN', 'false'
+            buildConfigField 'String', 'APP_URL_CONTENT_TYPE', '"https://apps.hokuapps.com"'
+
+            //hide show features
+            buildConfigField 'boolean', 'IS_HIDE_NOTE', 'true'
+            buildConfigField 'boolean', 'IS_HIDE_POST', 'true'
+            buildConfigField 'boolean', 'IS_HIDE_FILE_SECTION', 'true'
+
+
+            buildConfigField 'boolean', 'LOAD_HTML_DIRECTLY', 'true'
+            dimension "api"
+            buildConfigField 'String', 'HEADER_COLOR', '"#FFFFFF"'
+            buildConfigField 'boolean', 'IS_IN_APPNOTIFICATION', 'true'
+
+            manifestPlaceholders.screenOrientation = "unspecified"
+
+        }
+    }
+}
+
+
+
+dependencies {
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha05'
+
+    //Firebase dependencies
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
+    implementation 'com.google.firebase:firebase-iid:21.1.0'
+    implementation 'com.google.firebase:firebase-analytics:21.2.1'
+    implementation 'com.google.firebase:firebase-crashlytics:18.3.6'
+
+    //Image loading dependencies
+    implementation 'com.koushikdutta.ion:ion:3.1.0'
+    implementation project(path: ':authenticateWithTouchID')
+
+
+    implementation project(path: ':shareAppData')
+    implementation project(path: ':loginNativeCallV2')
+    implementation project(path: ':logoutNativeCall')
+    implementation project(path: ':getCurrentLocationDetails')
+    implementation project(path: ':calendarOprations')
+    implementation project(path: ':updateAppVersion')
+    implementation project(path: ':getNetworkStatus')
+    implementation project(path: ':loadNativeFileUpload')
+
+}
+
+apply plugin: 'com.google.gms.google-services'

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "501659212119",
+    "project_id": "pearlista-d0877",
+    "storage_bucket": "pearlista-d0877.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501659212119:android:d6d3f21f0e29191059c612",
+        "android_client_info": {
+          "package_name": "com.pearlista"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "501659212119-pemic82knfb43cuobc0i7usoc3jm5pau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjnKCfzK4dPhnRFLRkBpe4tV1KpaetF2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "501659212119-pemic82knfb43cuobc0i7usoc3jm5pau.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

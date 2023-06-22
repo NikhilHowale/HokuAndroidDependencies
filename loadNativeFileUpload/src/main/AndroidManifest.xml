@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hokuapps.loadnativefileupload">
+
+    <application>
+        <provider
+            android:name=".database.MybeepsContentProvider"
+            android:authorities="${applicationId}.database"
+            android:exported="false" />
+
+        <activity android:name=".imageEditor.IPRectangleAnnotationActivity" />
+        <activity android:name=".annotate.AnnotateActivity"/>
+        <activity android:name=".annotate.FreeDrwaingActivity"/>
+    </application>
+</manifest>

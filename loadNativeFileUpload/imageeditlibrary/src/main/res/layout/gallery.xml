@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/custom_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/colorPrimary">
+    <ImageView
+        android:id="@+id/customBack"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_back_arrows_white_24dp"
+        android:scaleType="centerInside"
+        android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/titleGallery"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
+            android:text="ssssssss"
+            android:singleLine="true"
+            android:gravity="center_vertical|left"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white"
+            android:paddingLeft="8dp"
+            android:textSize="16sp"
+            android:textStyle="bold"></TextView>
+    </LinearLayout>
+
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/grid"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#EEEEEE"
+        android:columnWidth="150dp"
+        android:gravity="center"
+        android:horizontalSpacing="5dp"
+        android:numColumns="3"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="5dp"></GridView>
+</LinearLayout>

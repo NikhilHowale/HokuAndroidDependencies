@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "759752763502",
+    "firebase_url": "https://mstar-a40a2.firebaseio.com",
+    "project_id": "mstar-a40a2",
+    "storage_bucket": "mstar-a40a2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759752763502:android:d1fc6a6c6cfeb064785e7f",
+        "android_client_info": {
+          "package_name": "com.milestone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759752763502-s5bttqbc123bgj1obum40o0f0qhgo4dq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYbRIzY17GSFM74QEE9AYtLYBWSTFiW-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759752763502-s5bttqbc123bgj1obum40o0f0qhgo4dq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

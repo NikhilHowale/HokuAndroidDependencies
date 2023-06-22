@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+    <Button
+        android:id="@+id/btn_take_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_dark_blue_secondary"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:text="@string/lbl_take_photo"
+        android:background="@drawable/white_rounded_shape"
+        android:textAllCaps="false"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/btn_from_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/from_gallery"
+        android:textColor="@color/color_dark_blue_secondary"
+        android:textStyle="bold"
+        android:background="@drawable/white_rounded_shape"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"
+        android:textAllCaps="false"
+        />
+    <Button
+        android:id="@+id/btn_documents"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_dark_blue_secondary"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:text="@string/lbl_documents"
+        android:background="@drawable/white_rounded_shape"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"
+        android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_dark_blue_secondary"
+        android:textStyle="bold"
+        android:text="@string/btn_cancel"
+        android:gravity="center"
+        android:background="@drawable/white_rounded_shape"
+        android:layout_marginTop="4dp"
+        android:textAllCaps="false"/>
+
+</LinearLayout>

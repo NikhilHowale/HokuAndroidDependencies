@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="color_dark_blue_secondary">#7986cb</color>
+    <color name="screen_bg_white">#FEFEFE</color>
+
+    <color name="list_item_selected_state">#F4F6F6</color>
+    <color name="list_item_normal_state">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="color_primary_sherlock_blue">#3D6F92</color>
+    <color name="primary_text_default_material_dark">#ffffffff</color>
+    <color name="primary_text_default_material_light">#de000000</color>
+
+    <color name="color_red_primary">#005a30</color>
+    <color name="color_blue_200">#448AFF</color>
+    <color name="rippleEffectWaveColor">#bbbbbb</color>
+    <color name="white">#ffffff</color>
+    <color name="color_gray_primary_dark_700">#616161</color>
+    <color name="color_dark_blue_primary">#536dfe</color>
+
+    <array name="material_colors">
+        <item>#FF0000</item>
+        <item>#F44336</item>
+        <item>#9C27B0</item>
+        <item>#3F51B5</item>
+        <item>#03A9F4</item>
+        <item>#009688</item>
+        <item>#8BC34A</item>
+        <item>#FFEB3B</item>
+        <item>#FF9800</item>
+        <item>#795548</item>
+        <item>#607D8B</item>
+    </array>
+
+    <color name="color_primary">#FFFFFF</color>
+    <color name="color_primary_dark_700">#FFFFFF</color>
+    <color name="color_secondary_primary_300">#64b5f6</color>
+    <color name="color_accent_700">#DD2C00</color>
+</resources>

@@ -1,0 +1,36 @@
+<resources>
+    <style name="popwin_anim_style">
+        <item name="android:windowEnterAnimation">@anim/menushow</item>
+        <item name="android:windowExitAnimation">@anim/menuhide</item>
+    </style>
+    <!--Responsive Toolbar Styles -->
+    <style name="ToolbarResponsive" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
+        <item name="toolbarStyle">@style/CustomWidgetToolbar</item>
+        <item name="toolbarNavigationButtonStyle">@style/ToolbarButtonNavigation</item>
+        <item name="actionOverflowButtonStyle">@style/ActionButtonOverflow</item>
+    </style>
+
+    <style name="CustomWidgetToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="maxButtonHeight">48dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="contentInsetStart">16dp</item>
+    </style>
+
+    <style name="ToolbarButtonNavigation" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:minWidth">48dp</item>
+    </style>
+
+    <style name="ActionButtonOverflow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="queryBackground">@null</item>
+        <item name="submitBackground">@null</item>
+        <item name="searchHintIcon">@null</item>
+    </style>
+
+</resources>
