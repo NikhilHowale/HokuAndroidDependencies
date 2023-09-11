@@ -1,5 +1,6 @@
 package com.hokuapps.shareappdata;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -87,7 +88,7 @@ public class DownloadFile extends AsyncTask<Void, String, Boolean> {
         this.downloadFolderPath = downloadFolderPath;
     }
 
-    private File NewApifilePath = null;
+    private File NewApiFilePath = null;
 
     public String getDownloadUrl() {
         return downloadUrl;
@@ -133,10 +134,10 @@ public class DownloadFile extends AsyncTask<Void, String, Boolean> {
         if (isRename) {
             //need to change file name if already exists
             String fileNameWithoutExt = FileUtility.getFileNameWithoutExtension(fileName);
-            int numOfOccurence = getFileCountByFileName(downLoadedFolderDir, fileNameWithoutExt);
-            if (numOfOccurence > 0) {
+            int numOfOccurrence = getFileCountByFileName(downLoadedFolderDir, fileNameWithoutExt);
+            if (numOfOccurrence > 0) {
                 String ext = FileUtility.getExtensionWithDot(fileName);
-                fileName = String.format("%s(%d)%s", fileNameWithoutExt, numOfOccurence, ext);
+                fileName = String.format("%s(%d)%s", fileNameWithoutExt, numOfOccurrence, ext);
             }
         }
 
@@ -153,17 +154,11 @@ public class DownloadFile extends AsyncTask<Void, String, Boolean> {
         boolean isDownloaded = true;
 
         try {
-
-            //check file is exist and length is not zero
-
-            // For Api 30 change
             String destination = String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
 
-            NewApifilePath = new File(destination, filePath.getName());
+            NewApiFilePath = new File(destination, filePath.getName());
 
-
-            final Uri uri = Uri.parse("file://" + NewApifilePath);
-            // filePath.createNewFile();
+            final Uri uri = Uri.parse("file://" + NewApiFilePath);
             URL url = new URL(fileUrl);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -171,7 +166,7 @@ public class DownloadFile extends AsyncTask<Void, String, Boolean> {
 
             InputStream inputStream = urlConnection.getInputStream();
             FileOutputStream fileOutputStream = new FileOutputStream(new File(uri.getPath()));
-            int lenghtOfFile = urlConnection.getContentLength();
+            int lengthOfFile = urlConnection.getContentLength();
 
             byte[] buffer = new byte[MEGABYTE];
             int bufferLength = 0;
@@ -182,7 +177,7 @@ public class DownloadFile extends AsyncTask<Void, String, Boolean> {
                     fileOutputStream.write(buffer, 0, bufferLength);
                     // publishing the progress....
                     // After this onProgressUpdate will be called
-                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+                    publishProgress("" + (int) ((total * 100) / lengthOfFile));
                 } else {
                     isDownloaded = false;
                     break;
@@ -206,11 +201,23 @@ public class DownloadFile extends AsyncTask<Void, String, Boolean> {
         return isDownloaded;
     }
 
+    /**
+     * Delete the given file
+     * @param file
+     */
+    @SuppressLint("SuspiciousIndentation")
     private void deleteFile(File file) {
         if (file != null)
         file.delete();
     }
 
+
+    /**
+     * Return count of file by name
+     * @param downLoadedFolderDir
+     * @param fileNameWithoutExtension
+     * @return
+     */
     private int getFileCountByFileName(File downLoadedFolderDir, String fileNameWithoutExtension) {
 
         if (downLoadedFolderDir != null) {
@@ -243,11 +250,11 @@ public class DownloadFile extends AsyncTask<Void, String, Boolean> {
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
         try {
-            if (downloadCallback != null && downloadCallback.get() != null && NewApifilePath != null) {
+            if (downloadCallback != null && downloadCallback.get() != null && NewApiFilePath != null) {
                 if (!result) {
-                    deleteFile(NewApifilePath);
+                    deleteFile(NewApiFilePath);
                 }
-                downloadCallback.get().onDownloadStatus(result, NewApifilePath.getAbsolutePath());
+                downloadCallback.get().onDownloadStatus(result, NewApiFilePath.getAbsolutePath());
             }
         } catch (Exception ex) {
             ex.printStackTrace();

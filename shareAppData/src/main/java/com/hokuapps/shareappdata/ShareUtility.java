@@ -34,9 +34,13 @@ public class ShareUtility {
 
     public static final String TYPE_EMAIL_MESSAGE = "message/rfc822";
     public static final String TYPE_PLAIN_TEXT = "text/plain";
-    public static final String FOLDER_NAME_MEDIA = "Media";
 
-
+    /**
+     * Open the given pdf file in suitable app
+     * @param context
+     * @param filePath
+     * @param type
+     */
     public static void showPdfFileInApp(Context context, String filePath, String type) {
 
         File file = new File(filePath);
@@ -63,16 +67,20 @@ public class ShareUtility {
 
     }
 
-
+    /**
+     * get root directory path
+     * @return
+     */
     public static String getRootDirPath() {
         return getRootDir() + File.separator + new ShareAppData().applicationName;
     }
 
-    public static File getMediaDirPath() {
-        String path = getRootDir() + File.separator + new ShareAppData().applicationName;
-        return new File(path, ShareUtility.FOLDER_NAME_MEDIA);
-    }
-
+    /**
+     * Check if the application already installed
+     * @param context
+     * @param targetPackage
+     * @return
+     */
     @SuppressLint("QueryPermissionsNeeded")
     public static boolean isPackageExists(Context context, String targetPackage) {
         List<ApplicationInfo> packages;
@@ -87,27 +95,24 @@ public class ShareUtility {
         return false;
     }
 
-
-
-    public static boolean makeDirectory(File mediaStorageDir) {
-        if (!mediaStorageDir.exists()) {
-            return mediaStorageDir.mkdirs();
-        }
-        return true;
-    }
-
-
-
+    /**
+     * Get root directory
+     * @return
+     */
     public static File getRootDir() {
         return Environment.getExternalStorageDirectory();
     }
 
-
+    /**
+     * Launch the application
+     * @param context
+     * @param packageNameTobeLaunch
+     */
     public static void launchApplication(Context context, String packageNameTobeLaunch) {
         try {
             if (!TextUtils.isEmpty(packageNameTobeLaunch)) {
                 Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageNameTobeLaunch);
-                launchIntent.putExtra("pageName", "index.html");
+                launchIntent.putExtra(context.getString(R.string.page_name), "index.html");
                 context.startActivity(launchIntent);
             }
         } catch (Exception e) {
@@ -115,13 +120,22 @@ public class ShareUtility {
         }
     }
 
-
+    /**
+     * Show toast message to user
+     * @param context
+     * @param msg
+     */
     public static void showMessage(Context context, String msg) {
         if (context != null && !TextUtils.isEmpty(msg))
             Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
 
+    /**
+     * Save to calender
+     * @param context
+     * @param calEvtString
+     */
     public static void saveToCalendar(Context context, String calEvtString) {
         if (context == null) return;
 
@@ -174,6 +188,12 @@ public class ShareUtility {
         }
     }
 
+    /**
+     * Get the boolean value from json object
+     * @param obj
+     * @param fieldName
+     * @return
+     */
     public static boolean getJsonObjectBooleanValue(JSONObject obj, String fieldName) {
         if (obj == null) return false;
 
@@ -188,7 +208,12 @@ public class ShareUtility {
         return false;
     }
 
-
+    /**
+     * Get the string value from json object
+     * @param obj
+     * @param fieldName
+     * @return
+     */
     public static String getStringObjectValue(JSONObject obj, String fieldName) {
         try {
             if (obj == null) return "";
@@ -205,12 +230,22 @@ public class ShareUtility {
         return null;
     }
 
+    /**
+     * Get the current date and time in milli seconds
+     * @return
+     */
     public static long getCurrentDateTimeInMS() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTime().getTime();
     }
 
 
+    /**
+     * Get the required value from json object
+     * @param obj
+     * @param fieldName
+     * @return
+     */
     public static Object getJsonObjectValue(JSONObject obj, String fieldName) {
         try {
             if (obj == null) return null;
@@ -224,7 +259,11 @@ public class ShareUtility {
     }
 
 
-
+    /**
+     * Get the status of the event
+     * @param statusStr
+     * @return
+     */
     private static int getEventStatus(String statusStr) {
 
         if (statusStr.equalsIgnoreCase("CONFIRMED")) {
@@ -238,7 +277,11 @@ public class ShareUtility {
         return -1;
     }
 
-
+    /**
+     * Share the provided string via message app
+     * @param context
+     * @param sharedText
+     */
     public static void shareTextViaMessageApp(Context context, String sharedText) {
         Intent smsIntent = new Intent(Intent.ACTION_VIEW);
         smsIntent.setType("vnd.android-dir/mms-sms");
@@ -246,12 +289,23 @@ public class ShareUtility {
         context.startActivity(smsIntent);
     }
 
-
+    /**
+     * Share text message
+     * @param context
+     * @param messageText
+     * @param hasSendMultiple
+     */
     public static void shareTextMessage(Context context, String messageText, boolean hasSendMultiple) {
         shareTextMessage(context, messageText, hasSendMultiple, TYPE_PLAIN_TEXT);
     }
 
-
+    /**
+     * Share text message to multiple if it has
+     * @param context
+     * @param messageText
+     * @param hasSendMultiple
+     * @param type
+     */
     @SuppressLint("QueryPermissionsNeeded")
     public static void shareTextMessage(Context context, String messageText, boolean hasSendMultiple, String type) {
         Intent shareIntent = createSendIntent(context);
@@ -271,7 +325,11 @@ public class ShareUtility {
         }
     }
 
-
+    /**
+     * Share text via mail
+     * @param context
+     * @param messageText
+     */
     @SuppressLint("IntentReset")
     public static void shareTextViaMail(Context context, String messageText) {
         Intent mail = new Intent(Intent.ACTION_SENDTO);
@@ -289,6 +347,13 @@ public class ShareUtility {
 
     }
 
+    /**
+     * Share text via mail
+     * @param context
+     * @param email
+     * @param message
+     * @param data
+     */
     public static void shareTextViaMail(Context context, String email, String message, String data) {
         Intent mail = new Intent(Intent.ACTION_SENDTO);
         mail.setType(TYPE_EMAIL_MESSAGE);
@@ -301,6 +366,11 @@ public class ShareUtility {
         context.startActivity(chooserIntent);
     }
 
+    /**
+     * Open dial pad with provided number
+     * @param context
+     * @param mobileNo
+     */
     public static void openDialer(Context context, String mobileNo) {
         Intent dialIntent = new Intent(Intent.ACTION_DIAL);
         dialIntent.setData(Uri.parse("tel:" + mobileNo));
@@ -308,6 +378,13 @@ public class ShareUtility {
     }
 
 
+    /**
+     * Get Message intent
+     * @param context
+     * @param messageText
+     * @param hasSendMultiple
+     * @return
+     */
     public static ArrayList<Intent> getMessageIntent(Context context, String messageText, boolean hasSendMultiple) {
         ArrayList<Intent> plainTextIntent = new ArrayList<>();
         Intent shareIntent = hasSendMultiple ? createSendMultipleIntent(context) : createSendIntent(context);
@@ -340,15 +417,29 @@ public class ShareUtility {
         return plainTextIntent;
     }
 
+    /**
+     * create intent to send multiple content
+     * @param context
+     * @return
+     */
     public static Intent createSendMultipleIntent(Context context) {
         return new Intent(Intent.ACTION_SEND_MULTIPLE);
     }
 
-
+    /**
+     * create intent to send single content
+     * @param context
+     * @return
+     */
     public static Intent createSendIntent(Context context) {
         return new Intent(Intent.ACTION_SEND);
     }
 
+    /**
+     * open browser with given url
+     * @param context
+     * @param url
+     */
     public static void openBrowserIntent(Context context, String url) {
         if (context == null) return;
         try {
@@ -364,6 +455,11 @@ public class ShareUtility {
         }
     }
 
+    /**
+     * convert UTC date format to local date format
+     * @param dateString
+     * @return
+     */
     @SuppressLint("SimpleDateFormat")
     public static long convertUTCDateToLocalDate(String dateString) {
         if (TextUtils.isEmpty(dateString)) return 0;
@@ -385,48 +481,5 @@ public class ShareUtility {
         }
         return value;
     }
-
-    @SuppressLint("SimpleDateFormat")
-    public static long convertUTCDateToLocalDate(String dateString, String pattern) {
-        if (TextUtils.isEmpty(dateString)) return 0;
-        DateFormat format = new SimpleDateFormat(pattern);
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-        long value = 0;
-        try {
-            Date date = format.parse(dateString);
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mmaa");
-            dateFormatter.setTimeZone(TimeZone.getDefault());
-
-            Calendar calendar = Calendar.getInstance();
-            if (date != null) {
-                calendar.setTime(date);
-            }
-            value = calendar.getTimeInMillis();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return value;
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    public static Date convertUTCDateToLocalDateTime(String dateString) {
-        if (TextUtils.isEmpty(dateString) || dateString.equals("0")) return null;
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-        try {
-            Date date = format.parse(dateString);
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-            dateFormatter.setTimeZone(TimeZone.getDefault());
-            String dt = null;
-            if (date != null) {
-                dt = dateFormatter.format(date);
-            }
-            return dateFormatter.parse(dt);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
 }

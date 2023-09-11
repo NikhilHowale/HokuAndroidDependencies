@@ -10,13 +10,14 @@ public class FileUtility {
 
     private static final String TAG = "FileUtility";
 
-    // Avoid creation of object
     private FileUtility() {
     }
 
-
-
-
+    /**
+     * Check if the file exist in the given path
+     * @param path
+     * @return
+     */
     public static boolean isFileExist(String path) {
 
         boolean toReturn = false;
@@ -34,10 +35,11 @@ public class FileUtility {
     }
 
 
-
-
-
-
+    /**
+     * Get the file name from the given path
+     * @param filePath
+     * @return
+     */
     public static String getFileName(String filePath) {
 
         if (!isFileExist(filePath)) return "";
@@ -48,12 +50,21 @@ public class FileUtility {
     }
 
 
-
+    /**
+     * Get the file name without it's extension
+     * @param filename
+     * @return
+     */
     public static String getFileNameWithoutExtension(String filename) {
 
         return filename.substring(0, filename.length() - getExtensionWithDot(filename).length());
     }
 
+    /**
+     * Get file extension by file name
+     * @param name
+     * @return
+     */
     public static String getExtensionWithDot(String name) {
         String ext;
 
@@ -69,13 +80,12 @@ public class FileUtility {
         return ext;
     }
 
-
-
-
-
-
-
-
+    /**
+     * Get the Downloaded file parent directory
+     * @param folderName
+     * @param isSandboxDir
+     * @return
+     */
     public static String getDownloadFileParentDir(String folderName, boolean isSandboxDir) {
         File fileRootDir = new File(ShareUtility.getRootDirPath());
         if (!isSandboxDir) {
