@@ -28,7 +28,12 @@ public  class ImageCompression {
     Handler handler = new Handler(Looper.getMainLooper());
 
 
-
+    /**
+     * Compress image asynchronously
+     * @param from
+     * @param to
+     * @param callback
+     */
     public void executeAsync(String from,String to, OnCompressedListener callback) {
         executor.execute(() -> {
             final String result;
@@ -43,16 +48,24 @@ public  class ImageCompression {
         });
     }
 
-    static String compressImageV3(String originalPath, String commpressedPath, int reqWidth, int reqHeight) {
+    /**
+     * Compress image according to given width and height and returns compressed image path
+     * @param originalPath
+     * @param compressedPath
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    static String compressImageV3(String originalPath, String compressedPath, int reqWidth, int reqHeight) {
         try {
             FileOutputStream fileOutputStream = null;
             File imageFile = new File(originalPath);
-            File file = new File(commpressedPath).getParentFile();
+            File file = new File(compressedPath).getParentFile();
             if (!file.exists()) {
                 file.mkdirs();
             }
             try {
-                fileOutputStream = new FileOutputStream(commpressedPath);
+                fileOutputStream = new FileOutputStream(compressedPath);
                 // write the compressed bitmap at the destination specified by destinationPath.
                 decodeSampledBitmapFromFile(imageFile, reqWidth, reqHeight).compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream);
             } finally {
@@ -64,9 +77,17 @@ public  class ImageCompression {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return commpressedPath;
+        return compressedPath;
     }
 
+    /**
+     *
+     * @param imageFile
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     * @throws IOException
+     */
     static Bitmap decodeSampledBitmapFromFile(File imageFile, int reqWidth, int reqHeight) throws IOException {
         // First decode with inJustDecodeBounds=true to check dimensions
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -97,6 +118,14 @@ public  class ImageCompression {
         return scaledBitmap;
     }
 
+    /**
+     *
+     * resizing image according to width and height
+     * @param options
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
@@ -119,6 +148,9 @@ public  class ImageCompression {
     }
 
 
+    /**
+     * Setting listener for image compression success
+     */
     public interface OnCompressedListener {
         void onImageCompressed(String compressedPath);
     }

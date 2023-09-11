@@ -1,11 +1,31 @@
 package com.hokuapps.loadnativefileupload;
 
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.APP_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.APP_MEDIA_ARRAY;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAPTION;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_NAME;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_NM;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_PATH;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_MEDIA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_NAME;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_FILE_NM;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_MEDIA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_S3_FILE_PATH;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MEDIA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.NEXT_BUTTON_CALLBACK;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OBJ_PARAMS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_DATA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.S3_FILE_PATH;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STEP;
+
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.webkit.WebView;
 
-import com.hokuapps.loadnativefileupload.backgroundtask.RoofingUploader;
+import com.hokuapps.loadnativefileupload.backgroundtask.FileUploader;
 import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 import com.hokuapps.loadnativefileupload.restrequest.ServiceRequest;
@@ -25,14 +45,19 @@ public class UploadPendingFiles {
     private Activity mActivity;
     private boolean isGetAllFileStatusCalled = false;
     private String[] requiredJSONObjectKey = {};
-    private final String missingKeys = "Missing keys = ";
-    private final boolean whileDebuggingShowMissingAlert = false;
     private String fileStatusCallBackFunction = "";
     private String syncOfflineNextButtonCallBack = "";
     private String objParams = "";
     private String appAuthToken = "";
     private int instucationNumberClockIn = 0;
 
+    /**
+     * Parameterized constructor
+     * @param mContext
+     * @param appAuthToken
+     * @param webView
+     * @param activity
+     */
     public UploadPendingFiles(Context mContext, String appAuthToken,WebView webView,Activity activity) {
         this.mContext = mContext;
         this.appAuthToken = appAuthToken;
@@ -40,24 +65,23 @@ public class UploadPendingFiles {
         this.mActivity = activity;
     }
 
+    /**
+     * Entry point for uploadPendingFiles module
+     * @param fileStatusRes
+     */
     public void uploadPendingFiles(final String fileStatusRes){
         try {
             if (TextUtils.isEmpty(fileStatusRes)) return;
 
             requiredJSONObjectKey = new String[]{"offlineDataID", "fileNm", "appID"};
-            String missingKeysMsg = FileUploadUtility.showAlertBridgeMissingKeys(mContext, fileStatusRes, requiredJSONObjectKey);
-            if (whileDebuggingShowMissingAlert && !missingKeysMsg.equals(missingKeys) && BuildConfig.DEBUG) {
-                FileUploadUtility.showAlertMessage(mContext, missingKeysMsg, "retryFile");
-                return;
-            }
 
             JSONObject jOFileStatus = new JSONObject(fileStatusRes);
-            syncOfflineNextButtonCallBack = FileUploadUtility.getStringObjectValue(jOFileStatus, "nextButtonCallback");
-            String offlineDataID = FileUploadUtility.getStringObjectValue(jOFileStatus, "offlineDataID");
-            String filename = FileUploadUtility.getStringObjectValue(jOFileStatus, "fileName");
-            String appID = FileUploadUtility.getStringObjectValue(jOFileStatus, "appID");
-            String filePath = FileUploadUtility.getStringObjectValue(jOFileStatus, "filePath");
-            objParams = FileUploadUtility.getStringObjectValue(jOFileStatus, "objParams");
+            syncOfflineNextButtonCallBack = FileUploadUtility.getStringObjectValue(jOFileStatus, NEXT_BUTTON_CALLBACK);
+            String offlineDataID = FileUploadUtility.getStringObjectValue(jOFileStatus, OFFLINE_DATA_ID);
+            String filename = FileUploadUtility.getStringObjectValue(jOFileStatus, FILE_NAME);
+            String appID = FileUploadUtility.getStringObjectValue(jOFileStatus, APP_ID);
+            String filePath = FileUploadUtility.getStringObjectValue(jOFileStatus, FILE_PATH);
+            objParams = FileUploadUtility.getStringObjectValue(jOFileStatus, OBJ_PARAMS);
 
             retryFileUploadClient(appID, filename, offlineDataID, filePath);
         } catch (Exception ex) {
@@ -65,12 +89,12 @@ public class UploadPendingFiles {
         }
     }
 
-
-     /* retry file upload if file is failed during upload
-     *
-             * @param appID
+    /**
+     * retry file upload if file is failed during upload
+     * @param appID
      * @param fileName
      * @param offlineID
+     * @param filePath
      */
     private void retryFileUploadClient(String appID, String fileName, String offlineID, String filePath) {
         File file;
@@ -92,11 +116,11 @@ public class UploadPendingFiles {
             return;
         }
 
-        RoofingUploader roofingUploader = RoofingUploader.getInstance(appMediaDetails,mContext);
+        FileUploader roofingUploader = FileUploader.getInstance(appMediaDetails,mContext);
         roofingUploader.setFilePath(file.getPath());
         roofingUploader.setAppID(appID);
         roofingUploader.setAppsServerToken(appAuthToken);
-        roofingUploader.setUiCallBack(new RoofingUploader.IUICallBackRoofing() {
+        roofingUploader.setUiCallBack(new FileUploader.IUICallBackRoofing() {
             @Override
             public void onSuccess(ServiceRequest serviceRequest) {
                 // call javascript to update ui
@@ -132,7 +156,7 @@ public class UploadPendingFiles {
             JSONObject jsonObjectFileStatus = getAllFileStatusList(offlineDataID);
             if (objParams != null && !objParams.isEmpty()) {
                 try {
-                    jsonObjectFileStatus.put("objParams", objParams);
+                    jsonObjectFileStatus.put(OBJ_PARAMS, objParams);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -141,6 +165,11 @@ public class UploadPendingFiles {
         }
     }
 
+    /**
+     * Check the status of all the files uploads and send all the file details to callback function
+     * @param offlineDataID
+     * @return
+     */
     private JSONObject getAllFileStatusList(String offlineDataID) {
 
         try {
@@ -152,7 +181,6 @@ public class UploadPendingFiles {
             String mapFileMediaID = "";
             String mapFileName = "";
             int mapFileStatus = 0;
-            String caption = "";
             String mapPlanFileMediaID = "";
             String mapPlanFileName = "";
             String mapPlanS3FilePath = "";
@@ -170,42 +198,41 @@ public class UploadPendingFiles {
                     mapFileStatus = appMediaDetails.getUploadStatus();
                 } else {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("step", appMediaDetails.getInstructionNumber());
-                    jsonObject.put("fileNm", appMediaDetails.getFileName());
-                    jsonObject.put("mediaID", appMediaDetails.getMediaID());
-                    jsonObject.put("S3FilePath", appMediaDetails.getS3FilePath());
-                    jsonObject.put("status", appMediaDetails.getUploadStatus());
-                    jsonObject.putOpt("caption", appMediaDetails.getImageCaption());
+                    jsonObject.put(STEP, appMediaDetails.getInstructionNumber());
+                    jsonObject.put(FILE_NM, appMediaDetails.getFileName());
+                    jsonObject.put(MEDIA_ID, appMediaDetails.getMediaID());
+                    jsonObject.put(S3_FILE_PATH, appMediaDetails.getS3FilePath());
+                    jsonObject.put(STATUS, appMediaDetails.getUploadStatus());
+                    jsonObject.putOpt(CAPTION, appMediaDetails.getImageCaption());
                     jsonArray.put(jsonObject);
                 }
-                caption = appMediaDetails.getImageCaption();
 
             }
 
-            jsonObjectResponse.put("appMediaArrayForUploadArray", jsonArray);
+            jsonObjectResponse.put(APP_MEDIA_ARRAY, jsonArray);
 
             if (!TextUtils.isEmpty(mapFileMediaID)) {
-                jsonObjectResponse.put("mapFileMediaID", mapFileMediaID);
+                jsonObjectResponse.put(MAP_FILE_MEDIA_ID, mapFileMediaID);
             }
 
             if (!TextUtils.isEmpty(mapFileName)) {
-                jsonObjectResponse.put("mapFileName", mapFileName);
+                jsonObjectResponse.put(MAP_FILE_NAME, mapFileName);
             }
 
             if (!TextUtils.isEmpty(mapPlanFileMediaID)) {
-                jsonObjectResponse.put("mapPlanMediaID", mapPlanFileMediaID);
+                jsonObjectResponse.put(MAP_PLAN_MEDIA_ID, mapPlanFileMediaID);
             }
 
             if (!TextUtils.isEmpty(mapPlanFileName)) {
-                jsonObjectResponse.put("mapPlanFileNm", mapPlanFileName);
+                jsonObjectResponse.put(MAP_PLAN_FILE_NM, mapPlanFileName);
             }
 
             if (!TextUtils.isEmpty(mapPlanS3FilePath)) {
-                jsonObjectResponse.put("mapPlanS3FilePath", mapPlanS3FilePath);
+                jsonObjectResponse.put(MAP_PLAN_S3_FILE_PATH, mapPlanS3FilePath);
             }
 
-            jsonObjectResponse.put("mapPlanStatus", mapPlanStatus);
-            jsonObjectResponse.put("mapFileStatus", mapFileStatus);
+            jsonObjectResponse.put(MAP_PLAN_STATUS, mapPlanStatus);
+            jsonObjectResponse.put(MAP_PLAN_STATUS, mapFileStatus);
 
 
             return jsonObjectResponse;

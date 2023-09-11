@@ -3,11 +3,6 @@ package com.hokuapps.loadnativefileupload.colorseekbar;
 import android.util.Log;
 import android.view.View;
 
-/**
- * Created by Jack on 2016/12/5.
- * Email:rtugeek@gmail.com
- */
-
 class Logger {
     private static boolean debug = false;
     private static final String TAG ="ColorSeekBarLib";

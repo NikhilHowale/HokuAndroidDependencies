@@ -1,15 +1,11 @@
 package com.hokuapps.loadnativefileupload.constants;
 
-import com.hokuapps.loadnativefileupload.utilities.FileUtility;
 
 public class FileUploadConstant {
 
     public static final String APP_TAG = "Library";
     public static final int INVALID_ID = -1;
-    public static final int maxWidth = 1920/*720*/;
-    public static final int maxHeight = 1080/*1280*/;
     public static final String UTC_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    public static final int IMAGE_THUMB_SIZE_128 = 128;
     public static final String FOLDER_NAME_WEB_HTML = "WebHtml";
     public static final String FOLDER_NAME_IMAGE = FileUploadConstant.FOLDER_PARENT_NAME + " Images";
     public static final String FOLDER_NAME_VIDEO = FileUploadConstant.FOLDER_PARENT_NAME + " Videos";
@@ -26,13 +22,6 @@ public class FileUploadConstant {
 
 
     public static class REST_URLS {
-
-
-
-
-
-        public static String UPLOAD_CHAT_MEDIA = "upload";
-        public static String UPLOAD_ROOFING_MEDIA = "uploadFile";
         public static String UPLOAD_MP_HELITRACK = "upload";
 
     }
@@ -42,6 +31,21 @@ public class FileUploadConstant {
 
     }
 
+    public interface options{
+        String IS_SCAN_TEXT = "isScanText";
+        String IS_DEFAULT_CAMERA ="isDefaultCamera";
+        String IS_FREE_DRAW ="isFreeDraw";
+        String IS_ANNOTATION = "isAnnotation";
+        String IS_ANNOTATION_WITH_IMAGE_PATH = "isAnnotationWithImagePath";
+        String IS_ANNOTATION_WITH_LOCAL_IMAGE = "isAnnotationWithLocalImage";
+        String IS_ANNOTATION_WITH_IMAGE_URL = "isAnnotationWithImageUrl";
 
+    }
 
+    public interface Shape{
+        String LINE ="Line";
+        String CIRCLE = "Circle";
+        String Rectangle = "Rectangle";
+        String PATH = "Path";
+    }
 }

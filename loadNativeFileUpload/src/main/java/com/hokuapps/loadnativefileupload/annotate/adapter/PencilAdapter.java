@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hokuapps.loadnativefileupload.R;
-import com.hokuapps.loadnativefileupload.annotate.FreeDrwaingActivity;
+import com.hokuapps.loadnativefileupload.annotate.FreeDrawingActivity;
 import com.hokuapps.loadnativefileupload.annotate.TurboImageViewFree;
 
 import java.util.ArrayList;
@@ -45,13 +45,10 @@ public class PencilAdapter extends RecyclerView.Adapter<PencilAdapter.MyViewHold
             holder.image.setImageDrawable(imageList.get(position).getDrawable());
         }
 
-        holder.image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((FreeDrwaingActivity) activity).imageTitle.setVisibility(View.GONE);
-                ((FreeDrwaingActivity) activity).imageTitle.setText(imageList.get(position).getImageTitle());
-                TurboImageViewFree.colorCode = imageList.get(position).getColorCode();
-            }
+        holder.image.setOnClickListener(view -> {
+            ((FreeDrawingActivity) activity).imageTitle.setVisibility(View.GONE);
+            ((FreeDrawingActivity) activity).imageTitle.setText(imageList.get(position).getImageTitle());
+            TurboImageViewFree.colorCode = imageList.get(position).getColorCode();
         });
 
     }

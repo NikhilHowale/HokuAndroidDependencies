@@ -36,6 +36,9 @@ public class ImageObject extends MultiTouchObject {
         initPaint();
     }
 
+    /**
+     * Initialize paint object
+     */
     public void initPaint() {
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setColor(borderColor);
@@ -51,6 +54,10 @@ public class ImageObject extends MultiTouchObject {
         textPaint.setTextSize(50);
     }
 
+    /**
+     * Start drawing on canvas
+     * @param canvas
+     */
     public void draw(Canvas canvas) {
         canvas.save();
 
@@ -72,12 +79,6 @@ public class ImageObject extends MultiTouchObject {
         canvas.drawText(String.valueOf(count),getMaxX()+10,getMaxY()+10,textPaint); // added 100 to set the number text  to the bottom of the image
 
         drawable.draw(canvas);
-
-        if (isLatestSelected) {
-           // canvas.drawRect((int) minX, (int) minY, (int) maxX, (int) maxY, borderPaint);
-            /*Ready to show an X button to delete the view but impossible to detect when that X button is touched*/
-            //canvas.drawBitmap(cancelBitmap, minX - (cancelBitmap.getWidth() / 2), minY - (cancelBitmap.getHeight() / 2), new Paint());
-        }
 
         canvas.restore();
     }

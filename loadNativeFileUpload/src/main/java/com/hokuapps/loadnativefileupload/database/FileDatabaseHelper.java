@@ -5,21 +5,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 
-public class MybeepsDatabaseHelper extends SQLiteOpenHelper {
+public class FileDatabaseHelper extends SQLiteOpenHelper {
 
-    public final String TAG = MybeepsDatabaseHelper.class.getSimpleName();
+    public final String TAG = FileDatabaseHelper.class.getSimpleName();
 
     public static final String DATABASE_NAME = "appMediaDetails"+ ".db";
-    public static final int DATABASE_VERSION = 1; // Changed ver #24 instead of #25 // 150316 //V1.6.4mybbeps = 28 and V1.1.0 hoku and opmx = 29
+    public static final int DATABASE_VERSION = 1;
 
-    public MybeepsDatabaseHelper(Context context) {
+    public FileDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-
-
-
-
+    /**
+     * Create database with table name
+     */
     interface CreateQuery {
         String APP_MEDIA_DETAILS_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.AppMediaDetails.TABLE_NAME + " ( " +
                 Tables.AppMediaDetails.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -36,38 +35,12 @@ public class MybeepsDatabaseHelper extends SQLiteOpenHelper {
                 " ) ";
     }
 
-    interface CreateIndex {
-
-    }
-
-
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         db.execSQL(CreateQuery.APP_MEDIA_DETAILS_TABLE);
-
-
     }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
-
-
-
-    private void execQuery(SQLiteDatabase db, String query) {
-        try {
-            db.execSQL(query);
-        } catch (RuntimeException ex) {
-            ex.printStackTrace();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-
-
-
-
 }

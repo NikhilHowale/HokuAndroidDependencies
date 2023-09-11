@@ -34,7 +34,6 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
-import java.net.Socket;
 import java.net.URI;
 import java.net.URL;
 import java.util.Enumeration;
@@ -44,18 +43,16 @@ import java.util.Hashtable;
 /**
  * Created by user on 30/12/16.
  */
-public class RoofingUploaderAsyncTask extends AsyncTask<ServiceRequest, Integer, ServiceResponse> {
+public class FileUploaderAsyncTask extends AsyncTask<ServiceRequest, Integer, ServiceResponse> {
 
-    // class members
-    private static final String POST_METHOD = "POST";
     private final static int EXCEPTION_CODE = 400;
     public ServiceRequest serviceRequest;
-    private String TAG = RoofingUploaderAsyncTask.class.getSimpleName();
+    private String TAG = FileUploaderAsyncTask.class.getSimpleName();
     private int requestTimeout;
     private WeakReference<OnUploadListener> uploadListenerWeakReference;
     private Context context;
 
-    public RoofingUploaderAsyncTask(int requestTimeout, OnUploadListener uploadListenerWeakReference,Context context) {
+    public FileUploaderAsyncTask(int requestTimeout, OnUploadListener uploadListenerWeakReference, Context context) {
 
         this.requestTimeout = requestTimeout;
         this.uploadListenerWeakReference = new WeakReference<OnUploadListener>(uploadListenerWeakReference);
@@ -179,7 +176,6 @@ public class RoofingUploaderAsyncTask extends AsyncTask<ServiceRequest, Integer,
      */
     private void parseRoofingPhotoResponse(ServiceResponse result) {
         try {
-            // LogUtility.printErrorMessage(TAG + ":: upload Completed - " + result.getResponseString());
             System.out.println(TAG + " :: upload Completed " + result.getResponseString());
             Error error = null;
             JSONObject jsonObject = new JSONObject(result.getResponseString());
@@ -279,7 +275,4 @@ public class RoofingUploaderAsyncTask extends AsyncTask<ServiceRequest, Integer,
             publishProgress(getProgressUpdate(totalByteWrite, totalSize));
         }
     }
-
-
-
 }

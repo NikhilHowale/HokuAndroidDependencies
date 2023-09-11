@@ -13,6 +13,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class ServiceParser {
     public static String TAG = "ServiceParser";
 
+    /**
+     *
+     * @param result
+     * @return
+     */
     public static Element getDocumentElement(String result) {
         try {
             // This is not the correct resolution this should be fixed at server end.
@@ -29,6 +34,12 @@ public class ServiceParser {
             return null;
         }
     }
+
+    /**
+     *
+     * @param text
+     * @return
+     */
     private static InputStream stringToInputStream(String text) {
         try {
             return new ByteArrayInputStream(text.getBytes("UTF-8"));
@@ -38,7 +49,5 @@ public class ServiceParser {
             return null;
         }
     }
-
-
 
 }

@@ -49,10 +49,6 @@ public class ServiceRequest {
         this.appMediaDetails = appMediaDetails;
     }
 
-
-
-
-
     public String getContentType() {
         return contentType;
     }
@@ -68,8 +64,6 @@ public class ServiceRequest {
     public void setAdditionalHTTPBody(String additionalHTTPBody) {
         this.additionalHTTPBody = additionalHTTPBody;
     }
-
-
     public String getHTTPMethod() {
         return httpMethod;
     }

@@ -91,78 +91,71 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
             }
         }
 
-        holder.image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((AnnotateActivity) activity).imageTitle.setVisibility(View.VISIBLE);
-                ((AnnotateActivity) activity).imageTitle.setText(imageList.get(position).getImageTitle());
-                for (int i = 0; i < imageList.size(); i++) {
-                    Image image = imageList.get(i);
-                    if (image.isLocal()) {
-                        image.setOldDrawable(imageList.get(i).getOldDrawable());
-                        image.setNewDrawable(imageList.get(i).getNewDrawable());
-                        image.setImageTitle(imageList.get(i).getImageTitle());
-                        if (i == position) {
-                            image.setSelected(true);
-                            if (image.isDrawLine()) {
-                                TurboImageView.isDraw = "Line";
-                                TurboImageView.isFreeDraw = true;
-                            } else {
-                                TurboImageView.isFreeDraw = false;
-                            }
+        holder.image.setOnClickListener(view -> {
+            ((AnnotateActivity) activity).imageTitle.setVisibility(View.VISIBLE);
+            ((AnnotateActivity) activity).imageTitle.setText(imageList.get(position).getImageTitle());
+            for (int i = 0; i < imageList.size(); i++) {
+                Image image1 = imageList.get(i);
+                if (image1.isLocal()) {
+                    image1.setOldDrawable(imageList.get(i).getOldDrawable());
+                    image1.setNewDrawable(imageList.get(i).getNewDrawable());
+                    image1.setImageTitle(imageList.get(i).getImageTitle());
+                    if (i == position) {
+                        image1.setSelected(true);
+                        if (image1.isDrawLine()) {
+                            TurboImageView.isDraw = "Line";
+                            TurboImageView.isFreeDraw = true;
                         } else {
-                            image.setSelected(false);
+                            TurboImageView.isFreeDraw = false;
                         }
-                        imageList.set(i, image);
                     } else {
-                        image.setImageName(imageList.get(i).getImageName());
-                        image.setSelectedImageName(imageList.get(i).getSelectedImageName());
-                        image.setImageTitle(imageList.get(i).getImageTitle());
-                        if (i == position) {
-                            image.setSelected(true);
-                        } else {
-                            image.setSelected(false);
-                        }
-                        imageList.set(i, image);
+                        image1.setSelected(false);
                     }
+                    imageList.set(i, image1);
+                } else {
+                    image1.setImageName(imageList.get(i).getImageName());
+                    image1.setSelectedImageName(imageList.get(i).getSelectedImageName());
+                    image1.setImageTitle(imageList.get(i).getImageTitle());
+                    if (i == position) {
+                        image1.setSelected(true);
+                    } else {
+                        image1.setSelected(false);
+                    }
+                    imageList.set(i, image1);
                 }
-                notifyDataSetChanged();
             }
+            notifyDataSetChanged();
         });
 
-        holder.image.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (!imageList.get(position).isLocal()) {
-                    Bitmap bmImg = getBitmapFromMemCache(imageList.get(position).getSelectedImageName());
-                    if (bmImg == null) {
-                        try {
-                            bmImg = Ion.with(activity)
-                                    .load(imageList.get(position).getSelectedImageName()).asBitmap().get();
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-//                        bmImg = Utility.getImageDrawableFromBitmapBySize(App.getInstance().getApplicationContext(), bmImg, 24, 24);
-                    }
-                    if (bmImg != null) {
-                        addBitmapToMemoryCache(imageList.get(position).getSelectedImageName(), bmImg);
-                        ClipData data = ClipData.newPlainText("", "");
-                        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(holder.image);
-                        holder.image.startDrag(data, shadowBuilder, imageList.get(position).getSelectedImageName(), 0);
-                        ((AnnotateActivity) activity).getDraggedBitMap(bmImg, imageList.get(position).getImageTitle(), imageList.get(position).getMetaData());
-                    }
-                } else {
-                    if (!imageList.get(position).isDrawLine()) {
-                        TurboImageView.isFreeDraw = false;
-                        BitmapDrawable drawable = (BitmapDrawable) imageList.get(position).getNewDrawable();
-                        ClipData data = ClipData.newPlainText("", "");
-                        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(holder.image);
-                        holder.image.startDrag(data, shadowBuilder, imageList.get(position).getNewDrawable(), 0);
-                        ((AnnotateActivity) activity).getDraggedBitMap(drawable.getBitmap(), imageList.get(position).getImageTitle(), imageList.get(position).getMetaData());
+        holder.image.setOnLongClickListener(v -> {
+            if (!imageList.get(position).isLocal()) {
+                Bitmap bmImg = getBitmapFromMemCache(imageList.get(position).getSelectedImageName());
+                if (bmImg == null) {
+                    try {
+                        bmImg = Ion.with(activity)
+                                .load(imageList.get(position).getSelectedImageName()).asBitmap().get();
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
-                return true;
+                if (bmImg != null) {
+                    addBitmapToMemoryCache(imageList.get(position).getSelectedImageName(), bmImg);
+                    ClipData data = ClipData.newPlainText("", "");
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(holder.image);
+                    holder.image.startDrag(data, shadowBuilder, imageList.get(position).getSelectedImageName(), 0);
+                    ((AnnotateActivity) activity).getDraggedBitMap(bmImg, imageList.get(position).getImageTitle(), imageList.get(position).getMetaData());
+                }
+            } else {
+                if (!imageList.get(position).isDrawLine()) {
+                    TurboImageView.isFreeDraw = false;
+                    BitmapDrawable drawable = (BitmapDrawable) imageList.get(position).getNewDrawable();
+                    ClipData data = ClipData.newPlainText("", "");
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(holder.image);
+                    holder.image.startDrag(data, shadowBuilder, imageList.get(position).getNewDrawable(), 0);
+                    ((AnnotateActivity) activity).getDraggedBitMap(drawable.getBitmap(), imageList.get(position).getImageTitle(), imageList.get(position).getMetaData());
+                }
             }
+            return true;
         });
     }
 

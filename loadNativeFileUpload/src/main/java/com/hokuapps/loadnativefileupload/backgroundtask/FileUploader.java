@@ -2,8 +2,6 @@ package com.hokuapps.loadnativefileupload.backgroundtask;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.text.TextUtils;
 
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
@@ -14,18 +12,17 @@ import com.hokuapps.loadnativefileupload.delegate.OnUploadListener;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 import com.hokuapps.loadnativefileupload.models.Error;
 import com.hokuapps.loadnativefileupload.restrequest.ServiceRequest;
-import com.hokuapps.loadnativefileupload.services.IntegrationManager;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class RoofingUploader implements OnUploadListener {
+public class FileUploader implements OnUploadListener {
 
-    private static HashMap<String, RoofingUploader> profileUploaderMap = new HashMap<String, RoofingUploader>();
-    private static RoofingUploader roofingUploader = null;
-    private RoofingUploaderAsyncTask fileUploaderAsyncTask;
+    private static HashMap<String, FileUploader> profileUploaderMap = new HashMap<String, FileUploader>();
+
+    private FileUploaderAsyncTask fileUploaderAsyncTask;
     private ArrayList<WeakReference<OnUploadListener>> listeners = new ArrayList<WeakReference<OnUploadListener>>();
     private IUICallBackRoofing uiCallBack;
     private String filePath;
@@ -40,10 +37,10 @@ public class RoofingUploader implements OnUploadListener {
     /**
      * Constructor of profile uploader class
      */
-    private RoofingUploader() {
+    private FileUploader() {
     }
 
-    private RoofingUploader(AppMediaDetails appMediaDetails,Context context) {
+    private FileUploader(AppMediaDetails appMediaDetails, Context context) {
         this.appMediaDetails = appMediaDetails;
         this.context = context;
     }
@@ -53,8 +50,8 @@ public class RoofingUploader implements OnUploadListener {
      *
      * @return ProfileUploader
      */
-    public static RoofingUploader getInstance(AppMediaDetails appMediaDetails, Context mContext) {
-        RoofingUploader roofingUploader = null;
+    public static FileUploader getInstance(AppMediaDetails appMediaDetails, Context mContext) {
+        FileUploader roofingUploader = null;
 
         try {
             if (appMediaDetails == null) {
@@ -64,7 +61,7 @@ public class RoofingUploader implements OnUploadListener {
             roofingUploader = getRunningRoofingUploaderRef(appMediaDetails);
 
             if (roofingUploader == null) {
-                roofingUploader = new RoofingUploader(appMediaDetails, mContext);
+                roofingUploader = new FileUploader(appMediaDetails, mContext);
                 profileUploaderMap.put(appMediaDetails.getFileName(), roofingUploader);
             } else {
                 roofingUploader.appMediaDetails = appMediaDetails;
@@ -77,23 +74,7 @@ public class RoofingUploader implements OnUploadListener {
         return roofingUploader;
     }
 
-    /**
-     * Make singleton instance of object
-     *
-     * @return ProfileUploader
-     */
-    public static RoofingUploader getRoofingUploaderPhotoUploaderInstance() {
-        try {
-            if (roofingUploader == null) {
-                roofingUploader = new RoofingUploader();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return roofingUploader;
-    }
-
-    public static RoofingUploader getRunningRoofingUploaderRef(AppMediaDetails appMediaDetails) {
+    public static FileUploader getRunningRoofingUploaderRef(AppMediaDetails appMediaDetails) {
         return profileUploaderMap.get(appMediaDetails.getFileName());
     }
 
@@ -127,30 +108,9 @@ public class RoofingUploader implements OnUploadListener {
         }
     }
 
-    public void addListener(OnUploadListener listener) {
-        listeners.add(new WeakReference<OnUploadListener>(listener));
-    }
-
-    public void removeListener(OnUploadListener listener) {
-        WeakReference<OnUploadListener> listenerToRemove = null;
-
-        for (WeakReference<OnUploadListener> weakReferenceListener : listeners) {
-            if (weakReferenceListener.get() != null && weakReferenceListener.get() == listener) {
-                listenerToRemove = weakReferenceListener;
-                break;
-            }
-        }
-
-        if (listenerToRemove != null) {
-            listeners.remove(listenerToRemove);
-        }
-    }
-
     @SuppressLint("SuspiciousIndentation")
     private void executeTask() {
         if (fileUploaderAsyncTask == null) {
-
-//            MybeepsPref pref = new MybeepsPref(App.getInstance().getApplicationContext());
 
             ServiceRequest serviceRequest = new ServiceRequest();
 
@@ -158,31 +118,23 @@ public class RoofingUploader implements OnUploadListener {
                 serviceRequest.setUrl(NativeFileUpload.APP_FILE_URL + File.separator + FileUploadConstant.REST_URLS.UPLOAD_MP_HELITRACK);
             }
 
-
             serviceRequest.setFilePath(filePath);
             serviceRequest.setAppID(appID);
             serviceRequest.setFileName(appMediaDetails.getFileName());
             serviceRequest.setAppMediaDetails(appMediaDetails);
             //set headers
             serviceRequest.addHTTPHeader(FileUploadConstant.AuthIO.AUTH_TOKEN.toLowerCase(),
-                             appsServerToken);
+                    appsServerToken);
 
             serviceRequest.addHTTPHeader("Authorization", authToken);
             serviceRequest.addHTTPHeader("key", appID);
             serviceRequest.addHTTPHeader("filename", appMediaDetails.getFileName());
 
-            fileUploaderAsyncTask = new RoofingUploaderAsyncTask(300000, this,context);
+            fileUploaderAsyncTask = new FileUploaderAsyncTask(300000, this, context);
 
-
-                fileUploaderAsyncTask.execute(serviceRequest);
+            fileUploaderAsyncTask.execute(serviceRequest);
         }
     }
-
-    public boolean isRunningTask() {
-        return fileUploaderAsyncTask != null
-                && !fileUploaderAsyncTask.isCancelled();
-    }
-
 
     @Override
     public void onUploadFinish(ServiceRequest request, Error error) {
@@ -193,22 +145,14 @@ public class RoofingUploader implements OnUploadListener {
         }
 
         if (error != null) {
-            //Utility.showMessage(App.getInstance().getApplicationContext(), error.getMsg());
-            //executeTask();
+
             try {
-                /*AppMediaDetailsDAO appMediaDetailsDAO = new AppMediaDetailsDAO(App.getInstance().getApplicationContext());
-                AppMediaDetails appMediaDetails = appMediaDetailsDAO.getStoredAppMediaDetails(App.getInstance().getApplicationContext(), request.getFileName());
-                appMediaDetails.setUploadStatus(AppMediaDetails.UPLOAD_FAILED);
-                appMediaDetails.save(App.getInstance().getApplicationContext());*/
                 AppMediaDetailsDAO.updateUploadedFileStatus(request.getFileName(), AppMediaDetails.UPLOAD_FAILED);
                 request.setAppMediaDetails(appMediaDetails);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
             this.uiCallBack.onFailure(request);
-
-//            Toast.makeText(App.getInstance().getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
-//            Toast.makeText(App.getInstance().getApplicationContext(), "Something went wrong please try again", Toast.LENGTH_SHORT).show();
 
         } else if (request != null) {
             this.uiCallBack.onSuccess(request);

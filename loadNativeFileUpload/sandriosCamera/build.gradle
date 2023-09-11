@@ -3,7 +3,10 @@ apply plugin: 'com.android.library'
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+
+            maven { url "https://jitpack.io" }
+
     }
     dependencies {
 
@@ -70,7 +73,7 @@ dependencies {
 
 
     //    Multiple images/video picker library.
-    api('com.github.esafirm.android-image-picker:imagepicker:2.4.5'){}
+    implementation 'com.github.esafirm:android-image-picker:2.4.5'
     implementation project(path: ':loadNativeFileUpload:imageeditlibrary')
     implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
 

@@ -4,12 +4,12 @@
 
     <application>
         <provider
-            android:name=".database.MybeepsContentProvider"
+            android:name=".database.FileContentProvider"
             android:authorities="${applicationId}.database"
             android:exported="false" />
 
         <activity android:name=".imageEditor.IPRectangleAnnotationActivity" />
         <activity android:name=".annotate.AnnotateActivity"/>
-        <activity android:name=".annotate.FreeDrwaingActivity"/>
+        <activity android:name=".annotate.FreeDrawingActivity"/>
     </application>
 </manifest>

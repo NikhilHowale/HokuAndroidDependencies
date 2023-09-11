@@ -131,20 +131,6 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
         context.startActivityForResult(it, requestCode);
     }
 
-    public static Bitmap getBitmapFromAsset(Context context, String filePath) {
-        AssetManager assetManager = context.getAssets();
-
-        InputStream inputStream;
-        Bitmap bitmap = null;
-        try {
-            inputStream = assetManager.open(filePath);
-            bitmap = BitmapFactory.decodeStream(inputStream);
-        } catch (IOException ignored) {
-        }
-
-        return bitmap;
-    }
-
     public static Dialog getLoadingDialog(Context context, String title, boolean canCancel) {
         ProgressDialog dialog = new ProgressDialog(context);
         dialog.setCancelable(canCancel);
@@ -168,7 +154,7 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
         findViewById(R.id.addButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                turboImageView.addObject(AnnotateActivity.this, getBitmapFromAsset(AnnotateActivity.this, "bitmaps/bitmap.png"));
+
             }
         });
 
@@ -407,10 +393,6 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
             } else {
                 loadImage(filePath);
             }
-
-//            TurboImageView.isDraw = getIntent().getStringExtra(ANNOTATION_TYPE) != null ? getIntent().getStringExtra(ANNOTATION_TYPE) : "Path";
-//            TurboImageView.colorCode = getIntent().getStringExtra(EXTRA_TOOLBAR_COLOR) != null ? getIntent().getStringExtra(EXTRA_TOOLBAR_COLOR) : "#FF0000";
-
             if (!TextUtils.isEmpty(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA))) {
                 JSONObject object = new JSONObject(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA));
                 totalcountedit = FileUploadUtility.getJsonObjectIntValue(object, "totalcountedit");
@@ -531,6 +513,9 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
         }
     }// end inner class
 
+    /**
+     *
+     */
     private final class SaveBtnClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -771,5 +756,4 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
             mContext.finish();
         }
     }
-
 }

@@ -106,8 +106,7 @@ public class UpdateVersionApiClient {
                         if (response.isSuccessful()) {
                             parseResponse(response.body().string(), listener);
                         } else {
-
-                            Error error = Error.createError(response.body().string(), mContext);
+                           Error error = Error.createError(response.body().string(), mContext);
                             listener.onFailure(error);
                         }
 

@@ -48,10 +48,66 @@ public class JSResponseData {
     private boolean isFrontCamera = false;
     private boolean isAudioRecording = false;
     private boolean isRectangle = false;
+
+    private boolean isScanText = false;
+    private boolean isScanDocument = false;
+
+    private String imageURL;
+    private String originalImagePath;
+    private boolean usedForAnnotation;
     private String[] supportedFormat = new String[]{};
     private String extention;
+    private String localImageName;
+
+    public String getLocalImageName() {
+        return localImageName;
+    }
+
+    public void setLocalImageName(String localImageName) {
+        this.localImageName = localImageName;
+    }
 
     public JSResponseData() {
+    }
+
+    public boolean isUsedForAnnotation() {
+        return usedForAnnotation;
+    }
+
+    public void setUsedForAnnotation(boolean usedForAnnotation) {
+        this.usedForAnnotation = usedForAnnotation;
+    }
+
+    public String getOriginalImagePath() {
+        return originalImagePath;
+    }
+
+    public void setOriginalImagePath(String originalImagePath) {
+        this.originalImagePath = originalImagePath;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public boolean isScanDocument() {
+        return isScanDocument;
+    }
+
+    public void setScanDocument(boolean scanDocument) {
+        isScanDocument = scanDocument;
+    }
+
+    public boolean isScanText() {
+        return this.isScanText;
+    }
+
+    public void setScanText(boolean scanText) {
+        isScanText = scanText;
     }
 
     public String getLanguagePref() {

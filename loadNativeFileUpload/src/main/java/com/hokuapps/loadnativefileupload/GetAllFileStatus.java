@@ -1,5 +1,23 @@
 package com.hokuapps.loadnativefileupload;
 
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.APP_MEDIA_ARRAY;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAPTION;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_NM;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_CANCEL;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_GET_ALL_FILE_STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_NAME;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_FILE_NM;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_MEDIA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_S3_FILE_PATH;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MEDIA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.NEXT_BUTTON_CALLBACK;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_DATA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.S3_FILE_PATH;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STEP;
+
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
@@ -20,8 +38,7 @@ public class GetAllFileStatus {
     private WebView mWebView;
     private Activity mActivity;
     private String[] requiredJSONObjectKey = {};
-    private final String missingKeys = "Missing keys = ";
-    private final boolean whileDebuggingShowMissingAlert = false;
+
     private String fileStatusCallBackFunction = "";
     private boolean isGetAllFileStatusCalled = false;
 
@@ -31,37 +48,38 @@ public class GetAllFileStatus {
         this.mWebView = webView;
     }
 
+    /**
+     * Checks the status of the file()
+     * @param fileStatusRes
+     */
     public void getAllFileStatus(final String fileStatusRes) {
         try {
-            getAllFileStatusClient(fileStatusRes);
+
+            if (TextUtils.isEmpty(fileStatusRes)) return;
+
+            requiredJSONObjectKey = new String[]{OFFLINE_DATA_ID, NEXT_BUTTON_CALLBACK};
+
+            JSONObject jOFileStatus = new JSONObject(fileStatusRes);
+            String offlineDataID = FileUploadUtility.getStringObjectValue(jOFileStatus, OFFLINE_DATA_ID);
+
+            fileStatusCallBackFunction = FileUploadUtility.getStringObjectValue(jOFileStatus, NEXT_BUTTON_CALLBACK);
+            isGetAllFileStatusCalled = FileUploadUtility.getJsonObjectBooleanValue(jOFileStatus, IS_GET_ALL_FILE_STATUS);
+
+            JSONObject jsonObjectFileStatus = getAllFileStatusList(offlineDataID);
+
+            FileUploadUtility.callJavaScriptFunction(mActivity, mWebView, fileStatusCallBackFunction, jsonObjectFileStatus);
+
         } catch (Exception ex) {
             ex.printStackTrace();
 
         }
     }
 
-    private void getAllFileStatusClient(String fileStatusRes) throws Exception {
-        if (TextUtils.isEmpty(fileStatusRes)) return;
-
-        requiredJSONObjectKey = new String[]{"offlineDataID", "nextButtonCallback"};
-        String missingKeysMsg = FileUploadUtility.showAlertBridgeMissingKeys(mContext, fileStatusRes, requiredJSONObjectKey);
-        if (whileDebuggingShowMissingAlert && !missingKeysMsg.equals(missingKeys) && BuildConfig.DEBUG) {
-            FileUploadUtility.showAlertMessage(mContext, missingKeysMsg, "getAllFileStatus");
-            return;
-        }
-
-        JSONObject jOFileStatus = new JSONObject(fileStatusRes);
-        String offlineDataID = FileUploadUtility.getStringObjectValue(jOFileStatus, "offlineDataID");
-        String appID = FileUploadUtility.getStringObjectValue(jOFileStatus, "appID");
-
-        fileStatusCallBackFunction = FileUploadUtility.getStringObjectValue(jOFileStatus, "nextButtonCallback");
-        isGetAllFileStatusCalled = FileUploadUtility.getJsonObjectBooleanValue(jOFileStatus, "isGetAllFileStatus");
-
-        JSONObject jsonObjectFileStatus = getAllFileStatusList(offlineDataID);
-
-        FileUploadUtility.callJavaScriptFunction(mActivity, mWebView, fileStatusCallBackFunction, jsonObjectFileStatus);
-    }
-
+    /**
+     * Get the status of all the files
+     * @param offlineDataID
+     * @return
+     */
     private JSONObject getAllFileStatusList(String offlineDataID) {
 
         try {
@@ -73,7 +91,6 @@ public class GetAllFileStatus {
             String mapFileMediaID = "";
             String mapFileName = "";
             int mapFileStatus = 0;
-            String caption = "";
             String mapPlanFileMediaID = "";
             String mapPlanFileName = "";
             String mapPlanS3FilePath = "";
@@ -91,42 +108,41 @@ public class GetAllFileStatus {
                     mapFileStatus = appMediaDetails.getUploadStatus();
                 } else {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("step", appMediaDetails.getInstructionNumber());
-                    jsonObject.put("fileNm", appMediaDetails.getFileName());
-                    jsonObject.put("mediaID", appMediaDetails.getMediaID());
-                    jsonObject.put("S3FilePath", appMediaDetails.getS3FilePath());
-                    jsonObject.put("status", appMediaDetails.getUploadStatus());
-                    jsonObject.putOpt("caption", appMediaDetails.getImageCaption());
+                    jsonObject.put(STEP, appMediaDetails.getInstructionNumber());
+                    jsonObject.put(FILE_NM, appMediaDetails.getFileName());
+                    jsonObject.put(MEDIA_ID, appMediaDetails.getMediaID());
+                    jsonObject.put(S3_FILE_PATH, appMediaDetails.getS3FilePath());
+                    jsonObject.put(STATUS, appMediaDetails.getUploadStatus());
+                    jsonObject.putOpt(CAPTION, appMediaDetails.getImageCaption());
                     jsonArray.put(jsonObject);
                 }
-                caption = appMediaDetails.getImageCaption();
 
             }
 
-            jsonObjectResponse.put("appMediaArrayForUploadArray", jsonArray);
+            jsonObjectResponse.put(APP_MEDIA_ARRAY, jsonArray);
 
             if (!TextUtils.isEmpty(mapFileMediaID)) {
-                jsonObjectResponse.put("mapFileMediaID", mapFileMediaID);
+                jsonObjectResponse.put(MAP_PLAN_MEDIA_ID, mapFileMediaID);
             }
 
             if (!TextUtils.isEmpty(mapFileName)) {
-                jsonObjectResponse.put("mapFileName", mapFileName);
+                jsonObjectResponse.put(MAP_FILE_NAME, mapFileName);
             }
 
             if (!TextUtils.isEmpty(mapPlanFileMediaID)) {
-                jsonObjectResponse.put("mapPlanMediaID", mapPlanFileMediaID);
+                jsonObjectResponse.put(MAP_PLAN_MEDIA_ID, mapPlanFileMediaID);
             }
 
             if (!TextUtils.isEmpty(mapPlanFileName)) {
-                jsonObjectResponse.put("mapPlanFileNm", mapPlanFileName);
+                jsonObjectResponse.put(MAP_PLAN_FILE_NM, mapPlanFileName);
             }
 
             if (!TextUtils.isEmpty(mapPlanS3FilePath)) {
-                jsonObjectResponse.put("mapPlanS3FilePath", mapPlanS3FilePath);
+                jsonObjectResponse.put(MAP_PLAN_S3_FILE_PATH, mapPlanS3FilePath);
             }
 
-            jsonObjectResponse.put("mapPlanStatus", mapPlanStatus);
-            jsonObjectResponse.put("mapFileStatus", mapFileStatus);
+            jsonObjectResponse.put(MAP_PLAN_STATUS, mapPlanStatus);
+            jsonObjectResponse.put(MAP_FILE_STATUS, mapFileStatus);
 
 
             return jsonObjectResponse;
@@ -136,4 +152,7 @@ public class GetAllFileStatus {
 
         return new JSONObject();
     }
+
+
+
 }

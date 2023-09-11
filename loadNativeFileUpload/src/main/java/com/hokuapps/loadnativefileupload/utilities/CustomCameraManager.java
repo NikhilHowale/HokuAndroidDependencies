@@ -23,7 +23,6 @@ import java.util.List;
 public class CustomCameraManager {
     public static final int CAPTURE_MEDIA_PHOTO = 368;
     public static final int CAPTURE_MEDIA_VIDEO = 369;
-    public static final int CAPTURE_MEDIA_BOTH = 370;
     public static final int REQUEST_FILE_BROWSER = 9012;
     public static final int SCAN_IMAGE_REQUEST_CAMERA = 9032;
     public static final int SCAN_IMAGE_REQUEST_GALLERY = 9031;
@@ -113,9 +112,6 @@ public class CustomCameraManager {
                         .setPermissionListener(permissionlistener)
                         .setPermissions(   Manifest.permission.READ_EXTERNAL_STORAGE)
                         .check();
-
-
-
             }
 
         });

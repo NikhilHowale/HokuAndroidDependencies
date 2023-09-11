@@ -42,6 +42,11 @@ import java.util.TimeZone;
 
 public class FileUtility {
 
+    /**
+     *
+     * @param filePath
+     * @return
+     */
     public static String getFileNameWithoutExists(String filePath) {
 
         File file = new File(filePath);
@@ -49,6 +54,10 @@ public class FileUtility {
         return file.getName();
     }
 
+    /**
+     *
+     * @return
+     */
     public static File getMediaDirPath() {
         String path = FileUtility.getRootDir() + File.separator + FileUploadConstant.FOLDER_PARENT_NAME;
         File mediaStorageDir = new File(path, FileUploadConstant.FOLDER_NAME_MEDIA);
@@ -73,8 +82,6 @@ public class FileUtility {
         return getRootDir() + File.separator + FileUploadConstant.FOLDER_PARENT_NAME;
     }
 
-
-
     /**
      * Create the storage directory if it does not exist
      *
@@ -92,10 +99,14 @@ public class FileUtility {
     }
 
     public static boolean isHelitrack() {
-//        return (BuildConfig.APPLICATION_ID.equals("com.helitrack") || (BuildConfig.FLAVOR.equalsIgnoreCase("BeepupHelitrack") && BuildConfig.APPLICATION_ID.equals("com.beepup")));
         return true;
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static String getExtensionWithDot(String name) {
         String ext;
 
@@ -111,6 +122,11 @@ public class FileUtility {
         return ext;
     }
 
+    /**
+     * Returns file name from given path
+     * @param filePath
+     * @return
+     */
     public static String getFileName(String filePath) {
 
         if (!isFileExist(filePath)) return "";
@@ -136,12 +152,16 @@ public class FileUtility {
             File file = new File(path);
             if (file.exists() || file.length() > 0) toReturn = true;
         } catch (Exception ex) {
-//            LogUtility.printErrorMessage(TAG + "isFileExist : Exception occured " + ex.getMessage());
         }
 
         return toReturn;
     }
 
+    /**
+     *
+     * @param bitmap
+     * @return
+     */
     public static String getBase64Data(Bitmap bitmap) {
         if (bitmap == null) {
             return "";
@@ -153,6 +173,11 @@ public class FileUtility {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     public static File getHtmlDirFromSandbox(Context context) {
         File htmlDir = new File(context.getFilesDir() + File.separator + FileUploadConstant.FOLDER_NAME_WEB_HTML);
 
@@ -224,7 +249,6 @@ public class FileUtility {
                     contentUri = MediaStore.Files.getContentUri("external");
                 }
 
-
                 final String selection = "_id=?";
                 final String[] selectionArgs = new String[]{
                         split[1]
@@ -245,8 +269,6 @@ public class FileUtility {
             } catch (Exception ex) {
                 return uri.getPath();
             }
-
-
         }
 
         // File
@@ -257,6 +279,12 @@ public class FileUtility {
         return null;
     }
 
+    /**
+     * Returns file path from the uri
+     * @param context
+     * @param uri
+     * @return
+     */
     public static String getFilePath(Context context, Uri uri) {
 
         Cursor returnCursor = context.getContentResolver().query(uri, null, null, null, null);
@@ -396,127 +424,12 @@ public class FileUtility {
         }
         return utcDateString;
     }
-    public static Bitmap decodeFile(String filePath) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
 
-        //by setting this field as true, the actual bitmap pixels are not loaded in the memory. Just the bounds are loaded. If
-        //you try the use the bitmap here, you will get null.
-        options.inJustDecodeBounds = true;
-        Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
-
-        int actualHeight = options.outHeight;
-        int actualWidth = options.outWidth;
-
-        //max Height and width values of the compressed image is taken as 816x612
-
-        float maxHeight = 816.0f;
-        float maxWidth = 612.0f;
-        float imgRatio = actualWidth / actualHeight;
-        float maxRatio = maxWidth / maxHeight;
-
-        // width and height values are set maintaining the aspect ratio of the image
-
-        if (actualHeight > maxHeight || actualWidth > maxWidth) {
-            if (imgRatio < maxRatio) {
-                imgRatio = maxHeight / actualHeight;
-                actualWidth = (int) (imgRatio * actualWidth);
-                actualHeight = (int) maxHeight;
-            } else if (imgRatio > maxRatio) {
-                imgRatio = maxWidth / actualWidth;
-                actualHeight = (int) (imgRatio * actualHeight);
-                actualWidth = (int) maxWidth;
-            } else {
-                actualHeight = (int) maxHeight;
-                actualWidth = (int) maxWidth;
-            }
-        }
-
-        //setting inSampleSize value allows to load a scaled down version of the original image
-        options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
-
-        //inJustDecodeBounds set to false to load the actual bitmap
-        options.inJustDecodeBounds = false;
-
-        //this options allow android to claim the bitmap memory if it runs low on memory
-        options.inPurgeable = true;
-        options.inInputShareable = true;
-        options.inTempStorage = new byte[16 * 1024];
-
-        try {
-            //load the bitmap from its path
-            bmp = BitmapFactory.decodeFile(filePath, options);
-        } catch (OutOfMemoryError exception) {
-            exception.printStackTrace();
-        }
-        return checkAndGetRotatedBitmap(filePath, bmp);
-    }
-
-    public static Bitmap checkAndGetRotatedBitmap(String filePath, Bitmap bitmap) {
-        //check the rotation of the image and display it properly
-        try {
-            if (bitmap != null) {
-                ExifInterface exif= new ExifInterface(filePath);
-
-                if (exif == null) return bitmap;
-
-                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-
-                Matrix matrix = new Matrix();
-
-                switch (orientation) {
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        matrix.postRotate(180);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        matrix.postRotate(90);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        matrix.postRotate(270);
-                        break;
-                    case ExifInterface.ORIENTATION_NORMAL:
-                    default:
-                        return bitmap;
-                }
-
-                try {
-                    Bitmap newOrientedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                            bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                    bitmap.recycle();
-                    return newOrientedBitmap;
-                } catch (OutOfMemoryError e) {
-                    e.printStackTrace();
-                    return bitmap;
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return bitmap;
-    }
-
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-
+    /**
+     *
+     * @param activity
+     * @param type
+     */
     public static void launchIntentByFileFormat(final Activity activity, final String type) {
         activity.runOnUiThread(new Runnable() {
             @Override
@@ -548,6 +461,12 @@ public class FileUtility {
         });
     }
 
+    /**
+     *
+     * @param uri
+     * @param context
+     * @return
+     */
     public static String getMimeType(Uri uri,Context context) {
         String mimeType = null;
         if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
@@ -562,6 +481,11 @@ public class FileUtility {
         return mimeType;
     }
 
+    /**
+     * check's if the given file is image
+     * @param type
+     * @return
+     */
     public static boolean isImageFile(String type) {
         return (!TextUtils.isEmpty(type) && type.toLowerCase().indexOf("image") != -1);
     }

@@ -19,10 +19,6 @@ public class ServiceResponse {
     private IUICallBack iuiCallBack;
 //    private Message message;
     private int responseCode;
-
-
-
-
     public IUICallBack getIuiCallBack() {
         return iuiCallBack;
     }
@@ -63,9 +59,6 @@ public class ServiceResponse {
         }
         return element;
     }
-
-
-
     public int getResponseCode() {
         return responseCode;
     }
@@ -73,7 +66,5 @@ public class ServiceResponse {
     public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
     }
-
-
 
 }

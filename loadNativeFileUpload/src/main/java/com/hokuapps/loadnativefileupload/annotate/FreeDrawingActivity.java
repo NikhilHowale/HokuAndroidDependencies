@@ -1,6 +1,6 @@
 package com.hokuapps.loadnativefileupload.annotate;
 
-import static com.hokuapps.loadnativefileupload.NativeFileUpload.ACTION_REQUEST_EDITIMAGE;
+import static com.hokuapps.loadnativefileupload.NativeFileUpload.ACTION_REQUEST_EDIT_IMAGE;
 import static com.hokuapps.loadnativefileupload.annotate.TurboImageView.cirRectPoints;
 import static com.hokuapps.loadnativefileupload.annotate.TurboImageView.straightLinePoints;
 
@@ -11,11 +11,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -23,7 +20,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -59,15 +55,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 
-public class FreeDrwaingActivity extends AppCompatActivity implements TurboImageViewListener {
+public class FreeDrawingActivity extends AppCompatActivity implements TurboImageViewListener {
 
     public static final String FILE_PATH = "file_path";
     public static final String EXTRA_OUTPUT = "extra_output";
@@ -78,10 +72,8 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
     public static final String IMAGE_IS_EDIT = "image_is_edit";
     public static final String ANNOTATION_COUNT = "ANNOTATION_COUNT";
     public static final String ANNOTATION_DATA = "ANNOTATION_DATA";
-    public static final String IS_ANNOTATION = "IS_ANNOTATION";
     public static final String ANNOTATION_TYPE = "ANNOTATION_TYPE";
-    public static final String ANNOTATION_COLOR = "ANNOTATION_COLOR";
-    public static final String ANNOTATION_DRAW_TYPE = "ANNOTATION_DRAW_TYPE";
+
     private static final String TAG = "AnnotateActivity";
     public String filePath;
     public String originalImage;
@@ -95,7 +87,6 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
     String toolbarColor = "#FF0000";
     Bitmap dragged;
     boolean isDraw;
-    private TextPaint mTextPaint = new TextPaint();
     private LoadImageTask mLoadImageTask;
     private int imageWidth, imageHeight;
     private TextView text_clear, text_done;
@@ -123,7 +114,7 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
             return;
         }
 
-        Intent it = new Intent(context, FreeDrwaingActivity.class);
+        Intent it = new Intent(context, FreeDrawingActivity.class);
         it.putExtra(IPRectangleAnnotationActivity.DATA, data);
         it.putExtra(IPRectangleAnnotationActivity.FILE_PATH, editImagePath);
         it.putExtra(IPRectangleAnnotationActivity.EXTRA_OUTPUT, outputPath);
@@ -131,20 +122,6 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
         it.putExtra(IPRectangleAnnotationActivity.EXTRA_TOOLBAR_COLOR, colorCode);
         it.putExtra(IPRectangleAnnotationActivity.EXTRA_TOOLBAR_TITLE, title);
         context.startActivityForResult(it, requestCode);
-    }
-
-    public static Bitmap getBitmapFromAsset(Context context, String filePath) {
-        AssetManager assetManager = context.getAssets();
-
-        InputStream inputStream;
-        Bitmap bitmap = null;
-        try {
-            inputStream = assetManager.open(filePath);
-            bitmap = BitmapFactory.decodeStream(inputStream);
-        } catch (IOException ignored) {
-        }
-
-        return bitmap;
     }
 
     public static Dialog getLoadingDialog(Context context, String title, boolean canCancel) {
@@ -170,7 +147,7 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
         findViewById(R.id.addButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                turboImageView.addObject(AnnotateActivity.this, getBitmapFromAsset(AnnotateActivity.this, "bitmaps/bitmap.png"));
+
             }
         });
 
@@ -185,21 +162,13 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
     private void deleteAnnotation() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure want to clear annotation.");
-        builder.setPositiveButton(R.string.lbl_yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();
-                NativeFileUpload.setFreedrawing(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA), filePath, toolbarColor, toolbarTitle, ACTION_REQUEST_EDITIMAGE, drawType);
-            }
+        builder.setPositiveButton(R.string.lbl_yes, (dialog, which) -> {
+            dialog.dismiss();
+            finish();
+            NativeFileUpload.setFreeDrawing(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA), filePath, toolbarColor, toolbarTitle, ACTION_REQUEST_EDIT_IMAGE, drawType);
         });
 
-        builder.setNegativeButton(R.string.lbl_no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton(R.string.lbl_no, (dialog, which) -> dialog.dismiss());
         final AlertDialog dialog = builder.create();
         dialog.setCancelable(false);
         dialog.show();
@@ -227,30 +196,24 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
         text_done = findViewById(R.id.text_done);
         text_done.setOnClickListener(new SaveBtnClick());
 
-        btnFreeDraw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isDraw = !isDraw;
-                if (isDraw) {
-                    btnFreeDraw.setImageResource(R.drawable.ic_cancel);
-                    TurboImageView.isFreeDraw = true;
-                    TurboImageView.isDraw = "Path";
-                } else {
-                    TurboImageView.isFreeDraw = false;
-                    btnFreeDraw.setImageResource(R.drawable.ic_edit);
-                }
+        btnFreeDraw.setOnClickListener(v -> {
+            isDraw = !isDraw;
+            if (isDraw) {
+                btnFreeDraw.setImageResource(R.drawable.ic_cancel);
+                TurboImageView.isFreeDraw = true;
+                TurboImageView.isDraw = "Path";
+            } else {
+                TurboImageView.isFreeDraw = false;
+                btnFreeDraw.setImageResource(R.drawable.ic_edit);
             }
         });
 
-        reldrag.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                if (event.getAction() == DragEvent.ACTION_DROP) {
-                    drawPoints.add(new Point(event.getX(), event.getY(), toolbarColor, itemTitle, metaData));
-                    addImage(dragged, event.getX(), event.getY());
-                }
-                return true;
+        reldrag.setOnDragListener((v, event) -> {
+            if (event.getAction() == DragEvent.ACTION_DROP) {
+                drawPoints.add(new Point(event.getX(), event.getY(), toolbarColor, itemTitle, metaData));
+                addImage(dragged, event.getX(), event.getY());
             }
+            return true;
         });
 
     }
@@ -271,12 +234,6 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
     }
 
     public void addImage(Bitmap bitmap, float x, float y) {
-    }
-
-    public void getDraggedBitMap(Bitmap dragged, String title, String metaData) {
-        this.dragged = dragged;
-        this.itemTitle = title;
-        this.metaData = metaData;
     }
 
     private void setToolbarTitleAndColor() {
@@ -328,10 +285,6 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
             } else {
                 loadImage(filePath);
             }
-
-
-//            TurboImageView.isDraw = getIntent().getStringExtra(ANNOTATION_TYPE) != null ? getIntent().getStringExtra(ANNOTATION_TYPE) : "Path";
-//            TurboImageView.colorCode = getIntent().getStringExtra(EXTRA_TOOLBAR_COLOR) != null ? getIntent().getStringExtra(EXTRA_TOOLBAR_COLOR) : "#FF0000";
 
             if (!TextUtils.isEmpty(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA))) {
                 JSONObject object = new JSONObject(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA));
@@ -391,6 +344,10 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
         }
     }
 
+    /**
+     * load image from the path
+     * @param filepath
+     */
     public void loadImage(String filepath) {
         if (mLoadImageTask != null) {
             mLoadImageTask.cancel(true);
@@ -479,10 +436,10 @@ public class FreeDrwaingActivity extends AppCompatActivity implements TurboImage
     @SuppressLint("StaticFieldLeak")
     private final class SaveImageAnnotatedImage extends AsyncTask<Bitmap, Void, Void> {
 
-        private FreeDrwaingActivity mContext;
+        private FreeDrawingActivity mContext;
         private Dialog dialog;
 
-        public SaveImageAnnotatedImage(FreeDrwaingActivity context) {
+        public SaveImageAnnotatedImage(FreeDrawingActivity context) {
             this.mContext = context;
         }
 

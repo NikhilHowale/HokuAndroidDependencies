@@ -8,10 +8,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.text.TextUtils;
+
 import androidx.loader.content.CursorLoader;
 
-import com.hokuapps.loadnativefileupload.database.MybeepsDatabaseHelper;
+import com.hokuapps.loadnativefileupload.database.FileDatabaseHelper;
 import com.hokuapps.loadnativefileupload.database.Tables;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 
@@ -22,7 +22,7 @@ public class AppMediaDetailsDAO extends BaseDAO {
 
     AppMediaDetails appMediaDetails;
     public SQLiteDatabase mdb;
-    MybeepsDatabaseHelper databaseHelper;
+    FileDatabaseHelper databaseHelper;
     static Context mContext;
 
     public AppMediaDetailsDAO(Context context) {
@@ -32,7 +32,7 @@ public class AppMediaDetailsDAO extends BaseDAO {
     public AppMediaDetailsDAO(Context context, AppMediaDetails appMediaDetails) {
         super(context);
         this.mContext = context;
-        databaseHelper = new MybeepsDatabaseHelper(getContext());
+        databaseHelper = new FileDatabaseHelper(getContext());
         mdb = databaseHelper.getWritableDatabase();
         this.appMediaDetails = appMediaDetails;
     }
@@ -43,19 +43,6 @@ public class AppMediaDetailsDAO extends BaseDAO {
         appMediaDetails.setUploadStatus(uploadStatus);
         appMediaDetails.save(mContext);
     }
-
-    public boolean deleteAppMediaDeatailsByFileName(String filename) {
-        if (TextUtils.isEmpty(filename)) {
-            return false;
-        }
-
-        //delete a record
-        return mContext.getContentResolver().delete(
-                Tables.AppMediaDetailsTable.CONTENT_URI,
-                Tables.AppMediaDetailsTable.COLUMN_FILE_NAME + " =?",
-                new String[]{filename}) > 0;
-    }
-
     private static AppMediaDetails buildAppMediaDetailsFromCursor(Cursor cursor) {
         AppMediaDetails appMediaDetailsModel = null;
         try {
@@ -117,19 +104,6 @@ public class AppMediaDetailsDAO extends BaseDAO {
         AppMediaDetails appMediaDetailsList = buildAppMediaDetailsFromCursor(cursor);
 
         return appMediaDetailsList;
-    }
-
-    public boolean deleteAppMediaDeatailsByInstructionNumber(String offlineId, int number) {
-        if (TextUtils.isEmpty(offlineId)) {
-            return false;
-        }
-
-        //delete a record
-        mContext.getContentResolver().delete(
-                Tables.AppMediaDetailsTable.CONTENT_URI,
-                Tables.AppMediaDetailsTable.COLUMN_OFFLINE_DATA_ID + " = \"" + offlineId + "\" AND " +
-                        Tables.AppMediaDetailsTable.COLUMN_INSTRUCATION_NUMBER + " = " + number, null);
-        return true;
     }
 
     public static ArrayList<AppMediaDetails>
@@ -243,17 +217,6 @@ public class AppMediaDetailsDAO extends BaseDAO {
                 null,
                 Tables.AppMediaDetailsTable.COLUMN_FILE_NAME + " =? ",
                 new String[]{filename},
-                null));
-    }
-
-    public AppMediaDetails getStoredAppMediaDetails(Context context, int instructionNumber) {
-        ContentResolver cr = context.getContentResolver();
-
-        return buildAppMediaDetailsFromCursor(cr.query(
-                Tables.AppMediaDetailsTable.CONTENT_URI,
-                null,
-                Tables.AppMediaDetailsTable.COLUMN_INSTRUCATION_NUMBER + " =? ",
-                new String[]{String.valueOf(instructionNumber)},
                 null));
     }
 

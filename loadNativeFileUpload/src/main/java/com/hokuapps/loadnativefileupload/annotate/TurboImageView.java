@@ -114,8 +114,7 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
         imageObject.setBorderColor(objectBorderColor);
         mImages.add(imageObject);
 
-//        float cx = getX() ;
-//        float cy = getY() ;
+
 
         mImages.get(mImages.size() - 1).init(context, cx, cy);
 
@@ -158,8 +157,7 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
             drawCircleRect(canvas, null, isDraw);
         } else if (isDraw.equalsIgnoreCase("Path")) {
             for (Path path : paths) {
-//                canvas.drawPath(path, brush);
-//                drawStraightLine(canvas, path, isDraw);
+
                 drawPath(canvas, path, isDraw);
             }
         } else if (isDraw.equalsIgnoreCase("Line")) {
@@ -218,7 +216,6 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
                         c.drawPath(path, brush);
                     } else {
                         c.drawLine(point.x, point.y, pointEnd.x, pointEnd.y, brush);
-//                        c.drawText("" + entry.getKey(), point.x + 35, point.y + 35, mTextPaint);
                     }
                 }
             }
@@ -260,27 +257,6 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
             e.printStackTrace();
         }
     }
-
-   /* @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        // TODO Auto-generated method stub
-        if(event.getAction() == MotionEvent.ACTION_DOWN){
-            path = new Path();
-            path.moveTo(event.getX(), event.getY());
-            //path.lineTo(event.getX(), event.getY());
-        }else if(event.getAction() == MotionEvent.ACTION_MOVE){
-            path.lineTo(event.getX(), event.getY());
-            paths.add(path);
-            invalidate();
-        }else if(event.getAction() == MotionEvent.ACTION_UP){
-            path.lineTo(event.getX(), event.getY());
-            paths.add(path);
-            invalidate();
-        }
-        return true;
-    }*/
-
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean ret = super.onTouchEvent(event);

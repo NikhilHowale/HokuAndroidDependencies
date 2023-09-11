@@ -8,26 +8,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-
-
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
-import com.hokuapps.loadnativefileupload.services.IntegrationManager;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 
 
-public class MybeepsContentProvider extends ContentProvider {
 
-    public static final String AUTHORITY = NativeFileUpload.AUTHORITY/*"com.mybeeps.database"*/;
-    public static final String SYNC_MOBILE_FIRST = "smV8";
+public class FileContentProvider extends ContentProvider {
+
+    public static final String AUTHORITY = NativeFileUpload.AUTHORITY;
     public static final Uri CONTENT_URI = Uri.parse("content://" + NativeFileUpload.AUTHORITY);
     private static final int APP_MEDIA_DETAILS = 730;
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private static MybeepsContentProvider provider;
+    private static FileContentProvider provider;
 
     static {
 
@@ -36,21 +27,27 @@ public class MybeepsContentProvider extends ContentProvider {
     }
 
     public SQLiteDatabase mdb;
-    MybeepsDatabaseHelper databaseHelper;
+    FileDatabaseHelper databaseHelper;
 
-    public static MybeepsContentProvider getInstance() {
+    public static FileContentProvider getInstance() {
         return provider;
     }
 
     @Override
     public boolean onCreate() {
-        databaseHelper = new MybeepsDatabaseHelper(getContext());
+        databaseHelper = new FileDatabaseHelper(getContext());
         mdb = databaseHelper.getWritableDatabase();
         provider = this;
         return true;
     }
 
-
+    /**
+     * Delete values from database
+     * @param uri
+     * @param selection
+     * @param selectionArgs
+     * @return
+     */
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         if (mdb == null) return -1;
@@ -81,11 +78,22 @@ public class MybeepsContentProvider extends ContentProvider {
         return id;
     }
 
+    /**
+     *
+     * @param arg0
+     * @return
+     */
     @Override
     public String getType(Uri arg0) {
         return null;
     }
 
+    /**
+     * Insert values into database
+     * @param uri
+     * @param values
+     * @return
+     */
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         if (mdb == null) return null;
@@ -116,6 +124,15 @@ public class MybeepsContentProvider extends ContentProvider {
         return newUri;
     }
 
+    /**
+     *
+     * @param uri
+     * @param projection
+     * @param selection
+     * @param selectionArgs
+     * @param sortOrder
+     * @return
+     */
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
@@ -153,6 +170,14 @@ public class MybeepsContentProvider extends ContentProvider {
         return null;
     }
 
+    /**
+     * Update data in database
+     * @param uri
+     * @param values
+     * @param selection
+     * @param selectionArgs
+     * @return
+     */
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
@@ -186,101 +211,4 @@ public class MybeepsContentProvider extends ContentProvider {
         return id;
     }
 
-    public void writeDataToDatabase(File file) {
-
-        BufferedReader in = null;
-//        String line = null;
-        String query = "";
-        StringBuilder sb = new StringBuilder();
-        try {
-
-            in = new BufferedReader(new FileReader(file));
-            mdb.beginTransaction();
-
-            for (String next, line = in.readLine(); line != null; line = next) {
-                next = in.readLine();
-                try {
-                    //String query = line;
-                    sb.append(line);
-
-                    int lastIndex = sb.toString().lastIndexOf(");");
-
-                    if (sb.toString().startsWith("INSERT OR REPLACE INTO")) {
-                        if (lastIndex == -1) {
-                            sb.append("\n");
-                            continue;
-                        } else {
-
-                            if (next != null && !next.startsWith("INSERT OR REPLACE INTO")) {
-                                sb.append("\n");
-                                continue;
-                            }
-                            query = sb.toString();
-                            sb.setLength(0);
-
-                            if (query.startsWith("INSERT OR REPLACE INTO ChatMessageText")
-                                    || query.startsWith("INSERT OR REPLACE INTO ChatMessageFile")) {
-                            } else if (query.startsWith("INSERT OR REPLACE INTO ChatMessage")) { /*"_id",*/
-
-                                if (SYNC_MOBILE_FIRST.equals("smV8")) {
-//                                    syncMobileV8
-                                    query = query.replace("INSERT OR REPLACE INTO ChatMessage", "INSERT OR REPLACE INTO ChatMessage(\"_id\",\"orgID\",\"sender\",\"target\",\"messageId\",\"type\",\"chatMessageType\",\"creationDate\",\"serverReceivedDate\",\"readDate\",\"readNotifiedDate\",\"deliveryDate\",\"deliveryNotifiedDate\",\"sortDate\",\"updateDate\",\"syncDate\",\"isRead\",\"isDelivered\",\"messageScore\",\"mentions\",\"updatedBy\",\"addedAction\",\"actionTypeId\",\"mapAppMessageKey\",\"IntegrationId\",\"jsonData\",\"isTask\",\"isMessageDelete\")"); // syncMobileV8
-                                } else {
-//                                    syncMobileV6
-                                    query = query.replace("INSERT OR REPLACE INTO ChatMessage", "INSERT OR REPLACE INTO ChatMessage(\"_id\",\"orgID\",\"sender\",\"target\",\"messageId\",\"type\",\"chatMessageType\",\"creationDate\",\"serverReceivedDate\",\"readDate\",\"readNotifiedDate\",\"deliveryDate\",\"deliveryNotifiedDate\",\"sortDate\",\"updateDate\",\"syncDate\",\"isRead\",\"isDelivered\",\"messageScore\",\"mentions\",\"updatedBy\",\"addedAction\",\"actionTypeId\",\"mapAppMessageKey\",\"IntegrationId\",\"jsonData\",\"isTask\")"); // syncMobileV6
-                                }
-
-                       }
-                        }
-                    } else {
-                        sb.setLength(0);
-                        continue;
-                    }
-
-                    mdb.execSQL(query);
-                    sb.setLength(0);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    continue;
-                }
-            }
-
-
-            mdb.setTransactionSuccessful();
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            mdb.endTransaction();
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-            if (file != null) {
-                file.delete();
-            }
-        }
-    }
-
-
-
-
-    public void execSQL(String sql) {
-        try {
-            mdb.beginTransaction();
-            mdb.execSQL(sql);
-            mdb.setTransactionSuccessful();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            mdb.endTransaction();
-        }
-    }
 }

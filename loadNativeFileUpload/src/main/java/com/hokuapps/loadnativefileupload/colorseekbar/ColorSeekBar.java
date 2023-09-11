@@ -497,12 +497,6 @@ public class ColorSeekBar extends View {
         setLayoutParams(getLayoutParams());
     }
 
-//    public void setVertical(boolean vertical) {
-//        mIsVertical = vertical;
-//        refreshLayoutParams();
-//        invalidate();
-//    }
-
     public boolean isVertical() {
         return mIsVertical;
     }
@@ -575,7 +569,6 @@ public class ColorSeekBar extends View {
         invalidate();
     }
 
-
     /**
      * Set the value of color bar, if out of bounds , it will be 0 or maxValue;
      *
@@ -590,7 +583,6 @@ public class ColorSeekBar extends View {
             mOnColorChangeLister.onColorChangeListener(mColorBarPosition, mAlphaBarPosition, getColor());
     }
 
-
     /**
      * Set color, it must correspond to the value, if not , setColorBarPosition(0);
      *
@@ -601,7 +593,7 @@ public class ColorSeekBar extends View {
 
         if (mInit) {
             int value = mColors.indexOf(withoutAlphaColor);
-//            mColorsToInvoke = color;
+
             setColorBarPosition(value);
         } else {
             mColorsToInvoke = color;

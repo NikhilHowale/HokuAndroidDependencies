@@ -141,7 +141,6 @@ public class ScanTextUtility {
             bitmap = BitmapFactory.decodeStream(is, null, options);
             inspectFromBitmap(bitmap);
         } catch (FileNotFoundException e) {
-//            Log.w(TAG, "Failed to find the file: " + uri, e);
         } finally {
             if (bitmap != null) {
                 bitmap.recycle();
@@ -150,7 +149,6 @@ public class ScanTextUtility {
                 try {
                     is.close();
                 } catch (IOException e) {
-//                    Log.w(TAG, "Failed to close InputStream", e);
                 }
             }
         }
