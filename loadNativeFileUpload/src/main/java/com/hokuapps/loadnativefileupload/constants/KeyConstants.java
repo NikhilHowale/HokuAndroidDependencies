@@ -68,6 +68,17 @@ public class KeyConstants {
         String ANNOTATION_COUNT = "annotationCount";
         String IS_GET_ALL_FILE_STATUS = "isGetAllFileStatus";
         String IS_CANCEL ="isCancel";
+        String TOTAL_COUNT_EDIT ="totalcountedit";
+        String ANNOTATIONS_ARRAY = "annotaionsArray";
+        String IMAGE_NAME ="imageName";
+        String SELECTED_IMAGE_NAME = "selectedImageName";
+        String TITLE = "title";
+        String METADATA = "metadata";
+        String BADGE = "badge";
+        String X = "x";
+        String Y = "y";
+        String START = "start";
+        String END = "end";
 
     }
 

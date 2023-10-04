@@ -37,10 +37,6 @@ public class Image {
         return metaData;
     }
 
-    public void setMetaData(String metaData) {
-        this.metaData = metaData;
-    }
-
     public String getImageTitle() {
         return imageTitle;
     }
@@ -93,15 +89,8 @@ public class Image {
         return isLocal;
     }
 
-    public void setLocal(boolean local) {
-        isLocal = local;
-    }
-
     public boolean isDrawLine() {
         return isDrawLine;
     }
 
-    public void setDrawLine(boolean drawLine) {
-        isDrawLine = drawLine;
-    }
 }

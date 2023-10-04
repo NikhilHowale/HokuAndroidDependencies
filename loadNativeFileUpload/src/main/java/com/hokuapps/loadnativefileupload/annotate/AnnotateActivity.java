@@ -1,9 +1,22 @@
 package com.hokuapps.loadnativefileupload.annotate;
 
-;
+
 
 import static com.hokuapps.loadnativefileupload.annotate.TurboImageView.cirRectPoints;
 import static com.hokuapps.loadnativefileupload.annotate.TurboImageView.straightLinePoints;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.ANNOTATIONS_ARRAY;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.BADGE;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.COLOR;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.END;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IMAGE_NAME;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.METADATA;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SELECTED_IMAGE_NAME;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.START;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.TITLE;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.TOTAL_COUNT_EDIT;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.TYPE;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.X;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.Y;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -14,9 +27,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -57,8 +68,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +140,14 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
         context.startActivityForResult(it, requestCode);
     }
 
+
+    /**
+     * Get progress dialog instance with given title string
+     * @param context
+     * @param title title to show on dialog
+     * @param canCancel
+     * @return
+     */
     public static Dialog getLoadingDialog(Context context, String title, boolean canCancel) {
         ProgressDialog dialog = new ProgressDialog(context);
         dialog.setCancelable(canCancel);
@@ -150,63 +167,42 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
 
     }
 
+
+    /**
+     * Initialize buttons and set click listeners
+     */
     private void initAnnotateButton() {
-        findViewById(R.id.addButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        findViewById(R.id.addButton).setOnClickListener(view -> {
 
-            }
         });
 
-        findViewById(R.id.removeButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean deleted = turboImageView.removeSelectedObject();
-                Log.d(TAG, "deleted: " + deleted);
-            }
+        findViewById(R.id.removeButton).setOnClickListener(v -> {
+            boolean deleted = turboImageView.removeSelectedObject();
+            Log.d(TAG, "deleted: " + deleted);
         });
 
-        text_clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteAnnotation();
+        text_clear.setOnClickListener(v -> deleteAnnotation());
+
+
+        iv_undo.setOnClickListener(v -> {
+            if (drawPoints.size() > 0) {
+                drawPoints.remove(drawPoints.size() - 1);
+                turboImageView.undoSelectedObject();
             }
+
         });
 
+        findViewById(R.id.removeAllButton).setOnClickListener(v -> turboImageView.removeAllObjects());
 
-        iv_undo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawPoints.size() > 0) {
-                    drawPoints.remove(drawPoints.size() - 1);
-                    turboImageView.undoSelectedObject();
-                }
+        findViewById(R.id.deselectButton).setOnClickListener(v -> turboImageView.deselectAll());
 
-            }
-        });
-
-        findViewById(R.id.removeAllButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                turboImageView.removeAllObjects();
-            }
-        });
-
-        findViewById(R.id.deselectButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                turboImageView.deselectAll();
-            }
-        });
-
-        findViewById(R.id.flipButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                turboImageView.toggleFlippedHorizontallySelectedObject();
-            }
-        });
+        findViewById(R.id.flipButton).setOnClickListener(v -> turboImageView.toggleFlippedHorizontallySelectedObject());
     }
 
+
+    /**
+     * Initialize views(imageview,button,toolbar,recyclerview)
+     */
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {
         imageWidth = getWindowManager().getDefaultDisplay().getWidth();
@@ -227,92 +223,78 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
         text_done = findViewById(R.id.text_done);
         text_done.setOnClickListener(new SaveBtnClick());
 
-        btnFreeDraw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isDraw = !isDraw;
-                if (isDraw) {
-                    btnFreeDraw.setImageResource(R.drawable.ic_cancel);
-                    TurboImageView.isFreeDraw = true;
-                    TurboImageView.isDraw = "Path";
-                } else {
-                    TurboImageView.isFreeDraw = false;
-                    btnFreeDraw.setImageResource(R.drawable.ic_edit);
-                }
-                turboImageView.deselectAll();
+        btnFreeDraw.setOnClickListener(v -> {
+            isDraw = !isDraw;
+            if (isDraw) {
+                btnFreeDraw.setImageResource(R.drawable.ic_cancel);
+                TurboImageView.isFreeDraw = true;
+                TurboImageView.isDraw = "Path";
+            } else {
+                TurboImageView.isFreeDraw = false;
+                btnFreeDraw.setImageResource(R.drawable.ic_edit);
             }
+            turboImageView.deselectAll();
         });
 
-        reldrag.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                if (event.getAction() == DragEvent.ACTION_DROP) {
-                    drawPoints.add(new Point(event.getX(), event.getY(), toolbarColor, itemTitle, metaData));
-                    addImage(dragged, event.getX(), event.getY());
-                }
-                return true;
+        reldrag.setOnDragListener((v, event) -> {
+            if (event.getAction() == DragEvent.ACTION_DROP) {
+                drawPoints.add(new Point(event.getX(), event.getY(), toolbarColor, itemTitle, metaData));
+                addImage(dragged, event.getX(), event.getY());
             }
+            return true;
         });
 
-        turboImageView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                try {
-                    if (new JSONObject(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA)).has("annotaionsArray")) {
-                        if (!turboImageView.check()) {
-                            for (MultiTouchObject object : turboImageView.mImages) {
-                                if (object.isSelected()) {
-                                    isSelect = true;
-                                    break;
-                                }
-                            }
-
-                            if (isSelect) {
-                                isSelect = false;
-                                final AlertDialog.Builder builder = new AlertDialog.Builder(AnnotateActivity.this);
-                                builder.setMessage("Are you sure want to delete this annotation.");
-                                builder.setPositiveButton(R.string.lbl_yes, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        isDelete = true;
-                                        float x = 0, y = 0;
-                                        for (MultiTouchObject object : turboImageView.mImages) {
-                                            if (object.isSelected()) {
-                                                x = object.startMidX;
-                                                y = object.startMidY;
-                                            }
-                                        }
-
-                                        turboImageView.removeLongSelectedObject();
-                                        for (int i = 0; i < drawPoints.size(); i++) {
-                                            Point point = drawPoints.get(i);
-                                            if (point.x == x && point.y == y) {
-                                                drawPoints.remove(i);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                });
-
-                                builder.setNegativeButton(R.string.lbl_no, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                                final AlertDialog dialog = builder.create();
-                                dialog.setCancelable(false);
-                                dialog.show();
+        turboImageView.setOnLongClickListener(v -> {
+            try {
+                if (new JSONObject(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA)).has("annotaionsArray")) {
+                    if (!turboImageView.check()) {
+                        for (MultiTouchObject object : turboImageView.mImages) {
+                            if (object.isSelected()) {
+                                isSelect = true;
+                                break;
                             }
                         }
-                    }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                        if (isSelect) {
+                            isSelect = false;
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(AnnotateActivity.this);
+                            builder.setMessage("Are you sure want to delete this annotation.");
+                            builder.setPositiveButton(R.string.lbl_yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    isDelete = true;
+                                    float x = 0, y = 0;
+                                    for (MultiTouchObject object : turboImageView.mImages) {
+                                        if (object.isSelected()) {
+                                            x = object.startMidX;
+                                            y = object.startMidY;
+                                        }
+                                    }
+
+                                    turboImageView.removeLongSelectedObject();
+                                    for (int i = 0; i < drawPoints.size(); i++) {
+                                        Point point = drawPoints.get(i);
+                                        if (point.x == x && point.y == y) {
+                                            drawPoints.remove(i);
+                                            break;
+                                        }
+                                    }
+                                }
+                            });
+
+                            builder.setNegativeButton(R.string.lbl_no, (dialog, which) -> dialog.dismiss());
+                            final AlertDialog dialog = builder.create();
+                            dialog.setCancelable(false);
+                            dialog.show();
+                        }
+                    }
                 }
-                return false;
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            return false;
         });
     }
 
@@ -333,17 +315,34 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
     }
 
 
+    /**
+     * Add bitmap image to imageview
+     * @param bitmap bitmaps
+     * @param x
+     * @param y
+     */
     public void addImage(Bitmap bitmap, float x, float y) {
         turboImageView.addObject(AnnotateActivity.this, bitmap, x, y);
         turboImageView.deselectAll();
     }
 
+
+    /**
+     *
+     * @param dragged
+     * @param title
+     * @param metaData
+     */
     public void getDraggedBitMap(Bitmap dragged, String title, String metaData) {
         this.dragged = dragged;
         this.itemTitle = title;
         this.metaData = metaData;
     }
 
+
+    /**
+     * Set title and color to toolbar
+     */
     private void setToolbarTitleAndColor() {
         if (!TextUtils.isEmpty(toolbarTitle)) {
             title.setText(toolbarTitle);
@@ -353,6 +352,10 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
             toolbar.setBackgroundColor(Color.parseColor(toolbarColor));
     }
 
+
+    /**
+     * Set color to status bar
+     */
     private void setStatusBarColor() {
         try {
             String color = getIntent().getExtras().containsKey(EXTRA_TOOLBAR_COLOR)
@@ -367,6 +370,11 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
         }
     }
 
+
+    /**
+     * Set given color to status bar
+     * @param color color need to set to status bar
+     */
     public void setStatusBarColor(int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -377,6 +385,10 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
         }
     }
 
+
+    /**
+     * Fetch data from intent and set to variables
+     */
     private void getData() {
         try {
             filePath = getIntent().getStringExtra(FILE_PATH);
@@ -395,20 +407,20 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
             }
             if (!TextUtils.isEmpty(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA))) {
                 JSONObject object = new JSONObject(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA));
-                totalcountedit = FileUploadUtility.getJsonObjectIntValue(object, "totalcountedit");
+                totalcountedit = FileUploadUtility.getJsonObjectIntValue(object, TOTAL_COUNT_EDIT);
                 turboImageView.imageCount = totalcountedit;
-                if (object.has("annotaionsArray")) {
+                if (object.has(ANNOTATIONS_ARRAY)) {
                     btnFreeDraw.setVisibility(View.VISIBLE);
                     iv_undo.setVisibility(View.GONE);
-                    JSONArray annotaionsArray = object.getJSONArray("annotaionsArray");
-                    for (int i = 0; i < annotaionsArray.length(); i++) {
-                        JSONObject jsonObject = annotaionsArray.getJSONObject(i);
+                    JSONArray annotationsArray = object.getJSONArray(ANNOTATIONS_ARRAY);
+                    for (int i = 0; i < annotationsArray.length(); i++) {
+                        JSONObject jsonObject = annotationsArray.getJSONObject(i);
                         Image image = new Image(FileUploadUtility.getHtmlDirFromSandbox(mContext).getAbsolutePath() +
-                                File.separator + FileUploadUtility.getStringObjectValue(jsonObject, "imageName"),
+                                File.separator + FileUploadUtility.getStringObjectValue(jsonObject, IMAGE_NAME),
                                 FileUploadUtility.getHtmlDirFromSandbox(mContext).getAbsolutePath() +
-                                        File.separator + FileUploadUtility.getStringObjectValue(jsonObject, "selectedImageName")
-                                , FileUploadUtility.getStringObjectValue(jsonObject, "title"),
-                                FileUploadUtility.getStringObjectValue(jsonObject, "metadata"), false, false, false);
+                                        File.separator + FileUploadUtility.getStringObjectValue(jsonObject, SELECTED_IMAGE_NAME)
+                                , FileUploadUtility.getStringObjectValue(jsonObject, TITLE),
+                                FileUploadUtility.getStringObjectValue(jsonObject, METADATA), false, false, false);
                         imageList.add(image);
                     }
                 } else {
@@ -431,6 +443,11 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
         }
     }
 
+
+    /**
+     * Load image from given file path
+     * @param filepath
+     */
     public void loadImage(String filepath) {
         if (mLoadImageTask != null) {
             mLoadImageTask.cancel(true);
@@ -439,26 +456,22 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
         mLoadImageTask.execute(filepath);
     }
 
+
+    /**
+     * Show alert dialog to delete or cancel annotation
+     */
     private void deleteAnnotation() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure want to clear annotation.");
-        builder.setPositiveButton(R.string.lbl_yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                drawPoints.clear();
-                turboImageView.removeAllObjects();
-                turboImageView.clearAllDrawData();
-                turboImageView.imageCount = totalcountedit;
-            }
+        builder.setPositiveButton(R.string.lbl_yes, (dialog, which) -> {
+            dialog.dismiss();
+            drawPoints.clear();
+            turboImageView.removeAllObjects();
+            turboImageView.clearAllDrawData();
+            turboImageView.imageCount = totalcountedit;
         });
 
-        builder.setNegativeButton(R.string.lbl_no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton(R.string.lbl_no, (dialog, which) -> dialog.dismiss());
         final AlertDialog dialog = builder.create();
         dialog.setCancelable(false);
         dialog.show();
@@ -588,19 +601,19 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
                                 linePathCount++;
                                 point = ((TurboImageView.Point) ((ArrayList) entry.getValue()).get(0));
                                 pointEnd = ((TurboImageView.Point) ((ArrayList) entry.getValue()).get(1));
-                                object.put("badge", entry.getKey());
-                                object.put("type", point.drawType);
-                                object.put("title", point.drawType);
-                                object.put("color", String.valueOf(TurboImageView.colorCode));
+                                object.put(BADGE, entry.getKey());
+                                object.put(TYPE, point.drawType);
+                                object.put(TITLE, point.drawType);
+                                object.put(COLOR, String.valueOf(TurboImageView.colorCode));
 
-                                start.put("x", point.x);
-                                start.put("y", point.y);
+                                start.put(X, point.x);
+                                start.put(Y, point.y);
 
-                                end.put("x", pointEnd.x);
-                                end.put("y", pointEnd.y);
+                                end.put(X, pointEnd.x);
+                                end.put(Y, pointEnd.y);
 
-                                object.put("start", start);
-                                object.put("end", end);
+                                object.put(START, start);
+                                object.put(END, end);
 
                                 annotateData.put(object);
                                 object = new JSONObject();
@@ -612,14 +625,14 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
                     if (cirRectPoints.size() > 0) {
                         for (int i = 1; i <= cirRectPoints.size(); i++) {
                             TurboImageView.Point point = null;
-                            object.put("badge", i);
-                            object.put("type", point.drawType);
-                            object.put("title", point.drawType);
-                            object.put("color", String.valueOf(TurboImageView.colorCode));
+                            object.put(BADGE, i);
+                            object.put(TYPE, point.drawType);
+                            object.put(TITLE, point.drawType);
+                            object.put(COLOR, String.valueOf(TurboImageView.colorCode));
                             point = cirRectPoints.get(i - 1);
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            start.put(X, point.x);
+                            start.put(Y, point.y);
+                            object.put(START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -630,15 +643,15 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
                     if (drawPoints.size() > 0) {
                         for (int i = 1; i <= drawPoints.size(); i++) {
                             Point point = drawPoints.get(i - 1);
-                            object.put("badge", i);
-                            object.put("type", drawType);
-                            object.put("title", point.drawType);
-                            object.put("metadata", point.metaData);
-                            object.put("color", toolbarColor);
+                            object.put(BADGE, i);
+                            object.put(TYPE, drawType);
+                            object.put(TITLE, point.drawType);
+                            object.put(METADATA, point.metaData);
+                            object.put(COLOR, toolbarColor);
 
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            start.put(X, point.x);
+                            start.put(Y, point.y);
+                            object.put(START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -673,19 +686,19 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
                                 linePathCount++;
                                 point = ((TurboImageView.Point) ((ArrayList) entry.getValue()).get(0));
                                 pointEnd = ((TurboImageView.Point) ((ArrayList) entry.getValue()).get(1));
-                                object.put("badge", entry.getKey());
-                                object.put("type", point.drawType);
-                                object.put("title", point.drawType);
-                                object.put("color", String.valueOf(TurboImageView.colorCode));
+                                object.put(BADGE, entry.getKey());
+                                object.put(TYPE, point.drawType);
+                                object.put(TITLE, point.drawType);
+                                object.put(COLOR, String.valueOf(TurboImageView.colorCode));
 
-                                start.put("x", point.x);
-                                start.put("y", point.y);
+                                start.put(X, point.x);
+                                start.put(Y, point.y);
 
-                                end.put("x", pointEnd.x);
-                                end.put("y", pointEnd.y);
+                                end.put(X, pointEnd.x);
+                                end.put(Y, pointEnd.y);
 
-                                object.put("start", start);
-                                object.put("end", end);
+                                object.put(START, start);
+                                object.put(END, end);
 
                                 annotateData.put(object);
                                 object = new JSONObject();
@@ -698,14 +711,14 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
                     if (cirRectPoints.size() > 0) {
                         for (int i = 1; i <= cirRectPoints.size(); i++) {
                             TurboImageView.Point point = null;
-                            object.put("badge", i);
-                            object.put("type", point.drawType);
-                            object.put("title", point.drawType);
-                            object.put("color", String.valueOf(TurboImageView.colorCode));
+                            object.put(BADGE, i);
+                            object.put(TYPE, point.drawType);
+                            object.put(TITLE, point.drawType);
+                            object.put(COLOR, String.valueOf(TurboImageView.colorCode));
                             point = cirRectPoints.get(i - 1);
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            start.put(X, point.x);
+                            start.put(Y, point.y);
+                            object.put(START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -716,15 +729,15 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
                     if (drawPoints.size() > 0) {
                         for (int i = 1; i <= drawPoints.size(); i++) {
                             Point point = drawPoints.get(i - 1);
-                            object.put("badge", i);
-                            object.put("type", drawType);
-                            object.put("title", point.drawType);
-                            object.put("metadata", point.metaData);
-                            object.put("color", toolbarColor);
+                            object.put(BADGE, i);
+                            object.put(TYPE, drawType);
+                            object.put(TITLE, point.drawType);
+                            object.put(METADATA, point.metaData);
+                            object.put(COLOR, toolbarColor);
 
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            start.put(X, point.x);
+                            start.put(Y, point.y);
+                            object.put(START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();

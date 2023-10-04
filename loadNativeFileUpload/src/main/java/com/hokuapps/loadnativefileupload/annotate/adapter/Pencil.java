@@ -19,10 +19,6 @@ public class Pencil {
         return imageTitle;
     }
 
-    public void setImageTitle(String imageTitle) {
-        this.imageTitle = imageTitle;
-    }
-
     public String getColorCode() {
         return colorCode;
     }
@@ -43,7 +39,4 @@ public class Pencil {
         return isSelected;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
 }

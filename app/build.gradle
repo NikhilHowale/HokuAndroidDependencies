@@ -162,6 +162,7 @@ dependencies {
     implementation project(path: ':updateAppVersion')
     implementation project(path: ':getNetworkStatus')
     implementation project(path: ':loadNativeFileUpload')
+    implementation project(":loadMapViewByConfig")
 
 }
 

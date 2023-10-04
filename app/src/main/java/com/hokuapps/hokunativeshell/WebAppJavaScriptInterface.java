@@ -20,6 +20,7 @@ import com.hokuapps.hokunativeshell.constants.AppConstant;
 import com.hokuapps.hokunativeshell.constants.IntegrationManager;
 import com.hokuapps.hokunativeshell.pref.MybeepsPref;
 import com.hokuapps.hokunativeshell.utils.Utility;
+import com.hokuapps.loadmapviewbyconfig.LoadMapViewByConfig;
 import com.hokuapps.loadnativefileupload.GetAllFileStatus;
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
 import com.hokuapps.loadnativefileupload.SendOfflineMediaDetails;
@@ -236,5 +237,15 @@ public class WebAppJavaScriptInterface {
 
     @JavascriptInterface
     public void initCometChat(final String shareObj){
+    }
+
+    @JavascriptInterface
+    public void loadMapViewByConfig(final String respData){
+        String app_id = BuildConfig.APPLICATION_ID;
+
+        boolean html = BuildConfig.LOAD_HTML_DIRECTLY;
+
+        new LoadMapViewByConfig(mContext,mWebAppActivity,
+                1,app_id,html).loadMapViewByConfig(respData);
     }
 }
