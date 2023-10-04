@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Library</string>
+    <string name="label_ok">OK</string>
+    <string name="label_explore">Explore</string>
+    <string name="default_channel">Default channel</string>
+    <string name="near_me_tab">Near Me</string>
+    <string name="search_teacher_tab">Search Teacher</string>
+    <string name="overflow_description">More...</string>
+    <string name="abc_action_menu_overflow_description">More options</string>
+
+    <!-- Status Error Message -->
+    <string name="status_invalid_phone_number">Invalid phone number, please enter correct phone number. </string>
+    <string name="status_invalid_otp_code">Invalid otp code, please enter valid otp code or get new otp code via sms or call. </string>
+    <string name="status_invalid_otp_expired">OTP code has expired, please get new otp code via sms or call. </string>
+    <string name="status_invalid_country_name">Invalid country name</string>
+    <string name="status_error_sending_sms">SMS sending failed. please make sure do you have suffienent balance to send sms?.</string>
+    <string name="status_error_making_call">Error during making a call.</string>
+    <string name="status_error_connection_timeout">Connection timeout, please check your internet connection and try again.</string>
+    <string name="timeout_error_message">Request timeout, please try again.</string>
+    <string name="failed_match_otp_code">The code you entered is incorrect , please verify and try again</string>
+    <string name="err_occurred_msg">An error occurred while loading, Please try again...</string>
+    <string name="err_parsing_msg">An error occurred while parsing , Please try again...</string>
+
+    <string name="map_api_key">AIzaSyBVGjGd2Ho6TsGraUek984AJXWpcPJ5-To</string>
+    <string name="distance_api_key">AIzaSyC0K6L4snju6_uUfGEgnX7mGk8s5y-YBoY</string>
+    <string name="map_api_key_cp_client">AIzaSyDWdXscfNTF5kalttjdD24TIUdILuQmL60</string>
+    <string name="map_api_key_cp_driver">AIzaSyDWdXscfNTF5kalttjdD24TIUdILuQmL60</string>
+
+    <string name="label_loading">Loading...</string>
+    <string name="cannot_connect_to_play_service">Cannot Connect To Play Services</string>
+    <string name="navigation_via">Navigate via</string>
+    <string name="navigation">navigation</string>
+    <string name="setting_change_unavailable">Setting change unavailable</string>
+    <string name="gps_not_enabled">GPS is not enabled.</string>
+    <string name="enter_name">Please enter name</string>
+    <string name="cannot_process_json">Cannot process JSON results</string>
+
+</resources>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/overlay_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:background="@drawable/card_shape"
+    android:visibility="visible"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="35dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="1dp"
+    app:layout_behavior="com.hokuapps.loadmapviewbyconfig.widgets.behavior.AnchorBottomSheetBehavior">
+    <!--app:behavior_anchorOffset="400dp"-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/frameLayout_overlay_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/overlay_above_btn_height"
+            android:background="@color/screen_bg_white"
+            android:clickable="true"
+            android:focusable="false"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView_overlay_handle"
+                android:layout_width="50dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:background="@drawable/rounded_webview_overlay" />
+
+            <ImageButton
+                android:id="@+id/btn_close_overlay"
+                android:layout_width="@dimen/overlay_above_btn_height"
+                android:layout_height="@dimen/overlay_above_btn_height"
+                android:layout_gravity="end"
+                android:layout_marginRight="4dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_clear_black_24dp"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <WebView
+            android:id="@+id/webview_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/frameLayout_overlay_bar"
+            android:isScrollContainer="true"
+            android:visibility="gone">
+
+        </WebView>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

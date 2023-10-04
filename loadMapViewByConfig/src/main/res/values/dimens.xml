@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size_subtitle_material_toolbar">16dp</dimen>
+    <dimen name="toolbar_horizontal_padding">4dp</dimen>
+    <dimen name="first_keyline">16dp</dimen>
+    <dimen name="text_size_title_material_toolbar">20dp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="navdrawer_width">260dp</dimen>
+    <dimen name="overlay_above_btn_height">35dp</dimen>
+    <dimen name="activity_horizontal_margin_16">16dp</dimen>
+</resources>

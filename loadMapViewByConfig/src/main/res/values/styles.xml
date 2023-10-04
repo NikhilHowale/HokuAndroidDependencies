@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ThemeOverlay.AppCompat.Light" parent="Base.ThemeOverlay.AppCompat.Light"/>
+    <style name="TextAppearance.Subtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">@dimen/text_size_subtitle_material_toolbar</item>
+    </style>
+
+    <!--Responsive Toolbar Styles -->
+    <style name="ToolbarResponsive" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
+        <item name="toolbarStyle">@style/CustomWidgetToolbar</item>
+        <item name="toolbarNavigationButtonStyle">@style/ToolbarButtonNavigation</item>
+        <item name="actionOverflowButtonStyle">@style/ActionButtonOverflow</item>
+    </style>
+
+    <style name="TextAppearance.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/text_size_title_material_toolbar</item>
+    </style>
+
+    <style name="CustomTabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>
