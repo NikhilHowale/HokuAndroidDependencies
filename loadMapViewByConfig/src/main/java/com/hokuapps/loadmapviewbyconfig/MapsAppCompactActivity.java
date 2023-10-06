@@ -417,7 +417,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     *
+     * get bitmap from image and set to imageview in background
      */
     private void asyncImageIcon() {
         new AsyncTask<Void, Void, Void>() {
@@ -1000,6 +1000,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
+     * this function receives/gets data from other activities
      * @param requestCode
      * @param resultCode
      * @param intent
@@ -1231,8 +1232,8 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                         }
 
                         addOrMoveCurrentLocationMarker(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()),
-                                new LatLng(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude()),
-                                location.getBearing());
+                                new LatLng(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude())
+                                );
 
                         animateMarker(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()),
                                 new LatLng(mPreviousLocation.getLatitude(), mPreviousLocation.getLongitude()), mCurrentLocationMarker);
@@ -1246,7 +1247,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * initialize the views
+     * initialize the views(map, imageview,buttons) and set click listeners
      */
     private void initView() {
         mMap = (MapView) findViewById(R.id.map);
@@ -1548,7 +1549,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * initialize location card
+     * initialize location card and set visibility
      */
     private void initShouldShowLocationCard() {
 //        Init components for fix my ride.
@@ -1644,7 +1645,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     *
+     * initialize close overlay button set click listener and visibility to button
      */
     private void setBtnCloseOverlay() {
         btnCloseOverlay = (ImageButton) findViewById(R.id.btn_close_overlay);
@@ -1677,7 +1678,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     *
+     * initialize autocomplete adapter and set autocomplet adapter to Search edittext
      */
     private void initAutoCompleteForSearch() {
         try {
@@ -1848,7 +1849,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * Show curreent location address
+     * Show curreent location address using latitude and longitude
      *
      * @param latitude lattitude to get address
      * @param longitude longitude to get address
@@ -1898,7 +1899,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * Show destination address
+     * Show destination address using given latitude and longitude
      *
      * @param latitude lattitude to get destination address
      * @param longitude longitude to get destination address
@@ -2110,7 +2111,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     *
+     * create bitmap from drawable image
      */
     private void carPinBitmap() {
         int height = 80;
@@ -2212,9 +2213,8 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
      *
      * @param currentPosition location to move the marker
      * @param previousPosition previous location
-     * @param bearing
      */
-    private void addOrMoveCurrentLocationMarker(LatLng currentPosition, LatLng previousPosition, float bearing) {
+    private void addOrMoveCurrentLocationMarker(LatLng currentPosition, LatLng previousPosition) {
 
         if (mCurrentLocationMarker == null) {
             mCurrentLocationMarker = mGoogleMap.addMarker(new MarkerOptions()
@@ -2374,7 +2374,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
      *
      * @param origin start location to get direction details
      * @param destination end location to get direction details
-     * @param mode
+     * @param mode mode of transportation/travel
      * @return
      */
     private DirectionsResult getDirectionsDetails(com.google.maps.model.LatLng origin, com.google.maps.model.LatLng destination, TravelMode mode) {
@@ -2471,7 +2471,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * set toolbar title
+     * set toolbar title with given string
      *
      * @param title String to set as toolbar title
      */
@@ -2572,7 +2572,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * load url in webview
+     * load url in webview using page name
      * @param pageName
      */
     private void loadUrlOvelayPage(String pageName) {
@@ -3107,7 +3107,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
      * create url containing near by places details
      * @param lat
      * @param lng
-     * @param radius
+     * @param radius radius
      * @param namePlace
      * @param type
      * @return
@@ -3209,9 +3209,9 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * this function is called to set result(data) to calling activity
-     * @param resultCode
-     * @param jsonObject
+     * this function is called to pass result(data) to calling activity
+     * @param resultCode code used to verify the result(success,failure)
+     * @param jsonObject json object(data) sending to activity
      */
     private void setResultToCallingActivity(int resultCode, JSONObject jsonObject) {
         Intent intent = new Intent();
@@ -3250,7 +3250,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
     /**
      * set address to auto complete edit text
      *
-     * @param latLng
+     * @param latLng LatLng object to fetch the address
      */
     private void setAddressToAutoCompleteEditTextView(LatLng latLng) {
         Geocoder gc = new Geocoder(context, Locale.ENGLISH);
@@ -3386,7 +3386,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * set zoom on rout
+     * set zoom on given rout
      *
      * @param route
      */
@@ -3422,8 +3422,9 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * @param sourceLatLang
-     * @param destLatLng
+     * set zoom on rout for given latitude and longitude
+     * @param sourceLatLang latitude and longitude of source point
+     * @param destLatLng latitude and longitude of destination point
      */
     private void setZoomMapForRoute(LatLng sourceLatLang, LatLng destLatLng) {
 
@@ -3526,7 +3527,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
     /**
      * Show or hide overlay based on it's current state
-     * @param isShow
+     * @param isShow boolen value to show or hide overlay(true,false)
      */
     private void showOrHideOverlay(boolean isShow) {
 
@@ -3551,7 +3552,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
     /**
      * set maximum height to bottom sheet
-     * @param peekHeight
+     * @param peekHeight definite height of bottomsheet
      */
     public void setPeekHeightToBottomSheet(int peekHeight) {
         anchorBottomSheetBehavior.setPeekHeight(peekHeight);
@@ -3606,6 +3607,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
     /**
      * Disable drawer
+     * set DrawerLockMode to locked
      */
     public void disableDrawer() {
         if (mDrawerLayout != null)
@@ -3615,6 +3617,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
     /**
      * Enable drawer
+     * set DrawerLockMode to unlock
      */
     public void enableDrawer() {
         if (mDrawerLayout != null)
@@ -3624,6 +3627,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
     /**
      * Set up drawer
+     * initialize, set listener to drawer
      */
     private void setupMenuDrawerLayout() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -3857,6 +3861,11 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
         }
     }
 
+
+    /**
+     * Get the last known location
+     * @param location
+     */
     @Override
     public void handleLastLocation(Location location) {
         if (location != null) {
@@ -3941,7 +3950,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
     /**
      * parse response data
-     * @param launchMapViewRes
+     * @param launchMapViewRes Responce data to parse
      */
     private void parseLoadMapViewByConfig(String launchMapViewRes) {
         try {

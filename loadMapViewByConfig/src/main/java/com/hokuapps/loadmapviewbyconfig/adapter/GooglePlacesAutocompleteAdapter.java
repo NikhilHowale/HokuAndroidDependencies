@@ -37,7 +37,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
- * Created by admin on 03/29/18.
+ * returns place predictions in response to user search queries
  */
 
 public class GooglePlacesAutocompleteAdapter extends ArrayAdapter<PlaceModel> implements Filterable {

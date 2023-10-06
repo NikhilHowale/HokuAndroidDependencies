@@ -53,23 +53,18 @@ public class FileContentProvider extends ContentProvider {
         if (mdb == null) return -1;
 
         final int match = sURIMatcher.match(uri);
-        String tableName = null;
+        String tableName;
 
         // match for which table we need to perform insert operation
-        switch (match) {
-
-            case APP_MEDIA_DETAILS:
-                tableName = Tables.AppMediaDetails.TABLE_NAME;
-                break;
-
-
-            default:
-                throw new IllegalArgumentException("Unsupported URI: " + uri);
+        if (match == APP_MEDIA_DETAILS) {
+            tableName = Tables.AppMediaDetails.TABLE_NAME;
+        } else {
+            throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
 
         // add record to respective table
         int id = mdb.delete(tableName, selection, selectionArgs);
-        Uri newUri = uri;
+        Uri newUri;
         if (id > 0) {
             newUri = ContentUris.withAppendedId(uri, id);
             getContext().getContentResolver().notifyChange(newUri, null);
@@ -99,7 +94,7 @@ public class FileContentProvider extends ContentProvider {
         if (mdb == null) return null;
 
         final int match = sURIMatcher.match(uri);
-        String tableName = null;
+        String tableName;
 
         // match for which table we need to perform insert operation
         switch (match) {
@@ -141,8 +136,8 @@ public class FileContentProvider extends ContentProvider {
 
         final int match = sURIMatcher.match(uri);
         String groupBy = null;
-        String tableName = null;
-        Cursor cursor = null;
+        String tableName;
+        Cursor cursor;
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
 
         // match for which table we need to perform insert operation
@@ -184,24 +179,19 @@ public class FileContentProvider extends ContentProvider {
         if (mdb == null) return -1;
 
         final int match = sURIMatcher.match(uri);
-        String tableName = null;
+        String tableName;
 
         // match for which table we need to perform insert operation
-        switch (match) {
-            case APP_MEDIA_DETAILS:
-                tableName = Tables.AppMediaDetails.TABLE_NAME;
-                break;
-
-
-
-            default:
-                throw new IllegalArgumentException("Unsupported URI: " + uri);
+        if (match == APP_MEDIA_DETAILS) {
+            tableName = Tables.AppMediaDetails.TABLE_NAME;
+        } else {
+            throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
 
         // update record to respective table
         int id = mdb.update(tableName, values, selection, selectionArgs);
 
-        Uri newUri = uri;
+        Uri newUri;
         if (id > 0) {
             newUri = ContentUris.withAppendedId(uri, id);
             getContext().getContentResolver().notifyChange(newUri, null);

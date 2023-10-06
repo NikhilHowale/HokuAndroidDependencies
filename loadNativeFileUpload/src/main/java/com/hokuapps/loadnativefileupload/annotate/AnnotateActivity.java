@@ -85,10 +85,7 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
     public static final String IMAGE_IS_EDIT = "image_is_edit";
     public static final String ANNOTATION_COUNT = "ANNOTATION_COUNT";
     public static final String ANNOTATION_DATA = "ANNOTATION_DATA";
-    public static final String IS_ANNOTATION = "IS_ANNOTATION";
     public static final String ANNOTATION_TYPE = "ANNOTATION_TYPE";
-    public static final String ANNOTATION_COLOR = "ANNOTATION_COLOR";
-    public static final String ANNOTATION_DRAW_TYPE = "ANNOTATION_DRAW_TYPE";
     private static final String TAG = "AnnotateActivity";
     public static int totalcountedit = 0;
     static boolean isDelete = false;
@@ -594,8 +591,8 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
                 try {
                     if (straightLinePoints != null && straightLinePoints.size() > 0) {
                         Set<Map.Entry<Integer, ArrayList<TurboImageView.Point>>> mappings = straightLinePoints.entrySet();
-                        TurboImageView.Point point = null;
-                        TurboImageView.Point pointEnd = null;
+                        TurboImageView.Point point;
+                        TurboImageView.Point pointEnd;
                         for (Map.Entry<Integer, ArrayList<TurboImageView.Point>> entry : mappings) {
                             if (entry.getValue().size() > 1) {
                                 linePathCount++;
@@ -679,8 +676,8 @@ public class AnnotateActivity extends AppCompatActivity implements TurboImageVie
                 try {
                     if (straightLinePoints != null && straightLinePoints.size() > 0) {
                         Set<Map.Entry<Integer, ArrayList<TurboImageView.Point>>> mappings = straightLinePoints.entrySet();
-                        TurboImageView.Point point = null;
-                        TurboImageView.Point pointEnd = null;
+                        TurboImageView.Point point;
+                        TurboImageView.Point pointEnd;
                         for (Map.Entry<Integer, ArrayList<TurboImageView.Point>> entry : mappings) {
                             if (entry.getValue().size() > 1) {
                                 linePathCount++;
