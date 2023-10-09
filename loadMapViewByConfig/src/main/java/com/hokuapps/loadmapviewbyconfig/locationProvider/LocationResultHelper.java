@@ -38,7 +38,6 @@ class LocationResultHelper {
 
     final private static String PRIMARY_CHANNEL = "default";
 
-
     private Context mContext;
     private List<Location> mLocations;
     private NotificationManager mNotificationManager;

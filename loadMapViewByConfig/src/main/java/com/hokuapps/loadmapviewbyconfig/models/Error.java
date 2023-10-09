@@ -3,6 +3,8 @@ package com.hokuapps.loadmapviewbyconfig.models;
 import android.content.Context;
 
 
+import androidx.annotation.NonNull;
+
 import com.hokuapps.loadmapviewbyconfig.App;
 import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.utility.Utility;
@@ -20,15 +22,11 @@ public class Error {
     private Object object;
 
     public interface ErrorCode {
-        //token
-        int INVALID_TOKEN = 1101;
-        int INVALID_SECRET_KEY = 1100;
 
         //Client Error
         int BAD_REQUEST = 400;
         int REQUEST_TIMEOUT = 408;
         int NOT_FOUND = 404;
-        int SOCKET_READ_FAILED = 23;
 
         //Server Error
         int INTERNAL_SERVER_ERROR = 500;
@@ -36,12 +34,6 @@ public class Error {
         int SERVICE_UNAVAILABLE = 503;
         int GATEWAY_TIMEOUT = 504;
 
-        //local error
-        int NO_INTERNET = 2001;
-        int UNKNOWN_ERROR = 520;
-
-        //Cancel from user
-        int CANCEL_BY_USER = 2003;
     }
 
     /**
@@ -73,22 +65,6 @@ public class Error {
         this.msg = msg;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
     public Object getObject() {
         return object;
     }
@@ -97,13 +73,10 @@ public class Error {
         this.object = object;
     }
 
-
-
-
+    @NonNull
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("statusCode:").append(code).append(", errMsg:").append(msg);
-        return builder.toString();
+        return "statusCode:" + code + ", errMsg:" + msg;
     }
 
     /**
@@ -117,8 +90,7 @@ public class Error {
         try {
             jsonObject.put("statusCode", code);
             jsonObject.put("errorMessage", Utility.isEmpty(msg) ? "" : msg);
-        } catch (Exception e) {
-//            LogUtility.printErrorMessage(Error.class.getSimpleName(), e);
+        } catch (Exception ignored) {
         }
 
         return jsonObject;

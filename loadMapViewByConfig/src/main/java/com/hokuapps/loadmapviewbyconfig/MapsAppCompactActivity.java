@@ -164,7 +164,6 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
     public Button buttonBottom;
     public LinearLayout bottomButtonLayout;
     public AutoCompleteTextView simpleSearchEdittext;
-    //    Close button for bottom action sheet.
     public ImageButton btnCloseOverlay;
     public Toolbar mToolbar;
     public ImageButton btnCollapse;
@@ -177,7 +176,6 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
     private String status = "";
     private boolean isOnline = false;
     private boolean isStartSendUpdate = true;
-    //    Temp array.
     private int pointNumber = 0;
     private JSONObject jsonObjectMapPoints = null;
     private ArrayList<LatLng> arrayListPoints = new ArrayList<>();
@@ -248,7 +246,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     *
+     * Interface definition for a callback to be invoked when an item in this AdapterView has been clicked.
      */
     AdapterView.OnItemClickListener autoCompleteListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -310,7 +308,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     *
+     * Callback interface for when the My Location button is clicked.
      */
     private GoogleMap.OnMyLocationButtonClickListener onMyLocationButtonClickListener = new GoogleMap.OnMyLocationButtonClickListener() {
         @Override
@@ -349,7 +347,8 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * Map click event
+     * Callback interface for when the user taps on the map.
+     * Listeners will be invoked on the Android UI thread
      */
     private GoogleMap.OnMapClickListener onMapClickListener = new GoogleMap.OnMapClickListener() {
         @Override
@@ -532,7 +531,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * this function gets called when Map initialized
+     * this function gets called when Map is initialized
      *
      * @param googleMap Map object
      */
@@ -705,7 +704,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * Plot marker on the location
+     * Add marker on the location
      */
     private void plotLocationMarker() {
         if (mLocationMapModel.getIsPlotLocation() == 1) {
@@ -808,7 +807,6 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                                         Utility.getStringObjectValue(menuItemJson, FILTER_ICON), size, size), "#828282"));
                     }
                 }
-//                Search icon.
 
                 if (!TextUtils.isEmpty(Utility.getStringObjectValue(menuItemJson, SEARCH_ICON))) {
 
@@ -860,7 +858,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
     /**
      * Show map icon on toolbar
      *
-     * @param menu
+     * @param menu toolbar menu object
      * @param show Boolean value to show the menu options(True or false)
      */
     private void showMapIconOnToolbar(Menu menu, boolean show) {
@@ -871,9 +869,9 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * Menu item selected event
+     * this function gets called when menu option gets clicked
      *
-     * @param item
+     * @param item menu item
      * @return
      */
     @Override
@@ -1151,7 +1149,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * set the address to json
+     * set the address details to json object
      *
      * @param fetchedAddress Fetched address object
      * @return returns JSONObject containing address details
@@ -2054,7 +2052,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * Build url with secret key
+     * Build url using secret key
      *
      * @param url url to build using Secret Key
      * @return returns string url
@@ -2180,7 +2178,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * returns bearing between 2 locations
+     * returns  the horizontal direction of travel between 2 locations
      * @param latLng1
      * @param latLng2
      * @return
@@ -2230,7 +2228,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * Animate the marker
+     * Animate the marker (set position,visibility,rotation)
      * @param curPostion current position
      * @param prevPosition previous position
      * @param mMarker Marker object to animate
@@ -2285,7 +2283,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * Add markers to map
+     * Add markers on map
      *
      * @param results Direction Result object containing details(start position, next position
      * @param mMap Google map object
@@ -2506,6 +2504,11 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
     /**
      * set up webview
+     * enable javascript, dom storage
+     * allow file access
+     * set WebViewClient, WebChromeClient
+     * addJ avascript Interface
+     * set Overlay Height
      */
     @SuppressLint("SetJavaScriptEnabled")
     private void setWebView() {
@@ -3452,7 +3455,11 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
     }
 
     /**
-     * set webview.
+     * set navigation drawer webview.
+     * Enabled JavaScript
+     * set debugging for webview
+     * add Javascript Interface
+     * Set WebView Client
      */
     @SuppressLint("SetJavaScriptEnabled")
     private void setNavDrawerWebView(String url) {
@@ -3560,6 +3567,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
+     * set BottomSheet state/height
      * @param state
      */
     private void setOverlayStateToCollapse(int state) {
@@ -3876,7 +3884,8 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     *
+     * Class provides the facility to create any method as the javascript Interface which means that
+     * method can be used by web components to communicate with Android.
      */
     public class WebAppJavascriptInterface {
         Context mContext;
@@ -4013,7 +4022,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
     /**
-     * Set response data to json object
+     * Set the parsed response data to json object
      *
      * @param jsResponseData Parsed json response data
      */

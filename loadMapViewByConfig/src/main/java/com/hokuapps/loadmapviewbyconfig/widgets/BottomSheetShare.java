@@ -31,10 +31,6 @@ public class BottomSheetShare extends BottomSheetDialogFragment {
     private boolean isNavigation = false;
     private AppAdapter.AppSelectedListener appSelectedListener;
 
-    public AppAdapter.AppSelectedListener getAppSelectedListener() {
-        return appSelectedListener;
-    }
-
     public void setAppSelectedListener(AppAdapter.AppSelectedListener appSelectedListener) {
         this.appSelectedListener = appSelectedListener;
     }
@@ -48,7 +44,7 @@ public class BottomSheetShare extends BottomSheetDialogFragment {
         Intent intent = null;
         ArrayList<String> setInclude = new ArrayList<String>();
 
-        List<AppAdapter.AppInfo> list = new ArrayList<>();
+        List<AppAdapter.AppInfo> list;
 
 //        Intent of share.
         if (isNavigation) {
@@ -84,14 +80,11 @@ public class BottomSheetShare extends BottomSheetDialogFragment {
         listViewShare.setAdapter(appAdapter);
 
 //        Set item click listener.
-        listViewShare.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (appSelectedListener != null) {
-                    appSelectedListener.onAppSelected(appAdapter.getItem(position));
-                }
-                dismiss();
+        listViewShare.setOnItemClickListener((parent, view1, position, id) -> {
+            if (appSelectedListener != null) {
+                appSelectedListener.onAppSelected(appAdapter.getItem(position));
             }
+            dismiss();
         });
 
         return view;
@@ -142,24 +135,8 @@ public class BottomSheetShare extends BottomSheetDialogFragment {
         return appResources;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getMessageText() {
-        return messageText;
-    }
-
-    public void setMessageText(String messageText) {
-        this.messageText = messageText;
-    }
-
-    public boolean isNavigation() {
-        return isNavigation;
     }
 
     /**

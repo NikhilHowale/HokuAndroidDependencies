@@ -5,6 +5,7 @@ import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.LAT;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.LONG;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -255,6 +256,7 @@ public class LocationProvider implements
      * @param lng longitude
      * @param onCapturedLocationObject interface
      */
+    @SuppressLint("StaticFieldLeak")
     public void getCompleteAddressJsonObject(double lat, double lng, final OnCapturedLocationObject onCapturedLocationObject) {
 //    Async to get address string from GeoCoder.
         new AsyncTask<Double, String, JSONObject>() {
@@ -281,6 +283,7 @@ public class LocationProvider implements
      * @param lng longitude
      * @param capturedLocationString interface
      */
+    @SuppressLint("StaticFieldLeak")
     public void getCompleteAddressString(double lat, double lng, final OnCapturedLocationString capturedLocationString) {
 //    Async to get address string from GeoCoder.
         new AsyncTask<Double, String, StringBuilder>() {

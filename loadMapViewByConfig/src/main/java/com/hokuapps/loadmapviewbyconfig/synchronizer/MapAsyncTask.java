@@ -19,10 +19,19 @@ public class MapAsyncTask extends AsyncTask<String, Void, String> {
 
     private OnMapAsyncListener onMapAsyncListener;
 
+
+    /**
+     * constructor
+     */
     public MapAsyncTask() {
 
     }
 
+
+    /**
+     * initialize OnMapAsyncListener
+     * @param onMapAsyncListener
+     */
     public void setOnMapAsyncListener(OnMapAsyncListener onMapAsyncListener) {
         this.onMapAsyncListener = onMapAsyncListener;
     }
@@ -102,7 +111,7 @@ public class MapAsyncTask extends AsyncTask<String, Void, String> {
 
 
     /**
-     *
+     * Interface listens for result
      */
     public  interface OnMapAsyncListener {
         void onMapAsyncTaskResult(JSONObject jsonObject);
