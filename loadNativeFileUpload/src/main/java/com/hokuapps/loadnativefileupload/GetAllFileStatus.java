@@ -1,6 +1,21 @@
 package com.hokuapps.loadnativefileupload;
 
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.*;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.APP_MEDIA_ARRAY;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAPTION;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_NM;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_GET_ALL_FILE_STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_NAME;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_FILE_NM;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_MEDIA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_S3_FILE_PATH;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MEDIA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.NEXT_BUTTON_CALLBACK;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_DATA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.S3_FILE_PATH;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STATUS;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STEP;
 
 import android.app.Activity;
 import android.content.Context;

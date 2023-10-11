@@ -3,18 +3,14 @@ package com.hokuapps.loadnativefileupload.utilities;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.widget.Toast;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
-
 import com.sandrios.sandriosCamera.internal.SandriosCamera;
 import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
 import com.xinlan.imageeditlibrary.picchooser.SelectPictureActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

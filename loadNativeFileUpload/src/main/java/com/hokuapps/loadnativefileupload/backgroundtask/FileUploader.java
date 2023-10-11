@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
 import com.hokuapps.loadnativefileupload.constants.FileUploadConstant;
-
 import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
 import com.hokuapps.loadnativefileupload.delegate.OnUploadListener;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;

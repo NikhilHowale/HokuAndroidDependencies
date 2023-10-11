@@ -8,9 +8,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebView;
 
-
-import com.hokuapps.loginnativecall.utils.LoginPref;
 import com.hokuapps.loginnativecall.model.Error;
+import com.hokuapps.loginnativecall.utils.LoginPref;
 import com.hokuapps.loginnativecall.utils.LoginUtility;
 
 import org.json.JSONObject;

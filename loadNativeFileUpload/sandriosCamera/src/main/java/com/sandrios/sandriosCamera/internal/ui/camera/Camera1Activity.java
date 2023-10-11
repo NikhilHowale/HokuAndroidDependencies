@@ -2,8 +2,8 @@ package com.sandrios.sandriosCamera.internal.ui.camera;
 
 import android.media.CamcorderProfile;
 
-import com.sandrios.sandriosCamera.internal.configuration.ConfigurationProvider;
 import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
+import com.sandrios.sandriosCamera.internal.configuration.ConfigurationProvider;
 import com.sandrios.sandriosCamera.internal.controller.CameraController;
 import com.sandrios.sandriosCamera.internal.controller.impl.Camera1Controller;
 import com.sandrios.sandriosCamera.internal.controller.view.CameraView;

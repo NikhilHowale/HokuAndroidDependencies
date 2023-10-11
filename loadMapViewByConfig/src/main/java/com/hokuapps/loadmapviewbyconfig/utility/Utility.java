@@ -34,9 +34,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hokuapps.loadmapviewbyconfig.App;
-import com.hokuapps.loadmapviewbyconfig.BuildConfig;
 import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
+import com.hokuapps.loadmapviewbyconfig.delegate.HtmlTagHandler;
+import com.hokuapps.loadmapviewbyconfig.models.Error;
+import com.hokuapps.loadmapviewbyconfig.services.SocketManager;
+import com.hokuapps.loadmapviewbyconfig.widgets.bottomsheetshare.AppAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,10 +51,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
-import com.hokuapps.loadmapviewbyconfig.delegate.HtmlTagHandler;
-import com.hokuapps.loadmapviewbyconfig.models.Error;
-import com.hokuapps.loadmapviewbyconfig.services.SocketManager;
-import com.hokuapps.loadmapviewbyconfig.widgets.bottomsheetshare.AppAdapter;
 
 public class Utility {
 

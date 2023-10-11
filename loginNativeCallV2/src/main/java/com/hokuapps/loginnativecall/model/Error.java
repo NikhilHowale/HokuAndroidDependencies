@@ -2,7 +2,6 @@ package com.hokuapps.loginnativecall.model;
 
 import android.content.Context;
 
-
 import com.hokuapps.loginnativecall.utils.LoginUtility;
 import com.hokuappsloginnativecall.R;
 

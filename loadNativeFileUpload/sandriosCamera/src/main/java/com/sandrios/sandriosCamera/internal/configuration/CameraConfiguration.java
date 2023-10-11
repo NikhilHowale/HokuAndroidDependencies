@@ -1,6 +1,7 @@
 package com.sandrios.sandriosCamera.internal.configuration;
 
 import android.app.Activity;
+
 import androidx.annotation.IntDef;
 
 import com.sandrios.sandriosCamera.internal.pref.CameraPref;

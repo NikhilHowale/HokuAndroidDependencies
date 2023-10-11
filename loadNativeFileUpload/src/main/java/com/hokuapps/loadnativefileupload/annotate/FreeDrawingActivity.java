@@ -38,7 +38,6 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.bumptech.glide.Glide;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
@@ -48,7 +47,7 @@ import com.hokuapps.loadnativefileupload.annotate.adapter.Image;
 import com.hokuapps.loadnativefileupload.annotate.adapter.ImageAdapter;
 import com.hokuapps.loadnativefileupload.annotate.adapter.Pencil;
 import com.hokuapps.loadnativefileupload.annotate.adapter.PencilAdapter;
-import com.hokuapps.loadnativefileupload.constants.KeyConstants.*;
+import com.hokuapps.loadnativefileupload.constants.KeyConstants.AnnotationData;
 import com.hokuapps.loadnativefileupload.imageEditor.IPRectangleAnnotationActivity;
 import com.hokuapps.loadnativefileupload.utilities.FileUploadUtility;
 import com.xinlan.imageeditlibrary.editimage.utils.BitmapUtils;

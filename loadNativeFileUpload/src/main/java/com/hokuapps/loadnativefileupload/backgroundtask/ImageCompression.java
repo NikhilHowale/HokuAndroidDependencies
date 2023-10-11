@@ -7,7 +7,6 @@ import android.graphics.Matrix;
 import android.os.Handler;
 import android.os.Looper;
 
-
 import androidx.exifinterface.media.ExifInterface;
 
 import java.io.File;

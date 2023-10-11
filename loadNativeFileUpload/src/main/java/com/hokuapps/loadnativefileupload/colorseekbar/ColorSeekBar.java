@@ -18,7 +18,6 @@ import android.view.View;
 
 import androidx.annotation.ArrayRes;
 
-
 import com.hokuapps.loadnativefileupload.R;
 
 import java.util.ArrayList;

@@ -8,7 +8,6 @@ import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.AudioManager;
-
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.util.Log;

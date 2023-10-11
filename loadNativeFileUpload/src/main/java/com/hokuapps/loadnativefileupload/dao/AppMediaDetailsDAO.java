@@ -15,7 +15,6 @@ import com.hokuapps.loadnativefileupload.database.FileDatabaseHelper;
 import com.hokuapps.loadnativefileupload.database.Tables;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 
-
 import java.util.ArrayList;
 
 public class AppMediaDetailsDAO extends BaseDAO {

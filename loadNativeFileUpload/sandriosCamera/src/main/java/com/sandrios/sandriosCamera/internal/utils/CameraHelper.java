@@ -35,7 +35,7 @@ public final class CameraHelper {
     }
 
     public static boolean hasCamera(Context context) {
-        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) ||
+        return  context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) ||
                 context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
     }
 

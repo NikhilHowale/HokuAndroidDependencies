@@ -1,6 +1,7 @@
 package com.hokuapps.loadnativefileupload.utilities;
 
-import static com.hokuapps.loadnativefileupload.constants.FileUploadConstant.*;
+import static com.hokuapps.loadnativefileupload.constants.FileUploadConstant.FOLDER_NAME_PROFILE_PICTURE;
+import static com.hokuapps.loadnativefileupload.constants.FileUploadConstant.MessageType;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

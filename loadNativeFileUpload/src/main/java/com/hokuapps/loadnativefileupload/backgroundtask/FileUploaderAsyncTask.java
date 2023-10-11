@@ -6,13 +6,11 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import com.hokuapps.loadnativefileupload.constants.FileUploadConstant;
 import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
 import com.hokuapps.loadnativefileupload.delegate.OnUploadListener;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 import com.hokuapps.loadnativefileupload.models.Error;
-
 import com.hokuapps.loadnativefileupload.restrequest.ServiceRequest;
 import com.hokuapps.loadnativefileupload.restrequest.ServiceResponse;
 import com.hokuapps.loadnativefileupload.utilities.FileUploadUtility;
