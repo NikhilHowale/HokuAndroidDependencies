@@ -2,6 +2,7 @@ package com.hokuapps.loadnativefileupload.utilities;
 
 import static com.hokuapps.loadnativefileupload.constants.FileUploadConstant.*;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
+@SuppressLint("StaticFieldLeak")
 public class CameraManager {
     public static final int REQUEST_IMAGE_CAPTURE = 100;
     public static final int TYPE_PROFILE_IMAGE = 4;
@@ -25,8 +26,8 @@ public class CameraManager {
     static Context context;
 
     public CameraManager(Activity activity, Context context) {
-        this.activity = activity;
-        this.context = context;
+        CameraManager.activity = activity;
+        CameraManager.context = context;
     }
 
     public static void launchCameraFromActivity(int type, int requestCode) {
@@ -55,7 +56,7 @@ public class CameraManager {
         }
 
         return FileProvider.getUriForFile(context,context.getPackageName() + ".provider", getOutputMediaFile(type));
-        // return Uri.fromFile(getOutputMediaFile(type));
+
     }
 
     public static Uri getProfilePictureOutputFileUri() {
@@ -87,10 +88,11 @@ public class CameraManager {
      * Create a File for saving an image
      */
     public static File getOutputMediaFile(int type) {
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-        /*String path = Utility.getRootFileDir() + File.separator + AppConstant.APP_TAG;
-        File mediaStorageDir = new File(path, AppConstant.FOLDER_NAME_MEDIA);*/
+        /* To be safe, you should check that the SDCard is mounted
+           using Environment.getExternalStorageState() before doing this.
+           String path = Utility.getRootFileDir() + File.separator + AppConstant.APP_TAG;
+           File mediaStorageDir = new File(path, AppConstant.FOLDER_NAME_MEDIA);
+           */
         File mediaStorageDir = FileUtility.getMediaDirPath();
 
         // This location works best if you want the created images to be shared

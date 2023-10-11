@@ -12,9 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.hokuapps.loadnativefileupload.R;
 import com.hokuapps.loadnativefileupload.annotate.AnnotateActivity;
@@ -30,8 +30,8 @@ import java.util.concurrent.ExecutionException;
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
 
     public Bitmap bitmap;
-    private ArrayList<Image> imageList;
-    private Context activity;
+    private final ArrayList<Image> imageList;
+    private final Context activity;
     private LruCache<String, Bitmap> mContactImageMemoryCache;
 
     public ImageAdapter(ArrayList<Image> list, Context activity) {
@@ -39,6 +39,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
         this.activity = activity;
     }
 
+    @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -48,7 +49,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
         Image image = imageList.get(position);
         if (image.isLocal()) {
@@ -116,11 +117,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
                     image1.setImageName(imageList.get(i).getImageName());
                     image1.setSelectedImageName(imageList.get(i).getSelectedImageName());
                     image1.setImageTitle(imageList.get(i).getImageTitle());
-                    if (i == position) {
-                        image1.setSelected(true);
-                    } else {
-                        image1.setSelected(false);
-                    }
+                    image1.setSelected(i == position);
                     imageList.set(i, image1);
                 }
             }
@@ -142,7 +139,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
                     addBitmapToMemoryCache(imageList.get(position).getSelectedImageName(), bmImg);
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(holder.image);
-                    holder.image.startDrag(data, shadowBuilder, imageList.get(position).getSelectedImageName(), 0);
+                    holder.image.startDragAndDrop(data, shadowBuilder, imageList.get(position).getSelectedImageName(), 0);
+
                     ((AnnotateActivity) activity).getDraggedBitMap(bmImg, imageList.get(position).getImageTitle(), imageList.get(position).getMetaData());
                 }
             } else {
@@ -151,7 +149,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
                     BitmapDrawable drawable = (BitmapDrawable) imageList.get(position).getNewDrawable();
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(holder.image);
-                    holder.image.startDrag(data, shadowBuilder, imageList.get(position).getNewDrawable(), 0);
+                    holder.image.startDragAndDrop(data, shadowBuilder, imageList.get(position).getNewDrawable(), 0);
                     ((AnnotateActivity) activity).getDraggedBitMap(drawable.getBitmap(), imageList.get(position).getImageTitle(), imageList.get(position).getMetaData());
                 }
             }
@@ -173,10 +171,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     @Override
     public int getItemCount() {
         return imageList.size();
-        // return 10;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView image;
         public CardView card;
 

@@ -3,10 +3,10 @@ package com.hokuapps.loadnativefileupload.annotate.adapter;
 import android.graphics.drawable.Drawable;
 
 public class Pencil {
-    private String imageTitle;
+    private final String imageTitle;
     private String colorCode;
     private Drawable drawable;
-    private boolean isSelected;
+    private final boolean isSelected;
 
     public Pencil(String imageTitle, String colorCode, Drawable drawable, boolean isSelected) {
         this.imageTitle = imageTitle;

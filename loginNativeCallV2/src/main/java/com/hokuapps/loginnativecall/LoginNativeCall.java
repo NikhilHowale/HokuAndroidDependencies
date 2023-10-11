@@ -24,7 +24,6 @@ public class LoginNativeCall {
     public WebView mWebView;
     public Activity mActivity;
     public Context mContext;
-    private String[] requiredJSONObjectKey = {};
     private final boolean whileDebuggingShowMissingAlert = false;
     private String appAuthToken = "";
     private String appSecretKey = "";
@@ -134,7 +133,7 @@ public class LoginNativeCall {
 
                 @Override
                 public void onFailure(Error error) {
-                    Log.e(TAG, "error===" + error.toString());
+                    //Log.e(TAG, "error===" + error.toString());
                 }
 
 

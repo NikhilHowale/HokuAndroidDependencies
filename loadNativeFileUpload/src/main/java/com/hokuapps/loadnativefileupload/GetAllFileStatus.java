@@ -1,22 +1,6 @@
 package com.hokuapps.loadnativefileupload;
 
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.APP_MEDIA_ARRAY;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAPTION;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_NM;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_CANCEL;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_GET_ALL_FILE_STATUS;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_NAME;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_STATUS;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_FILE_NM;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_MEDIA_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_S3_FILE_PATH;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_STATUS;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MEDIA_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.NEXT_BUTTON_CALLBACK;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_DATA_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.S3_FILE_PATH;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STATUS;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STEP;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.*;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,6 +8,7 @@ import android.text.TextUtils;
 import android.webkit.WebView;
 
 import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
+import com.hokuapps.loadnativefileupload.database.FileContentProvider;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 import com.hokuapps.loadnativefileupload.utilities.FileUploadUtility;
 
@@ -34,36 +19,32 @@ import java.util.ArrayList;
 
 public class GetAllFileStatus {
 
-    private Context mContext;
-    private WebView mWebView;
-    private Activity mActivity;
-    private String[] requiredJSONObjectKey = {};
+    private final Context mContext;
+    private final WebView mWebView;
+    private final Activity mActivity;
 
-    private String fileStatusCallBackFunction = "";
-    private boolean isGetAllFileStatusCalled = false;
 
-    public GetAllFileStatus(Activity activity, Context context, WebView webView) {
+    public GetAllFileStatus(Activity activity, Context context, WebView webView,String authority) {
         this.mActivity = activity;
         this.mContext = context;
         this.mWebView = webView;
+        FileContentProvider.getInstance().setUpDatabase(authority);
     }
 
     /**
      * Checks the status of the file()
-     * @param fileStatusRes
+     * @param fileStatusRes jsonObject with offlineID to check file status
      */
     public void getAllFileStatus(final String fileStatusRes) {
         try {
 
             if (TextUtils.isEmpty(fileStatusRes)) return;
 
-            requiredJSONObjectKey = new String[]{OFFLINE_DATA_ID, NEXT_BUTTON_CALLBACK};
-
             JSONObject jOFileStatus = new JSONObject(fileStatusRes);
             String offlineDataID = FileUploadUtility.getStringObjectValue(jOFileStatus, OFFLINE_DATA_ID);
 
-            fileStatusCallBackFunction = FileUploadUtility.getStringObjectValue(jOFileStatus, NEXT_BUTTON_CALLBACK);
-            isGetAllFileStatusCalled = FileUploadUtility.getJsonObjectBooleanValue(jOFileStatus, IS_GET_ALL_FILE_STATUS);
+            String fileStatusCallBackFunction = FileUploadUtility.getStringObjectValue(jOFileStatus, NEXT_BUTTON_CALLBACK);
+            boolean isGetAllFileStatusCalled = FileUploadUtility.getJsonObjectBooleanValue(jOFileStatus, IS_GET_ALL_FILE_STATUS);
 
             JSONObject jsonObjectFileStatus = getAllFileStatusList(offlineDataID);
 
@@ -77,8 +58,8 @@ public class GetAllFileStatus {
 
     /**
      * Get the status of all the files
-     * @param offlineDataID
-     * @return
+     * @param offlineDataID search file details against offlineID
+     * @return return all file details for offlineID
      */
     private JSONObject getAllFileStatusList(String offlineDataID) {
 

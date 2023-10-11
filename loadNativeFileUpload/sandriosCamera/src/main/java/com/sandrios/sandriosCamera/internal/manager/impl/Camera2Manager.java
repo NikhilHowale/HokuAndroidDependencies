@@ -1,7 +1,8 @@
 package com.sandrios.sandriosCamera.internal.manager.impl;
 
-import android.annotation.TargetApi;
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
@@ -18,9 +19,6 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
-import android.os.Build;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -28,8 +26,12 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.WindowManager;
 
-import com.sandrios.sandriosCamera.internal.configuration.ConfigurationProvider;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+
 import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
+import com.sandrios.sandriosCamera.internal.configuration.ConfigurationProvider;
 import com.sandrios.sandriosCamera.internal.manager.listener.CameraCloseListener;
 import com.sandrios.sandriosCamera.internal.manager.listener.CameraOpenListener;
 import com.sandrios.sandriosCamera.internal.manager.listener.CameraPhotoListener;
@@ -50,7 +52,6 @@ import java.util.Objects;
 /**
  * Created by Arpit Gandhi on 8/9/16.
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public final class Camera2Manager extends BaseCameraManager<String, TextureView.SurfaceTextureListener>
         implements ImageReader.OnImageAvailableListener, TextureView.SurfaceTextureListener {
 
@@ -81,7 +82,7 @@ public final class Camera2Manager extends BaseCameraManager<String, TextureView.
     private ImageReader imageReader;
     private CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
-        public void onOpened(CameraDevice cameraDevice) {
+        public void onOpened(@NonNull CameraDevice cameraDevice) {
             currentInstance.cameraDevice = cameraDevice;
             if (cameraOpenListener != null) {
                 uiHandler.post(new Runnable() {
@@ -206,6 +207,9 @@ public final class Camera2Manager extends BaseCameraManager<String, TextureView.
                 }
                 prepareCameraOutputs();
                 try {
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
                     manager.openCamera(currentCameraId, stateCallback, backgroundHandler);
                 } catch (Exception e) {
                     if (cameraOpenListener != null) {
@@ -301,13 +305,13 @@ public final class Camera2Manager extends BaseCameraManager<String, TextureView.
                                     previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
                                     try {
                                         captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, backgroundHandler);
-                                    } catch (Exception e) {
+                                    } catch (Exception ignored) {
                                     }
 
                                     try {
                                         videoRecorder.start();
-                                    } catch (Exception ignore) {
-                                        Log.e(TAG, "videoRecorder.start(): ", ignore);
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "videoRecorder.start(): ", e);
                                     }
 
                                     isVideoRecording = true;
@@ -667,6 +671,7 @@ public final class Camera2Manager extends BaseCameraManager<String, TextureView.
             previewState = STATE_WAITING_PRE_CAPTURE;
             captureSession.capture(previewRequestBuilder.build(), captureCallback, backgroundHandler);
         } catch (CameraAccessException e) {
+            e.printStackTrace();
         }
     }
 
@@ -699,8 +704,8 @@ public final class Camera2Manager extends BaseCameraManager<String, TextureView.
             } catch (Exception e) {
                 Log.e(TAG, "Error updating preview: ", e);
             }
-        } catch (Exception ignore) {
-            Log.e(TAG, "Error setting flash: ", ignore);
+        } catch (Exception exception) {
+            Log.e(TAG, "Error setting flash: ", exception);
         }
     }
 
@@ -776,7 +781,7 @@ public final class Camera2Manager extends BaseCameraManager<String, TextureView.
     }
 
     @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+    public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int width, int height) {
         if (surfaceTexture != null) startPreview(surfaceTexture);
     }
 

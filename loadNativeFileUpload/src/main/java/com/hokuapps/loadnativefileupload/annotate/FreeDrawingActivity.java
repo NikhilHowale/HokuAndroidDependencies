@@ -32,7 +32,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,6 +48,7 @@ import com.hokuapps.loadnativefileupload.annotate.adapter.Image;
 import com.hokuapps.loadnativefileupload.annotate.adapter.ImageAdapter;
 import com.hokuapps.loadnativefileupload.annotate.adapter.Pencil;
 import com.hokuapps.loadnativefileupload.annotate.adapter.PencilAdapter;
+import com.hokuapps.loadnativefileupload.constants.KeyConstants.*;
 import com.hokuapps.loadnativefileupload.imageEditor.IPRectangleAnnotationActivity;
 import com.hokuapps.loadnativefileupload.utilities.FileUploadUtility;
 import com.xinlan.imageeditlibrary.editimage.utils.BitmapUtils;
@@ -105,6 +108,7 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
     private Paint brush = new Paint(Paint.ANTI_ALIAS_FLAG);
     private ArrayList<Path> paths = new ArrayList<Path>();
 
+    @SuppressLint("StaticFieldLeak")
     private static Context mContext;
 
     public static void start(Activity context, final String data, final String editImagePath, final String outputPath, String colorCode, String title, final int requestCode, int type) {
@@ -161,7 +165,7 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
 
     private void deleteAnnotation() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure want to clear annotation.");
+        builder.setMessage(R.string.lbl_confirmation);
         builder.setPositiveButton(R.string.lbl_yes, (dialog, which) -> {
             dialog.dismiss();
             finish();
@@ -192,7 +196,7 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
         recyclerViewPencil = findViewById(R.id.recyclerViewPencil);
         imageTitle = findViewById(R.id.imgTitle);
         turboImageView = findViewById(R.id.turboImageView);
-        turboImageView.setListener(this);
+        turboImageView.setListener();
         text_done = findViewById(R.id.text_done);
         text_done.setOnClickListener(new SaveBtnClick());
 
@@ -247,9 +251,12 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
 
     private void setStatusBarColor() {
         try {
-            String color = getIntent().getExtras().containsKey(EXTRA_TOOLBAR_COLOR)
-                    ? getIntent().getExtras().getString(EXTRA_TOOLBAR_COLOR)
-                    : "#FFFFFF";
+            String color = "#FFFFFF";
+
+            if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_TOOLBAR_COLOR)) {
+                color = getIntent().getExtras().getString(EXTRA_TOOLBAR_COLOR);
+            }
+
             if (!TextUtils.isEmpty(color) && !"#FFFFFF".equalsIgnoreCase(color)) {
                 setStatusBarColor(FileUploadUtility.changeColorToPrimaryHSB(color));
             }
@@ -260,13 +267,11 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
     }
 
     public void setStatusBarColor(int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            TypedValue outValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.colorPrimaryDark, outValue, true);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        TypedValue outValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimaryDark, outValue, true);
 
-            getWindow().setStatusBarColor(color == 0 ? outValue.data : color);
-        }
+        getWindow().setStatusBarColor(color == 0 ? outValue.data : color);
     }
 
     private void getData() {
@@ -290,9 +295,9 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                 JSONObject object = new JSONObject(getIntent().getStringExtra(IPRectangleAnnotationActivity.DATA));
                 if (object.has("annotaionsArray")) {
                     btnFreeDraw.setVisibility(View.VISIBLE);
-                    JSONArray annotaionsArray = object.getJSONArray("annotaionsArray");
-                    for (int i = 0; i < annotaionsArray.length(); i++) {
-                        JSONObject jsonObject = annotaionsArray.getJSONObject(i);
+                    JSONArray annotationsArray = object.getJSONArray("annotaionsArray");
+                    for (int i = 0; i < annotationsArray.length(); i++) {
+                        JSONObject jsonObject = annotationsArray.getJSONObject(i);
                         Image image = new Image(FileUploadUtility.getHtmlDirFromSandbox(mContext).getAbsolutePath() +
                                 File.separator + jsonObject.getString("imageName"), FileUploadUtility.getHtmlDirFromSandbox(mContext).getAbsolutePath() +
                                 File.separator + jsonObject.getString("selectedImageName"), jsonObject.getString("title"), jsonObject.getString("metadata"), false, false, false);
@@ -300,8 +305,12 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                     }
                 } else {
                     btnFreeDraw.setVisibility(View.GONE);
-                    Image image1 = new Image(getResources().getDrawable(R.drawable.line_white), getResources().getDrawable(R.drawable.line_red), "Draw Line", "", false, true, true);
-                    Image image2 = new Image(getResources().getDrawable(R.drawable.circle_white), getResources().getDrawable(R.drawable.circle_red), "Circle", "", false, true, false);
+                    Image image1 = new Image(AppCompatResources.getDrawable(this,R.drawable.line_white),
+                            AppCompatResources.getDrawable(this,R.drawable.line_red),
+                            "Draw Line", "", false, true, true);
+                    Image image2 = new Image(AppCompatResources.getDrawable(this,R.drawable.circle_white),
+                            AppCompatResources.getDrawable(this,R.drawable.circle_red),
+                            "Circle", "", false, true, false);
                     imageList.add(image1);
                     imageList.add(image2);
                 }
@@ -318,17 +327,17 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                 recyclerViewPencil.setVisibility(View.VISIBLE);
                 TurboImageView.isFreeDraw = true;
                 TurboImageView.isDraw = "Path";
-                pencilList.add(new Pencil("White", "#FFFFFF", getResources().getDrawable(R.drawable.eraser), false));
-                pencilList.add(new Pencil("Black", "#111111", getResources().getDrawable(R.drawable.black), false));
-                pencilList.add(new Pencil("Blue", "#0000FF", getResources().getDrawable(R.drawable.blue), false));
-                pencilList.add(new Pencil("Brown", "#A52A2A", getResources().getDrawable(R.drawable.brown), false));
-                pencilList.add(new Pencil("Dark Green", "#006400", getResources().getDrawable(R.drawable.darkgreen), false));
-                pencilList.add(new Pencil("Dark Orange", "#FF8C00", getResources().getDrawable(R.drawable.darkorange), false));
-                pencilList.add(new Pencil("Grey", "#808080", getResources().getDrawable(R.drawable.grey), false));
-                pencilList.add(new Pencil("Light Blue", "#ADD8E6", getResources().getDrawable(R.drawable.lightblue), false));
-                pencilList.add(new Pencil("Light Green", "#90EE90", getResources().getDrawable(R.drawable.lightgreen), false));
-                pencilList.add(new Pencil("Red", "#FF0000", getResources().getDrawable(R.drawable.red), false));
-                pencilList.add(new Pencil("Yellow", "#FFFF00", getResources().getDrawable(R.drawable.yellow), false));
+                pencilList.add(new Pencil("White", "#FFFFFF", AppCompatResources.getDrawable(this, R.drawable.eraser), false));
+                pencilList.add(new Pencil("Black", "#111111", AppCompatResources.getDrawable(this, R.drawable.black), false));
+                pencilList.add(new Pencil("Blue", "#0000FF", AppCompatResources.getDrawable(this, R.drawable.blue), false));
+                pencilList.add(new Pencil("Brown", "#A52A2A", AppCompatResources.getDrawable(this, R.drawable.brown), false));
+                pencilList.add(new Pencil("Dark Green", "#006400", AppCompatResources.getDrawable(this, R.drawable.darkgreen), false));
+                pencilList.add(new Pencil("Dark Orange", "#FF8C00", AppCompatResources.getDrawable(this, R.drawable.darkorange), false));
+                pencilList.add(new Pencil("Grey", "#808080", AppCompatResources.getDrawable(this, R.drawable.grey), false));
+                pencilList.add(new Pencil("Light Blue", "#ADD8E6", AppCompatResources.getDrawable(this, R.drawable.lightblue), false));
+                pencilList.add(new Pencil("Light Green", "#90EE90", AppCompatResources.getDrawable(this, R.drawable.lightgreen), false));
+                pencilList.add(new Pencil("Red", "#FF0000", AppCompatResources.getDrawable(this, R.drawable.red), false));
+                pencilList.add(new Pencil("Yellow", "#FFFF00", AppCompatResources.getDrawable(this, R.drawable.yellow), false));
 
                 PencilAdapter pencilAdapter = new PencilAdapter(pencilList, this);
                 recyclerViewPencil.setHasFixedSize(true);
@@ -346,7 +355,7 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
 
     /**
      * load image from the path
-     * @param filepath
+     * @param filepath create bitmap using filepath and load into imageview
      */
     public void loadImage(String filepath) {
         if (mLoadImageTask != null) {
@@ -381,6 +390,7 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
             this.metaData = metaData;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return x + ", " + y;
@@ -397,9 +407,9 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
         protected void onPostExecute(Bitmap result) {
             super.onPostExecute(result);
             if (result != null) {
-                frame_annotation.setBackground(new BitmapDrawable(result));
+                frame_annotation.setBackground(new BitmapDrawable(getResources(),result));
             } else {
-                frame_annotation.setBackgroundColor(getResources().getColor(R.color.white));
+                frame_annotation.setBackgroundColor(getColor(R.color.white));
             }
 
         }
@@ -420,23 +430,32 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
 
                 @Override
                 public void onPermissionDenied(List<String> deniedPermissions) {
-
+                    Log.e(TAG, "onPermissionDenied: " + deniedPermissions);
                 }
             };
-            TedPermission.create()
-                    .setPermissionListener(permissionListener)
-                    .setPermissions(
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                    )
-                    .check();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                TedPermission.create()
+                        .setPermissionListener(permissionListener)
+                        .setPermissions(
+                                Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                        .check();
+            } else {
+                TedPermission.create()
+                        .setPermissionListener(permissionListener)
+                        .setPermissions(
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .check();
+            }
+
         }
     }// end inner class
 
     @SuppressLint("StaticFieldLeak")
     private final class SaveImageAnnotatedImage extends AsyncTask<Bitmap, Void, Void> {
 
-        private FreeDrawingActivity mContext;
+        private final FreeDrawingActivity mContext;
         private Dialog dialog;
 
         public SaveImageAnnotatedImage(FreeDrawingActivity context) {
@@ -446,7 +465,7 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = getLoadingDialog(mContext, "Saving...", false);
+            dialog = getLoadingDialog(mContext, getString(R.string.label_saving), false);
             dialog.show();
         }
 
@@ -471,21 +490,21 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                         TurboImageView.Point point = null;
                         TurboImageView.Point pointEnd = null;
                         for (Map.Entry<Integer, ArrayList<TurboImageView.Point>> entry : mappings) {
-                            point = ((TurboImageView.Point) ((ArrayList) entry.getValue()).get(0));
-                            pointEnd = ((TurboImageView.Point) ((ArrayList) entry.getValue()).get(1));
-                            object.put("badge", entry.getKey());
-                            object.put("type", point.drawType);
-                            object.put("title", point.drawType);
-                            object.put("color", String.valueOf(TurboImageView.colorCode));
+                            point = entry.getValue().get(0);
+                            pointEnd = entry.getValue().get(1);
+                            object.put(AnnotationData.BADGE, entry.getKey());
+                            object.put(AnnotationData.TYPE, point.drawType);
+                            object.put(AnnotationData.TITLE, point.drawType);
+                            object.put(AnnotationData.COLOR, String.valueOf(TurboImageView.colorCode));
 
-                            start.put("x", point.x);
-                            start.put("y", point.y);
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
 
-                            end.put("x", pointEnd.x);
-                            end.put("y", pointEnd.y);
+                            end.put(AnnotationData.X, pointEnd.x);
+                            end.put(AnnotationData.Y, pointEnd.y);
 
-                            object.put("start", start);
-                            object.put("end", end);
+                            object.put(AnnotationData.START, start);
+                            object.put(AnnotationData.END, end);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -496,14 +515,15 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                     if (cirRectPoints.size() > 0) {
                         for (int i = 1; i <= cirRectPoints.size(); i++) {
                             TurboImageView.Point point = null;
-                            object.put("badge", i);
-                            object.put("type", point.drawType);
-                            object.put("title", point.drawType);
-                            object.put("color", String.valueOf(TurboImageView.colorCode));
                             point = cirRectPoints.get(i - 1);
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            object.put(AnnotationData.BADGE, i);
+                            object.put(AnnotationData.TYPE, point.drawType);
+                            object.put(AnnotationData.TITLE, point.drawType);
+                            object.put(AnnotationData.COLOR, String.valueOf(TurboImageView.colorCode));
+
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
+                            object.put(AnnotationData.START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -514,15 +534,15 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                     if (drawPoints.size() > 0) {
                         for (int i = 1; i <= drawPoints.size(); i++) {
                             Point point = drawPoints.get(i - 1);
-                            object.put("badge", i);
-                            object.put("type", drawType);
-                            object.put("title", point.drawType);
-                            object.put("metadata", point.metaData);
-                            object.put("color", toolbarColor);
+                            object.put(AnnotationData.BADGE, i);
+                            object.put(AnnotationData.TYPE, drawType);
+                            object.put(AnnotationData.TITLE, point.drawType);
+                            object.put(AnnotationData.METADATA, point.metaData);
+                            object.put(AnnotationData.COLOR, toolbarColor);
 
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
+                            object.put(AnnotationData.START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -539,11 +559,12 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                 FileUtil.ablumUpdate(mContext, saveFilePath);
                 returnIntent.putExtra(ORIGINAL_IMAGE, originalImage);
                 int annotationCount = cirRectPoints.size() + TurboImageView.badgeCount + drawPoints.size();
-                returnIntent.putExtra(ANNOTATION_COUNT, "" + annotationCount);
+                returnIntent.putExtra(ANNOTATION_COUNT, annotationCount);
                 returnIntent.putExtra(ANNOTATION_DATA, annotateData.toString());
                 mContext.setResult(RESULT_OK, returnIntent);
 
-            } else {
+            }
+            else {
                 JSONArray annotateData = new JSONArray();
                 JSONObject object = new JSONObject();
                 JSONObject start = new JSONObject();
@@ -554,21 +575,21 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                         TurboImageView.Point point = null;
                         TurboImageView.Point pointEnd = null;
                         for (Map.Entry<Integer, ArrayList<TurboImageView.Point>> entry : mappings) {
-                            point = ((TurboImageView.Point) ((ArrayList) entry.getValue()).get(0));
-                            pointEnd = ((TurboImageView.Point) ((ArrayList) entry.getValue()).get(1));
-                            object.put("badge", entry.getKey());
-                            object.put("type", point.drawType);
-                            object.put("title", point.drawType);
-                            object.put("color", String.valueOf(TurboImageView.colorCode));
+                            point = entry.getValue().get(0);
+                            pointEnd = entry.getValue().get(1);
+                            object.put(AnnotationData.BADGE, entry.getKey());
+                            object.put(AnnotationData.TYPE, point.drawType);
+                            object.put(AnnotationData.TITLE, point.drawType);
+                            object.put(AnnotationData.COLOR, String.valueOf(TurboImageView.colorCode));
 
-                            start.put("x", point.x);
-                            start.put("y", point.y);
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
 
-                            end.put("x", pointEnd.x);
-                            end.put("y", pointEnd.y);
+                            end.put(AnnotationData.X, pointEnd.x);
+                            end.put(AnnotationData.Y, pointEnd.y);
 
-                            object.put("start", start);
-                            object.put("end", end);
+                            object.put(AnnotationData.START, start);
+                            object.put(AnnotationData.END, end);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -580,14 +601,15 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                     if (cirRectPoints.size() > 0) {
                         for (int i = 1; i <= cirRectPoints.size(); i++) {
                             TurboImageView.Point point = null;
-                            object.put("badge", i);
-                            object.put("type", point.drawType);
-                            object.put("title", point.drawType);
-                            object.put("color", String.valueOf(TurboImageView.colorCode));
                             point = cirRectPoints.get(i - 1);
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            object.put(AnnotationData.BADGE, i);
+                            object.put(AnnotationData.TYPE, point.drawType);
+                            object.put(AnnotationData.TITLE, point.drawType);
+                            object.put(AnnotationData.COLOR, String.valueOf(TurboImageView.colorCode));
+
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
+                            object.put(AnnotationData.START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -598,15 +620,15 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                     if (drawPoints.size() > 0) {
                         for (int i = 1; i <= drawPoints.size(); i++) {
                             Point point = drawPoints.get(i - 1);
-                            object.put("badge", i);
-                            object.put("type", drawType);
-                            object.put("title", point.drawType);
-                            object.put("metadata", point.metaData);
-                            object.put("color", toolbarColor);
+                            object.put(AnnotationData.BADGE, i);
+                            object.put(AnnotationData.TYPE, drawType);
+                            object.put(AnnotationData.TITLE, point.drawType);
+                            object.put(AnnotationData.METADATA, point.metaData);
+                            object.put(AnnotationData.COLOR, toolbarColor);
 
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
+                            object.put(AnnotationData.START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -621,7 +643,7 @@ public class FreeDrawingActivity extends AppCompatActivity implements TurboImage
                 returnIntent.putExtra(ORIGINAL_IMAGE, originalImage);
                 returnIntent.putExtra(IMAGE_IS_EDIT, false);
                 int annotationCount = cirRectPoints.size() + TurboImageView.badgeCount + drawPoints.size();
-                returnIntent.putExtra(ANNOTATION_COUNT, "" + annotationCount);
+                returnIntent.putExtra(ANNOTATION_COUNT, annotationCount);
                 returnIntent.putExtra(ANNOTATION_DATA, annotateData.toString());
                 mContext.setResult(RESULT_OK, returnIntent);
             }

@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hokuapps.loadmapviewbyconfig.App;
+import com.hokuapps.loadmapviewbyconfig.BuildConfig;
 import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
 
@@ -79,7 +80,7 @@ public class Utility {
 
     /**
      * Show toast with given message
-     * @param context
+     * @param context context
      * @param msg message to be shown
      */
     public static void showMessage(Context context, String msg) {

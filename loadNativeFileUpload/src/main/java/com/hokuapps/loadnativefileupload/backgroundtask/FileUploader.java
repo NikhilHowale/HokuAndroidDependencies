@@ -34,12 +34,6 @@ public class FileUploader implements OnUploadListener {
 
     String authToken;
 
-    /**
-     * Constructor of profile uploader class
-     */
-    private FileUploader() {
-    }
-
     private FileUploader(AppMediaDetails appMediaDetails, Context context) {
         this.appMediaDetails = appMediaDetails;
         this.context = context;
@@ -123,10 +117,8 @@ public class FileUploader implements OnUploadListener {
             serviceRequest.setFileName(appMediaDetails.getFileName());
             serviceRequest.setAppMediaDetails(appMediaDetails);
             //set headers
-            serviceRequest.addHTTPHeader(FileUploadConstant.AuthIO.AUTH_TOKEN.toLowerCase(),
-                    appsServerToken);
-
-            serviceRequest.addHTTPHeader("Authorization", authToken);
+            serviceRequest.addHTTPHeader(FileUploadConstant.AuthIO.AUTH_TOKEN.toLowerCase(), appsServerToken);
+            //serviceRequest.addHTTPHeader("Authorization", authToken);
             serviceRequest.addHTTPHeader("key", appID);
             serviceRequest.addHTTPHeader("filename", appMediaDetails.getFileName());
 

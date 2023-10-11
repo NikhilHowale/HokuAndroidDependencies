@@ -1,13 +1,9 @@
 package com.hokuapps.biometricauthentication;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.WebView;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,38 +12,29 @@ import org.json.JSONObject;
 public class AuthenticateWithTouch {
 
     Activity mWebAppActivity;
-    private final int BIOMETRIC_AUT = 0001;
-    private  WebView mWebView;
+    private final int BIOMETRIC_AUT = 1001;
+    private final WebView mWebView;
     public AuthenticateWithTouch (Activity activity, WebView webView){
          this.mWebAppActivity = activity;
          this.mWebView = webView;
 
     }
 
-    public AuthenticateWithTouch (){
-
-    }
 
     public void authenticateWithTouchID(final String data) {
-        Log.i("@authentic","Inside Authentication Bridge call");
+
         mWebAppActivity.runOnUiThread(() -> {
             final String nextButtonCallback;
-            final JSONObject jsonObjectRes = new JSONObject();
+
             try {
                 final JSONObject jsonObj = new JSONObject(data);
                 nextButtonCallback = getStringObjectValue(jsonObj, "nextButtonCallback");
                 if (!TextUtils.isEmpty(nextButtonCallback)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        Log.i("@authentic","opening biometric Authentication Dialog");
+                    Intent biometricIntent = new Intent(mWebAppActivity, BiometricAuthentication.class);
+                    biometricIntent.putExtra("nextButtonCallback",nextButtonCallback);
+                    biometricIntent.putExtra("jasonObject",jsonObj.toString());
+                    mWebAppActivity.startActivityForResult(biometricIntent,BIOMETRIC_AUT);
 
-                        Intent biometricIntent = new Intent(mWebAppActivity, BiometricAuthentication.class);
-                        biometricIntent.putExtra("nextButtonCallback",nextButtonCallback);
-                        biometricIntent.putExtra("jasonObject",jsonObj.toString());
-                        mWebAppActivity.startActivityForResult(biometricIntent,BIOMETRIC_AUT);
-
-                    } else {
-                        sendFingerPrintResultToServer(nextButtonCallback, jsonObj, 1);
-                    }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -108,12 +95,7 @@ public class AuthenticateWithTouch {
 
         activity.runOnUiThread(() -> {
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    webView.evaluateJavascript(String.format("javascript:" + callingJavaScriptFn + "(%s)", response), null);
-                } else {
-                    webView.loadUrl(String.format("javascript:" + callingJavaScriptFn + "(%s)", response));
-                }
-
+                webView.evaluateJavascript(String.format("javascript:" + callingJavaScriptFn + "(%s)", response), null);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

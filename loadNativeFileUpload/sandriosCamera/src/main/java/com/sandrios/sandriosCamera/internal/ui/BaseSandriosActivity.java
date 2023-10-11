@@ -78,7 +78,7 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
     protected int currentMediaActionState;
     protected int currentCameraType = CameraSwitchView.CAMERA_TYPE_REAR;
     @CameraConfiguration.MediaQuality
-    protected int newQuality = -1;
+    protected int newQuality = CameraConfiguration.MEDIA_QUALITY_AUTO;
     protected int flashMode = CameraConfiguration.FLASH_MODE_AUTO;
     private CameraControlPanel cameraControlPanel;
     private AlertDialog settingsDialog;
@@ -155,9 +155,6 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
                     case CameraConfiguration.MEDIA_QUALITY_HIGH:
                         mediaQuality = CameraConfiguration.MEDIA_QUALITY_HIGH;
                         break;
-                    case CameraConfiguration.MEDIA_QUALITY_MEDIUM:
-                        mediaQuality = CameraConfiguration.MEDIA_QUALITY_MEDIUM;
-                        break;
                     case CameraConfiguration.MEDIA_QUALITY_LOW:
                         mediaQuality = CameraConfiguration.MEDIA_QUALITY_LOW;
                         break;
@@ -225,9 +222,6 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
 
             if (bundle.containsKey(CameraConfiguration.Arguments.FLASH_MODE)) {
                 switch (bundle.getInt(CameraConfiguration.Arguments.FLASH_MODE)) {
-                    case CameraConfiguration.FLASH_MODE_AUTO:
-                        flashMode = CameraConfiguration.FLASH_MODE_AUTO;
-                        break;
                     case CameraConfiguration.FLASH_MODE_ON:
                         flashMode = CameraConfiguration.FLASH_MODE_ON;
                         break;
@@ -337,7 +331,9 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
         settingsDialog = builder.create();
         settingsDialog.show();
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.copyFrom(settingsDialog.getWindow().getAttributes());
+        if(settingsDialog.getWindow() != null)
+            layoutParams.copyFrom(settingsDialog.getWindow().getAttributes());
+
         layoutParams.width = Utils.convertDipToPixels(this, 350);
         layoutParams.height = Utils.convertDipToPixels(this, 350);
         settingsDialog.getWindow().setAttributes(layoutParams);
@@ -405,8 +401,7 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
 
     @Override
     protected void onScreenRotation(int degrees) {
-//        cameraControlPanel.rotateControls(degrees);
-//        rotateSettingsDialog(degrees);
+
     }
 
     @Override
@@ -520,7 +515,7 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
                     cameraControlPanel.showCrop(),
                     showCaption,
                     caption,
-                    isHideRetake, false, cameraControlPanel.isRectangle(),cameraControlPanel.getResponseData());
+                    isHideRetake, false,cameraControlPanel.getResponseData());
         } else {
             intent = PreviewActivity.newIntent(this,
                     getMediaAction(),
@@ -528,13 +523,14 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
                     cameraControlPanel.showCrop(),
                     showCaption,
                     caption,
-                    isHideRetake);
+                    isHideRetake,false);
         }
         startActivityForResult(intent, REQUEST_PREVIEW_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             List<Image> images = null;
             if (requestCode == REQUEST_PREVIEW_CODE) {
@@ -565,7 +561,7 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
                         true);
                 setResult(RESULT_OK, resultIntent);
                 finish();
-            }else if (requestCode == REQUEST_SELECT_MULTIPLE_PHOTOS_FROM_GALLERY_CODE) {
+            } else if (requestCode == REQUEST_SELECT_MULTIPLE_PHOTOS_FROM_GALLERY_CODE) {
                 // Get a list of picked images
                 images = ImagePicker.getImages(data);
                 if (images != null && images.size() == 1) {
@@ -579,7 +575,7 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
                     resultIntent.putExtra(CameraConfiguration.Arguments.IS_MULTIPLE_IMAGES,
                             false);
 
-                   // resultIntent.putExtra(CameraConfiguration.Arguments.ISCAPTIONREADONLY, isCaptionReadOnly);
+                    // resultIntent.putExtra(CameraConfiguration.Arguments.ISCAPTIONREADONLY, isCaptionReadOnly);
 
                     resultIntent.putExtra("isFromGallery",
                             true);
@@ -597,7 +593,7 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
                         resultIntent.putExtra(CameraConfiguration.Arguments.IS_MULTIPLE_IMAGES,
                                 true);
 
-                       // resultIntent.putExtra(CameraConfiguration.Arguments.ISCAPTIONREADONLY, isCaptionReadOnly);
+                        // resultIntent.putExtra(CameraConfiguration.Arguments.ISCAPTIONREADONLY, isCaptionReadOnly);
                         resultIntent.putParcelableArrayListExtra(CameraConfiguration.Arguments.ARRAY_LIST_OF_IMAGES, (ArrayList<? extends Parcelable>) images);
 
                         resultIntent.putExtra("isFromGallery",
@@ -611,14 +607,6 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
         }
     }
 
-    private void rotateSettingsDialog(int degrees) {
-        if (settingsDialog != null && settingsDialog.isShowing() && Build.VERSION.SDK_INT > 10) {
-            ViewGroup dialogView = (ViewGroup) settingsDialog.getWindow().getDecorView();
-            for (int i = 0; i < dialogView.getChildCount(); i++) {
-                dialogView.getChildAt(i).setRotation(degrees);
-            }
-        }
-    }
 
     protected abstract CharSequence[] getVideoQualityOptions();
 

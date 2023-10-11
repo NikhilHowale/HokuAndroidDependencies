@@ -1,23 +1,15 @@
 package com.sandrios.sandriosCamera.internal.ui.preview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -27,32 +19,24 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 
-import com.bumptech.glide.Glide;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.sandrios.sandriosCamera.R;
 import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
 import com.sandrios.sandriosCamera.internal.ui.BaseSandriosActivity;
 import com.sandrios.sandriosCamera.internal.ui.view.AspectFrameLayout;
 import com.sandrios.sandriosCamera.internal.utils.ScalingUtility;
 import com.sandrios.sandriosCamera.internal.utils.Utils;
-import com.theartofdev.edmodo.cropper.CropImageView;
 import com.xinlan.imageeditlibrary.editimage.view.imagezoom.ImageViewTouch;
 import com.xinlan.imageeditlibrary.editimage.view.imagezoom.ImageViewTouchBase;
-import com.bumptech.glide.request.transition.Transition;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
 
-/*import com.yalantis.ucrop.UCrop;
-import com.yalantis.ucrop.view.UCropView;*/
 
 /**
  * Created by Arpit Gandhi on 7/6/16.
@@ -62,8 +46,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private static final String TAG = "PreviewActivity";
 
     private final static String SHOW_CROP = CameraConfiguration.Arguments.ENABLE_CROP;
-    private final static String ISFROMGALLERY = "isFromGallery";
-    private final static String IS_RECTANGLE = "isRectangle";
+    private final static String IS_FROM_GALLERY = "isFromGallery";
     private final static String HIDE_RETAKE = "hide_retake";
     private final static String MEDIA_ACTION_ARG = "media_action_arg";
     private final static String FILE_PATH_ARG = CameraConfiguration.Arguments.FILE_PATH;
@@ -84,7 +67,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private SurfaceView surfaceView;
     private FrameLayout photoPreviewContainer;
     private ImageViewTouch imagePreview;
-    private CropImageView cropImageView;
     private AspectFrameLayout videoPreviewContainer;
 
     private MediaController mediaController;
@@ -94,10 +76,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private boolean isVideoPlaying = true;
     private boolean showCrop = false;
     private boolean hideRetake = false;
-
-    private Bitmap mainBitmap = null;
-    private int imageWidth, imageHeight;
-
     private boolean showCaption;
     private String caption;
 
@@ -107,10 +85,9 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private EditText captionText;
 
     private boolean isFromGallery;
-    private boolean isRectangle;
     private String responseData = "";
 
-    private MediaController.MediaPlayerControl MediaPlayerControlImpl = new MediaController.MediaPlayerControl() {
+    private final MediaController.MediaPlayerControl MediaPlayerControlImpl = new MediaController.MediaPlayerControl() {
         @Override
         public void start() {
             mediaPlayer.start();
@@ -167,59 +144,71 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         }
     };
 
-    private SurfaceHolder.Callback surfaceCallbacks = new SurfaceHolder.Callback() {
+    private final SurfaceHolder.Callback surfaceCallbacks = new SurfaceHolder.Callback() {
         @Override
-        public void surfaceCreated(SurfaceHolder holder) {
+        public void surfaceCreated(@NonNull SurfaceHolder holder) {
             showVideoPreview(holder);
         }
 
         @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
 
         }
 
         @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
+        public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
 
         }
     };
 
+    /**
+     * Create PreviewActivity Intent with Extra
+     * @param context context
+     * @param mediaAction flag for to show image or video preview
+     * @param filePath path of file
+     * @param showImageCrop flag for crop image
+     * @param showCaption flag for caption
+     * @param caption additional text with image or video
+     * @param isHideRetake flag for retry option
+     * @param isFromGallery flag for gallery image
+     * @return return PreviewActivity with intent extra
+     */
     public static Intent newIntent(Context context, @CameraConfiguration.MediaAction int mediaAction, String filePath, boolean showImageCrop, boolean showCaption, String caption, boolean isHideRetake, boolean isFromGallery) {
 
         return new Intent(context, PreviewActivity.class)
                 .putExtra(MEDIA_ACTION_ARG, mediaAction)
                 .putExtra(SHOW_CROP, showImageCrop)
-                .putExtra(ISFROMGALLERY, isFromGallery)
+                .putExtra(IS_FROM_GALLERY, isFromGallery)
                 .putExtra(HIDE_RETAKE, isHideRetake)
                 .putExtra(FILE_PATH_ARG, filePath)
                 .putExtra(SHOW_CAPTION_ARG, showCaption)
                 .putExtra(CAPTION_ARG, caption);
     }
 
-    public static Intent newIntent(Context context, @CameraConfiguration.MediaAction int mediaAction, String filePath, boolean showImageCrop, boolean showCaption, String caption, boolean isHideRetake, boolean isFromGallery, boolean isRectangle, String responseData) {
+    /**
+     * Create PreviewActivity Intent with Extra
+     * @param context context
+     * @param mediaAction flag for to show image or video preview
+     * @param filePath path of file
+     * @param showImageCrop flag for crop image
+     * @param showCaption flag for caption
+     * @param caption additional text with image or video
+     * @param isHideRetake flag for retry option
+     * @param isFromGallery flag for gallery image
+     * @param responseData jsonObject with metadata
+     * @return return PreviewActivity with intent extra
+     */
+    public static Intent newIntent(Context context, @CameraConfiguration.MediaAction int mediaAction, String filePath, boolean showImageCrop, boolean showCaption, String caption, boolean isHideRetake, boolean isFromGallery, String responseData) {
 
         return new Intent(context, PreviewActivity.class)
                 .putExtra(MEDIA_ACTION_ARG, mediaAction)
                 .putExtra(SHOW_CROP, showImageCrop)
-                .putExtra(ISFROMGALLERY, isFromGallery)
+                .putExtra(IS_FROM_GALLERY, isFromGallery)
                 .putExtra(HIDE_RETAKE, isHideRetake)
                 .putExtra(FILE_PATH_ARG, filePath)
                 .putExtra(SHOW_CAPTION_ARG, showCaption)
                 .putExtra(CAPTION_ARG, caption)
-                .putExtra(IS_RECTANGLE, isRectangle)
                 .putExtra(RESPONSE_DATA, responseData);
-    }
-
-    public static Intent newIntent(Context context, @CameraConfiguration.MediaAction int mediaAction, String filePath, boolean showImageCrop, boolean showCaption, String caption, boolean isHideRetake) {
-
-        return new Intent(context, PreviewActivity.class)
-                .putExtra(MEDIA_ACTION_ARG, mediaAction)
-                .putExtra(SHOW_CROP, showImageCrop)
-                .putExtra(ISFROMGALLERY, false)
-                .putExtra(HIDE_RETAKE, isHideRetake)
-                .putExtra(FILE_PATH_ARG, filePath)
-                .putExtra(SHOW_CAPTION_ARG, showCaption)
-                .putExtra(CAPTION_ARG, caption);
     }
 
 
@@ -250,20 +239,22 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
         showCaption = getIntent().getBooleanExtra(SHOW_CAPTION_ARG, false);
         caption = getIntent().getStringExtra(CAPTION_ARG);
-        isFromGallery = getIntent().getBooleanExtra(ISFROMGALLERY, false);
-        isRectangle = getIntent().getBooleanExtra(IS_RECTANGLE, false);
+        isFromGallery = getIntent().getBooleanExtra(IS_FROM_GALLERY, false);
         responseData = getIntent().getStringExtra(CameraConfiguration.Arguments.RESPONSE_DATA);
         initView();
         initData(savedInstanceState);
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initData(Bundle savedInstanceState) {
         mContext = this;
 
         Bundle args = getIntent().getExtras();
 
-        mediaAction = args.getInt(MEDIA_ACTION_ARG);
+        if(args == null) return;
+
+        mediaAction = args.getInt(MEDIA_ACTION_ARG,101);
         previewFilePath = args.getString(FILE_PATH_ARG);
         showCrop = args.getBoolean(SHOW_CROP);
         hideRetake = args.getBoolean(HIDE_RETAKE);
@@ -281,20 +272,16 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
             } else finish();
         }
 
-        initHeightAndWidth();
-        surfaceView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (mediaController == null) return false;
-                if (mediaController.isShowing()) {
-                    mediaController.hide();
-                    showButtonPanel(true);
-                } else {
-                    showButtonPanel(false);
-                    mediaController.show();
-                }
-                return false;
+        surfaceView.setOnTouchListener((v, event) -> {
+            if (mediaController == null) return false;
+            if (mediaController.isShowing()) {
+                mediaController.hide();
+                showButtonPanel(true);
+            } else {
+                showButtonPanel(false);
+                mediaController.show();
             }
+            return false;
         });
 
     }
@@ -318,42 +305,10 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         videoPreviewContainer = findViewById(R.id.previewAspectFrameLayout);
         photoPreviewContainer = findViewById(R.id.photo_preview_container);
         imagePreview = findViewById(R.id.image_view);
-        cropImageView = findViewById(R.id.cropImageView);
+
         buttonPanel = findViewById(R.id.preview_control_panel);
         captionView = findViewById(R.id.caption_root_container);
 
-        //set oval shape for crop
-        cropImageView .setCropShape(Build.VERSION.SDK_INT >= 28 ? CropImageView.CropShape.RECTANGLE : CropImageView.CropShape.OVAL);
-        cropImageView.setAspectRatio(2, 2);
-        cropImageView.setFixedAspectRatio(false);
-
-        JSONObject jsonObjectResponseData = null;
-        try {
-            if (!TextUtils.isEmpty(responseData)) {
-
-                jsonObjectResponseData = new JSONObject(responseData);
-                if (jsonObjectResponseData != null) {
-
-                    if (jsonObjectResponseData.optBoolean("isRectangle")) {
-//                Rectangle
-                        cropImageView.setAspectRatio(3, 2);
-                        cropImageView.setCropShape(CropImageView.CropShape.RECTANGLE);
-                    } else if (jsonObjectResponseData.optBoolean("isSquare")) {
-//                Square
-                        cropImageView.setAspectRatio(1, 1);
-                        cropImageView.setCropShape(CropImageView.CropShape.RECTANGLE);
-                        cropImageView.setFixedAspectRatio(true);
-                    }
-                }
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-//        if (!isRectangle) {
-//        cropImageView.setFixedAspectRatio(false);
-//        }
 
         initPreviewImageView();
 
@@ -364,18 +319,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         View reTakeMedia = findViewById(R.id.re_take_media);
         View cancelMediaAction = findViewById(R.id.cancel_media_action);
 
-        findViewById(R.id.crop_image).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //UCrop.Options options = new UCrop.Options();
-                //options.setToolbarColor(ContextCompat.getColor(mContext, android.R.color.black));
-                //options.setStatusBarColor(ContextCompat.getColor(mContext, android.R.color.black));
-                //Uri uri = Uri.fromFile(new File(previewFilePath));
-                // UCrop.of(uri, uri)
-                //        .withOptions(options)
-                //        .start(mContext);
-            }
-        });
 
         if (confirmMediaResult != null)
             confirmMediaResult.setOnClickListener(this);
@@ -399,27 +342,15 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void initHeightAndWidth() {
-        try {
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            imageWidth = metrics.widthPixels;
-            imageHeight = metrics.heightPixels;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         saveVideoParams(outState);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-       /* if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
-            showImagePreview();
-        }*/
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -436,8 +367,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void displayImage() {
-        imagePreview.setVisibility(showCrop ? View.GONE : View.VISIBLE);
-        cropImageView.setVisibility(showCrop ? View.VISIBLE : View.GONE);
+        imagePreview.setVisibility( View.VISIBLE);
 
         findViewById(R.id.re_take_media).setVisibility(hideRetake ? View.GONE : View.VISIBLE);
         findViewById(R.id.crop_image).setVisibility(View.GONE);
@@ -447,53 +377,31 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         showImagePreview();
     }
 
+    /**
+     *  Display image into imageview
+     */
     private void showImagePreview() {
         try {
-            //startLoadTask(previewFilePath);
-            Bitmap myBitmap = null;
-            if (showCrop) {
-                cropImageView.setImageUriAsync(Uri.fromFile(new File(previewFilePath)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                // For Android 11 and more
+                Glide.with(this)
+                        .asBitmap()
+                        .load(previewFilePath)
+                        .thumbnail(0.1f)
+                        .into(imagePreview);
             } else {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    // For Android 11 and more
-                    Glide.with(this)
-                            .asBitmap()
-                            .load(previewFilePath)
-                            
-                            .thumbnail(0.1f)
-                            .into(imagePreview);
-                }else{
-                    Glide.with(this)
+                Glide.with(this)
                         .load(Uri.fromFile(new File(previewFilePath)))
                         .thumbnail(0.1f)
                         .into(imagePreview);
-                }
-
             }
 
-        } catch (OutOfMemoryError outOfMemoryError) {
-            outOfMemoryError.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (OutOfMemoryError | Exception exception) {
+            exception.printStackTrace();
         }
     }
 
 
-    private byte[] bitmapToByte(Bitmap bitmap){
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
-    }
-    private void startLoadTask(String previewFilePath) {
-        if (showCrop) {
-            cropImageView.setImageUriAsync(Uri.fromFile(new File(previewFilePath)));
-        } else {
-            LoadImageTask task = new LoadImageTask();
-            task.execute(previewFilePath);
-        }
-    }
 
     private void displayVideo(Bundle savedInstanceState) {
         findViewById(R.id.crop_image).setVisibility(View.GONE);
@@ -504,6 +412,10 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         surfaceView.getHolder().addCallback(surfaceCallbacks);
     }
 
+    /**
+     * Display video preview
+     * @param holder view for display video
+     */
     private void showVideoPreview(SurfaceHolder holder) {
         try {
             mediaPlayer = new MediaPlayer();
@@ -543,20 +455,6 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void saveCroppedImage(Uri croppedFileUri) {
-        try {
-            File saveFile = new File(previewFilePath);
-            FileInputStream inStream = new FileInputStream(new File(croppedFileUri.getPath()));
-            FileOutputStream outStream = new FileOutputStream(saveFile);
-            FileChannel inChannel = inStream.getChannel();
-            FileChannel outChannel = outStream.getChannel();
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-            inStream.close();
-            outStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private void saveVideoParams(Bundle outState) {
         if (mediaPlayer != null) {
@@ -583,28 +481,17 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         final Intent resultIntent = new Intent();
         if (view.getId() == R.id.confirm_media_result || view.getId() == R.id.button_save) {
             try {
-                if (showCrop) {
-                    previewFilePath = ScalingUtility.saveBitmap(cropImageView.getCroppedImage(), previewFilePath);
-                    setResultDate(resultIntent);
-                    setResult(RESULT_OK, resultIntent);
-                    finish();
-                } else {
-                    try {
-                       Glide.with(PreviewActivity.this).asBitmap()
-                               .load(previewFilePath)
-				.into(new SimpleTarget<Bitmap>() {
-				    @Override
-				    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-					previewFilePath = ScalingUtility.saveBitmap(resource, previewFilePath);
-					setResultDate(resultIntent);
-					setResult(RESULT_OK, resultIntent);
-					finish();
-				    }
-				});
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                Glide.with(PreviewActivity.this).asBitmap()
+                        .load(previewFilePath)
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
+                                previewFilePath = ScalingUtility.saveBitmap(resource, previewFilePath);
+                                setResultDate(resultIntent);
+                                setResult(RESULT_OK, resultIntent);
+                                finish();
+                            }
+                        });
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -621,6 +508,10 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * set Result
+     * @param resultIntent result intent
+     */
     private void setResultDate(Intent resultIntent) {
         resultIntent.putExtra(RESPONSE_CODE_ARG, BaseSandriosActivity.ACTION_CONFIRM);
         resultIntent.putExtra(FILE_PATH_ARG, previewFilePath);
@@ -633,37 +524,15 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         deleteMediaFile();
     }
 
-    private boolean deleteMediaFile() {
-        if (isFromGallery) return false;
+    /**
+     *  deleting capture image if backPress without saving
+     */
+    private void deleteMediaFile() {
+        if (isFromGallery) return;
 
         File mediaFile = new File(previewFilePath);
         boolean isDeleted = mediaFile.delete();
         Utils.galleryAddPic(this, previewFilePath);
-        return isDeleted;
     }
 
-    private final class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-
-            return ScalingUtility.getSampledBitmap(params[0], imageWidth,
-                    imageHeight);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            super.onPostExecute(result);
-            if (mainBitmap != null) {
-                if (!mainBitmap.isRecycled()) {
-                    mainBitmap.recycle();
-                    System.gc();
-                }
-                mainBitmap = null;
-
-            }
-            mainBitmap = result;
-            imagePreview.setImageBitmap(result);
-        }
-    }// end inner class
 }

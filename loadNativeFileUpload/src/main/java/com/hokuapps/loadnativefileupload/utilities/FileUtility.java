@@ -1,7 +1,5 @@
 package com.hokuapps.loadnativefileupload.utilities;
 
-import static com.hokuapps.loadnativefileupload.utilities.FileUploadUtility.makeDirectory;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -10,21 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
-
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
@@ -44,8 +36,8 @@ public class FileUtility {
 
     /**
      *
-     * @param filePath
-     * @return
+     * @param filePath file path
+     * @return return name of file
      */
     public static String getFileNameWithoutExists(String filePath) {
 
@@ -56,18 +48,17 @@ public class FileUtility {
 
     /**
      *
-     * @return
+     * @return return path of media directory
      */
     public static File getMediaDirPath() {
         String path = FileUtility.getRootDir() + File.separator + FileUploadConstant.FOLDER_PARENT_NAME;
-        File mediaStorageDir = new File(path, FileUploadConstant.FOLDER_NAME_MEDIA);
-        return mediaStorageDir;
+        return new File(path, FileUploadConstant.FOLDER_NAME_MEDIA);
     }
 
     /**
      * Return the primary external storage directory.
      *
-     * @return
+     * @return return root( download ) directory
      */
     public static File getRootDir() {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -76,7 +67,7 @@ public class FileUtility {
     /**
      * Return the MyBeepsApp external storage directory.
      *
-     * @return
+     * @return return path of root directory
      */
     public static String getRootDirPath() {
         return getRootDir() + File.separator + FileUploadConstant.FOLDER_PARENT_NAME;
@@ -85,7 +76,7 @@ public class FileUtility {
     /**
      * Create the storage directory if it does not exist
      *
-     * @param mediaStorageDir
+     * @param mediaStorageDir directory name with path
      * @return true if directory created successfully
      * false Otherwise
      */
@@ -98,14 +89,11 @@ public class FileUtility {
         return true;
     }
 
-    public static boolean isHelitrack() {
-        return true;
-    }
 
     /**
      *
-     * @param name
-     * @return
+     * @param name source file path
+     * @return return extension of file from name
      */
     public static String getExtensionWithDot(String name) {
         String ext;
@@ -124,8 +112,8 @@ public class FileUtility {
 
     /**
      * Returns file name from given path
-     * @param filePath
-     * @return
+     * @param filePath file path
+     * @return return file name from file path
      */
     public static String getFileName(String filePath) {
 
@@ -139,19 +127,20 @@ public class FileUtility {
     /**
      * Check if  file is exist at given file location.
      *
-     * @param path
-     * @return
+     * @param path file path
+     * @return return true if file exit otherwise false
      */
     public static boolean isFileExist(String path) {
 
         boolean toReturn = false;
 
-        if (path == null || path.length() == 0) return toReturn;
+        if (path == null || path.length() == 0) return false;
 
         try {
             File file = new File(path);
             if (file.exists() || file.length() > 0) toReturn = true;
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return toReturn;
@@ -159,8 +148,8 @@ public class FileUtility {
 
     /**
      *
-     * @param bitmap
-     * @return
+     * @param bitmap bitmap
+     * @return return Base64 string after decoding bitmap
      */
     public static String getBase64Data(Bitmap bitmap) {
         if (bitmap == null) {
@@ -175,8 +164,8 @@ public class FileUtility {
 
     /**
      *
-     * @param context
-     * @return
+     * @param context context
+     * @return return sandbox directory path
      */
     public static File getHtmlDirFromSandbox(Context context) {
         File htmlDir = new File(context.getFilesDir() + File.separator + FileUploadConstant.FOLDER_NAME_WEB_HTML);
@@ -199,10 +188,8 @@ public class FileUtility {
     @SuppressLint("NewApi")
     public static String getPath(final Context context, final Uri uri) {
 
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
 
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
@@ -281,9 +268,9 @@ public class FileUtility {
 
     /**
      * Returns file path from the uri
-     * @param context
-     * @param uri
-     * @return
+     * @param context context
+     * @param uri uri of file
+     * @return return real path of file
      */
     public static String getFilePath(Context context, Uri uri) {
 
@@ -298,7 +285,7 @@ public class FileUtility {
             InputStream inputStream = context.getContentResolver().openInputStream(uri);
             FileOutputStream outputStream = new FileOutputStream(file);
             int read = 0;
-            int maxBufferSize = 1 * 1024 * 1024;
+            int maxBufferSize = 1024 * 1024;
             int bytesAvailable = inputStream.available();
 
             //int bufferSize = 1024;
@@ -308,13 +295,12 @@ public class FileUtility {
             while ((read = inputStream.read(buffers)) != -1) {
                 outputStream.write(buffers, 0, read);
             }
-            Log.e("File Size", "Size " + file.length());
+
             inputStream.close();
             outputStream.close();
-            Log.e("File Path", "Path " + file.getPath());
-            Log.e("File Size", "Size " + file.length());
+            returnCursor.close();
         } catch (Exception e) {
-            Log.e("Exception", e.getMessage());
+            e.printStackTrace();
         }
         return file.getPath();
     }
@@ -347,7 +333,7 @@ public class FileUtility {
                 return cursor.getString(index);
             }
         } catch (Exception e) {
-            Log.e("@uriCur", e.getMessage());
+            e.printStackTrace();
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -408,7 +394,7 @@ public class FileUtility {
     /**
      * Convert provided time to UTC data
      *
-     * @param milliseconds
+     * @param milliseconds time in long format
      * @return {@link String}
      */
     @SuppressLint("SimpleDateFormat")
@@ -427,8 +413,8 @@ public class FileUtility {
 
     /**
      *
-     * @param activity
-     * @param type
+     * @param activity activity context
+     * @param type set which type of file should open by intent
      */
     public static void launchIntentByFileFormat(final Activity activity, final String type) {
         activity.runOnUiThread(new Runnable() {
@@ -463,13 +449,13 @@ public class FileUtility {
 
     /**
      *
-     * @param uri
-     * @param context
-     * @return
+     * @param uri file uri
+     * @param context context
+     * @return return mime type
      */
     public static String getMimeType(Uri uri,Context context) {
         String mimeType = null;
-        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+        if (uri.getScheme() != null && uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
             ContentResolver cr = context.getContentResolver();
             mimeType = cr.getType(uri);
         } else {
@@ -483,10 +469,10 @@ public class FileUtility {
 
     /**
      * check's if the given file is image
-     * @param type
-     * @return
+     * @param type type of file
+     * @return return true if image file otherwise false
      */
     public static boolean isImageFile(String type) {
-        return (!TextUtils.isEmpty(type) && type.toLowerCase().indexOf("image") != -1);
+        return (!TextUtils.isEmpty(type) && type.toLowerCase().contains("image"));
     }
 }

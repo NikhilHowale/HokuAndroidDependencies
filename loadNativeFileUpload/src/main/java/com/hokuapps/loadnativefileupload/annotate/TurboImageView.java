@@ -14,8 +14,11 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.xinlan.imageeditlibrary.editimage.OnItemChangeListener;
 import com.xinlan.imageeditlibrary.editimage.view.Constants;
@@ -57,9 +60,8 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
     int imageCount = 0;
     private MultiTouchController<MultiTouchObject> multiTouchController = new MultiTouchController<>(
             this);
-    private Context mContext;
     private int currentStatus;
-    private float oldx, oldy;
+
     private OnItemChangeListener onItemChangeListener;
     private Paint brush = new Paint();
     private TextPaint mTextPaint = new TextPaint();
@@ -139,7 +141,7 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
             isDelete=false;
             for (int i = 1; i <= mImages.size(); i++) {
                 MultiTouchObject imageObject = mImages.get(i - 1);
-                ((ImageObject) imageObject).count = AnnotateActivity.totalcountedit + i;
+                ((ImageObject) imageObject).count = AnnotateActivity.totalCountEdit + i;
                 imageObject.draw(canvas);
             }
         } else {
@@ -191,6 +193,7 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
                 for (Map.Entry<Integer, ArrayList<Point>> entry : mappings) {
                     point = ((Point) ((ArrayList) entry.getValue()).get(0));
                     pointEnd = ((Point) ((ArrayList) entry.getValue()).get(1));
+                    Log.e(TAG, "drawStraightLine: 2  " + point.color );
                     brush.setColor(Color.parseColor(point.color));
                     c.drawPath(path, brush);
                     c.drawText("" + entry.getKey(), point.x + 35, point.y + 35, mTextPaint);
@@ -211,6 +214,7 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
                 for (Map.Entry<Integer, ArrayList<Point>> entry : mappings) {
                     point = ((Point) ((ArrayList) entry.getValue()).get(0));
                     pointEnd = ((Point) ((ArrayList) entry.getValue()).get(1));
+
                     brush.setColor(Color.parseColor(point.color));
                     if (isDraw.equalsIgnoreCase("Path")) {
                         c.drawPath(path, brush);
@@ -271,6 +275,7 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
                         path.moveTo(x, y);
                         startEndPoints.add(new Point(x, y, colorCode, isDraw));
                         badgeCount++;
+                        Log.e(TAG, "drawStraightLine: 1  " + colorCode );
                         straightLinePoints.put(badgeCount, startEndPoints);
                     } else {
                         cirRectPoints.add(new Point(x, y, colorCode, isDraw));
@@ -286,8 +291,7 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
                                 currentItem = item;
                                 currentItem.isDrawHelpTool = true;
                                 currentStatus = STATUS_ROTATE;
-                                oldx = x;
-                                oldy = y;
+
                             } else if (item.dstRect.contains(x, y)) {
 
                                 ret = true;
@@ -297,8 +301,7 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
                                 currentItem = item;
                                 currentItem.isDrawHelpTool = true;
                                 currentStatus = STATUS_MOVE;
-                                oldx = x;
-                                oldy = y;
+
                                 if (onItemChangeListener != null) {
                                     onItemChangeListener.onItemChanged(currentItem, OnItemChangeListener.reselected);
                                 }
@@ -595,6 +598,7 @@ public class TurboImageView extends View implements MultiTouchObjectCanvas<Multi
             this.drawType = drawType;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return x + ", " + y;

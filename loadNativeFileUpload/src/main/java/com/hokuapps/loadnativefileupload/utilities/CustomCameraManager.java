@@ -35,7 +35,7 @@ public class CustomCameraManager {
     /**
      * launch custom camera activity
      *
-     * @param activity
+     * @param activity        - activity context
      * @param isShowPicker    - true, show image picker horizontal false otherwise
      * @param isCustomPreview - true, to show custom preview control, false, to show inbuilt preview control
      */

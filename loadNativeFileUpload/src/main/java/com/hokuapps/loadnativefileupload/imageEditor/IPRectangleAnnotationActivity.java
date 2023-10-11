@@ -15,7 +15,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
@@ -37,9 +36,9 @@ import androidx.annotation.Nullable;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
-
 import com.hokuapps.loadnativefileupload.R;
 import com.hokuapps.loadnativefileupload.colorseekbar.ColorSeekBar;
+import com.hokuapps.loadnativefileupload.constants.KeyConstants.AnnotationData;
 import com.hokuapps.loadnativefileupload.models.LocationMapModel;
 import com.hokuapps.loadnativefileupload.utilities.FileUploadUtility;
 import com.xinlan.imageeditlibrary.editimage.OnItemChangeListener;
@@ -115,7 +114,7 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
     private ImageView ivTextIcon;
     private ImageView ivColourPickerIcon;
     private ImageView ivUndoIcon;
-    private TextView ivDrawPath, ivDrawRectangle, ivDrawCircle, tv_drawline;
+    private TextView ivDrawPath, ivDrawRectangle, ivDrawCircle, tv_drawLine;
 
     private ColorSeekBar.OnColorChangeListener onColorChangeListener = new ColorSeekBar.OnColorChangeListener() {
         @Override
@@ -174,13 +173,6 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
 
                         setIsEditTextEnabled(false);
 
-                        /*if (!itemStack.isEmpty() && itemStack.lastElement() != null) {
-                            currentItemObj = itemStack.lastElement();
-                            setCurrentItemObj();
-                        } else {
-                            setIsEditTextEnabled(false);
-                        }*/
-
                         break;
 
                     case OnItemChangeListener.pushItemInStack:
@@ -204,11 +196,11 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
         context.startActivityForResult(it, 9006);
     }
 
-    /**
-     * @param context
-     * @param editImagePath
-     * @param outputPath
-     * @param requestCode
+    /** open activity for edit image
+     * @param context context
+     * @param editImagePath file path to load image
+     * @param outputPath path after image is edited
+     * @param requestCode set code for intent to specify request
      */
     public static void start(Activity context, final String editImagePath, final String outputPath, String colorCode, String title, final int requestCode) {
         if (TextUtils.isEmpty(editImagePath)) {
@@ -271,9 +263,12 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
 
     private void setStatusBarColor() {
         try {
-            String color = getIntent().getExtras().containsKey(EXTRA_TOOLBAR_COLOR)
-                    ? getIntent().getExtras().getString(EXTRA_TOOLBAR_COLOR)
-                    : "#FFFFFF";
+            String color = "#FFFFFF";
+
+            if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(EXTRA_TOOLBAR_COLOR)){
+                color = getIntent().getExtras().getString(EXTRA_TOOLBAR_COLOR);
+            }
+
             if (!TextUtils.isEmpty(color) && !"#FFFFFF".equalsIgnoreCase(color)) {
                 setStatusBarColor(FileUploadUtility.changeColorToPrimaryHSB(color));
             }
@@ -415,14 +410,14 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
         ivDrawPath = findViewById(R.id.tv_drawpath);
         ivDrawRectangle = findViewById(R.id.tv_drawrectangle);
         ivDrawCircle = findViewById(R.id.tv_drawcircle);
-        tv_drawline = findViewById(R.id.tv_drawline);
+        tv_drawLine = findViewById(R.id.tv_drawline);
 
 
         ivUndoIcon.setOnClickListener(this);
         ivDrawPath.setOnClickListener(this);
         ivDrawRectangle.setOnClickListener(this);
         ivDrawCircle.setOnClickListener(this);
-        tv_drawline.setOnClickListener(this);
+        tv_drawLine.setOnClickListener(this);
 
         ivUndoIcon.setEnabled(false);
         bottomLayout = findViewById(R.id.layoutBottom);
@@ -490,7 +485,7 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
     /**
      * Load image from filepath
      *
-     * @param filepath
+     * @param filepath load image into imageview using file path
      */
     public void loadImage(String filepath) {
         if (mLoadImageTask != null) {
@@ -617,15 +612,15 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
         if (!getString(com.xinlan.imageeditlibrary.R.string.add_caption_label).equalsIgnoreCase(text)) {
             editText.setText(text);
             int position = editText.length();
-            Editable etext = editText.getText();
-            Selection.setSelection(etext, position);
+            Editable eText = editText.getText();
+            Selection.setSelection(eText, position);
         }
     }
 
     /**
      * undo recent item from stack
      *
-     * @return
+     * @return return true if undo operation otherwise false
      */
     public boolean performUndoOperationForRecent() {
 
@@ -635,25 +630,19 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
             if (itemDeletedObj instanceof StickerItem) {
                 StickerItem stickerItemDeleted = (StickerItem) itemDeletedObj;
                 bank.remove(stickerItemDeleted.stickerItemId);
-                // if (stickerItemDeleted.isDrawHelpTool) {
                 if (!itemStack.isEmpty() && itemStack.lastElement() != null) {
                     currentItemObj = itemStack.lastElement();
                     setCurrentItemObj();
                 }
-
-//                }
 
                 mStickerView.invalidate();
 
             } else if (itemDeletedObj instanceof TextStickerItem) {
                 TextStickerItem textStickerItemDeleted = (TextStickerItem) itemDeletedObj;
                 mTextStickerView.bank.remove(textStickerItemDeleted.stickerItemId);
-//                if (textStickerItemDeleted.isShowHelpBox) {
                 if (!itemStack.isEmpty() && itemStack.lastElement() != null) {
                     currentItemObj = itemStack.lastElement();
                     setCurrentItemObj();
-//                    }
-
                 }
 
                 mTextStickerView.invalidate();
@@ -726,11 +715,7 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
         protected void onPostExecute(Bitmap result) {
             super.onPostExecute(result);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                mainImage.setBackground(new BitmapDrawable(result));
-            } else {
-                mainImage.setBackgroundDrawable(new BitmapDrawable(result));
-            }
+            mainImage.setBackground(new BitmapDrawable(mContext.getResources(), result));
 
         }
     }// end inner class
@@ -811,7 +796,7 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = getLoadingDialog(mContext, "Saving...", false);
+            dialog = getLoadingDialog(mContext, getString(R.string.label_saving), false);
             dialog.show();
         }
 
@@ -841,21 +826,21 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
                         StickerView.Point point = null;
                         StickerView.Point pointEnd = null;
                         for (Map.Entry<Integer, ArrayList<StickerView.Point>> entry : mappings) {
-                            point = ((StickerView.Point) ((ArrayList) entry.getValue()).get(0));
-                            pointEnd = ((StickerView.Point) ((ArrayList) entry.getValue()).get(1));
-                            object.put("badge", entry.getKey());
-                            object.put("drawType", "0");
-                            object.put("type", "Line");
-                            object.put("color", String.valueOf(StickerView.colorCode));
+                            point = entry.getValue().get(0);
+                            pointEnd = entry.getValue().get(1);
+                            object.put(AnnotationData.BADGE, entry.getKey());
+                            object.put(AnnotationData.DRAW_TYPE, "0");
+                            object.put(AnnotationData.TYPE, "Line");
+                            object.put(AnnotationData.COLOR, String.valueOf(StickerView.colorCode));
 
-                            start.put("x", point.x);
-                            start.put("y", point.y);
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
 
-                            end.put("x", pointEnd.x);
-                            end.put("y", pointEnd.y);
+                            end.put(AnnotationData.X, pointEnd.x);
+                            end.put(AnnotationData.Y, pointEnd.y);
 
-                            object.put("start", start);
-                            object.put("end", end);
+                            object.put(AnnotationData.START, start);
+                            object.put(AnnotationData.END, end);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -865,14 +850,14 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
                     } else if (cirRectPoints.size() > 0) {
                         for (int i = 1; i <= cirRectPoints.size(); i++) {
                             StickerView.Point point = null;
-                            object.put("badge", i);
-                            object.put("drawType", "1");
-                            object.put("type", "Circle");
-                            object.put("color", String.valueOf(StickerView.colorCode));
+                            object.put(AnnotationData.BADGE, i);
+                            object.put(AnnotationData.DRAW_TYPE, "1");
+                            object.put(AnnotationData.TYPE, "Circle");
+                            object.put(AnnotationData.COLOR, String.valueOf(StickerView.colorCode));
                             point = cirRectPoints.get(i - 1);
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
+                            object.put(AnnotationData.START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -904,21 +889,21 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
                         StickerView.Point point = null;
                         StickerView.Point pointEnd = null;
                         for (Map.Entry<Integer, ArrayList<StickerView.Point>> entry : mappings) {
-                            point = ((StickerView.Point) ((ArrayList) entry.getValue()).get(0));
-                            pointEnd = ((StickerView.Point) ((ArrayList) entry.getValue()).get(1));
-                            object.put("badge", entry.getKey());
-                            object.put("drawType", "0");
-                            object.put("type", "Line");
-                            object.put("color", String.valueOf(StickerView.colorCode));
+                            point = entry.getValue().get(0);
+                            pointEnd = entry.getValue().get(1);
+                            object.put(AnnotationData.BADGE, entry.getKey());
+                            object.put(AnnotationData.DRAW_TYPE, "0");
+                            object.put(AnnotationData.TYPE, "Line");
+                            object.put(AnnotationData.COLOR, String.valueOf(StickerView.colorCode));
 
-                            start.put("x", point.x);
-                            start.put("y", point.y);
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
 
-                            end.put("x", pointEnd.x);
-                            end.put("y", pointEnd.y);
+                            end.put(AnnotationData.X, pointEnd.x);
+                            end.put(AnnotationData.Y, pointEnd.y);
 
-                            object.put("start", start);
-                            object.put("end", end);
+                            object.put(AnnotationData.START, start);
+                            object.put(AnnotationData.END, end);
 
                             annotateData.put(object);
                             object = new JSONObject();
@@ -928,14 +913,14 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
                     } else if (cirRectPoints.size() > 0) {
                         for (int i = 1; i <= cirRectPoints.size(); i++) {
                             StickerView.Point point = null;
-                            object.put("badge", i);
-                            object.put("drawType", "1");
-                            object.put("type", "Circle");
-                            object.put("color", String.valueOf(StickerView.colorCode));
+                            object.put(AnnotationData.BADGE, i);
+                            object.put(AnnotationData.DRAW_TYPE, "1");
+                            object.put(AnnotationData.TYPE, "Circle");
+                            object.put(AnnotationData.COLOR, String.valueOf(StickerView.colorCode));
                             point = cirRectPoints.get(i - 1);
-                            start.put("x", point.x);
-                            start.put("y", point.y);
-                            object.put("start", start);
+                            start.put(AnnotationData.X, point.x);
+                            start.put(AnnotationData.Y, point.y);
+                            object.put(AnnotationData.START, start);
 
                             annotateData.put(object);
                             object = new JSONObject();

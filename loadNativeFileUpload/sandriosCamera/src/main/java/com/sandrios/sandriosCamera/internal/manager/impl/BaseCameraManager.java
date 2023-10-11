@@ -3,15 +3,14 @@ package com.sandrios.sandriosCamera.internal.manager.impl;
 import android.content.Context;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
 
-import com.sandrios.sandriosCamera.internal.configuration.ConfigurationProvider;
 import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
+import com.sandrios.sandriosCamera.internal.configuration.ConfigurationProvider;
 import com.sandrios.sandriosCamera.internal.manager.CameraManager;
 import com.sandrios.sandriosCamera.internal.utils.Size;
 
@@ -91,9 +90,7 @@ abstract class BaseCameraManager<CameraId, SurfaceListener>
     }
 
     private void stopBackgroundThread() {
-        if (Build.VERSION.SDK_INT > 17) {
-            backgroundThread.quitSafely();
-        } else backgroundThread.quit();
+        backgroundThread.quitSafely();
 
         try {
             backgroundThread.join();

@@ -2,6 +2,7 @@ package com.hokuapps.loadnativefileupload.scantext;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.hokuapps.loadnativefileupload.R;
 
 import org.json.JSONArray;
 
@@ -25,14 +27,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+@SuppressLint("StaticFieldLeak")
 public class ScanTextUtility {
 
     public static final int SCAN_IMAGE_REQUEST_GALLERY = 9031;
     public static final int SCAN_IMAGE_REQUEST_CAMERA = 9032;
+
     private static Activity activity;
     private static ScanTextUtility scanTextUtility;
     private static ImageScanListener imageScanListener;
@@ -42,17 +44,17 @@ public class ScanTextUtility {
         return imageScanListener;
     }
 
-    public static ScanTextUtility setImageScanListener(ImageScanListener imageScanListener) {
+    public ScanTextUtility setImageScanListener(ImageScanListener imageScanListener) {
         ScanTextUtility.imageScanListener = imageScanListener;
         return scanTextUtility;
     }
 
     public ScanTextUtility(Activity activity) {
-        this.activity = activity;
+        ScanTextUtility.activity = activity;
 
     }
 
-    public ScanTextUtility showPicker() {
+    public void showPicker() {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Select");
         builder.setItems(new CharSequence[]
@@ -72,7 +74,6 @@ public class ScanTextUtility {
                     }
                 });
         builder.create().show();
-        return scanTextUtility;
     }
 
     private void launchCamera() {
@@ -141,6 +142,7 @@ public class ScanTextUtility {
             bitmap = BitmapFactory.decodeStream(is, null, options);
             inspectFromBitmap(bitmap);
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } finally {
             if (bitmap != null) {
                 bitmap.recycle();
@@ -149,6 +151,7 @@ public class ScanTextUtility {
                 try {
                     is.close();
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -160,7 +163,7 @@ public class ScanTextUtility {
             if (!textRecognizer.isOperational()) {
                 new AlertDialog.
                         Builder(activity).
-                        setMessage("Text recognizer could not be set up on your device").show();
+                        setMessage(activity.getString(R.string.lbl_text_recognizer)).show();
                 return;
             }
 
@@ -171,7 +174,7 @@ public class ScanTextUtility {
                 TextBlock textBlock = origTextBlocks.valueAt(i);
                 textBlocks.add(textBlock);
             }
-            Collections.sort(textBlocks, new Comparator<TextBlock>() {
+            textBlocks.sort(new Comparator<TextBlock>() {
                 @Override
                 public int compare(TextBlock o1, TextBlock o2) {
                     int diffOfTops = o1.getBoundingBox().top - o2.getBoundingBox().top;

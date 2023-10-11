@@ -1,24 +1,23 @@
 package com.sandrios.sandriosCamera.internal.manager.impl;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.AudioManager;
-import android.media.ExifInterface;
-import android.media.MediaPlayer;
+
 import android.media.MediaRecorder;
 import android.os.Build;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
-import com.sandrios.sandriosCamera.R;
+import androidx.exifinterface.media.ExifInterface;
+
 import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
 import com.sandrios.sandriosCamera.internal.configuration.ConfigurationProvider;
 import com.sandrios.sandriosCamera.internal.manager.listener.CameraCloseListener;
@@ -26,15 +25,12 @@ import com.sandrios.sandriosCamera.internal.manager.listener.CameraOpenListener;
 import com.sandrios.sandriosCamera.internal.manager.listener.CameraPhotoListener;
 import com.sandrios.sandriosCamera.internal.manager.listener.CameraVideoListener;
 import com.sandrios.sandriosCamera.internal.utils.CameraHelper;
-import com.sandrios.sandriosCamera.internal.utils.ScalingUtility;
 import com.sandrios.sandriosCamera.internal.utils.Size;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 /**
  * Created by Arpit Gandhi on 8/14/16.
@@ -44,6 +40,7 @@ public class Camera1Manager extends BaseCameraManager<Integer, SurfaceHolder.Cal
         implements SurfaceHolder.Callback, Camera.PictureCallback {
 
     private static final String TAG = "Camera1Manager";
+    @SuppressLint("StaticFieldLeak")
     private static Camera1Manager currentInstance;
     private Camera camera;
     private Surface surface;
@@ -54,7 +51,6 @@ public class Camera1Manager extends BaseCameraManager<Integer, SurfaceHolder.Cal
     private CameraVideoListener videoListener;
     private CameraPhotoListener photoListener;
     private boolean safeToTakePicture = false;
-    MediaPlayer media;
 
     private Camera1Manager() {
 
@@ -74,30 +70,27 @@ public class Camera1Manager extends BaseCameraManager<Integer, SurfaceHolder.Cal
     public void openCamera(final Integer cameraId,
                            final CameraOpenListener<Integer, SurfaceHolder.Callback> cameraOpenListener) {
         this.currentCameraId = cameraId;
-        backgroundHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    camera = Camera.open(cameraId);
-                    prepareCameraOutputs();
-                    if (cameraOpenListener != null) {
-                        uiHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                cameraOpenListener.onCameraOpened(cameraId, previewSize, currentInstance);
-                            }
-                        });
-                    }
-                } catch (Exception error) {
-                    Log.d(TAG, "Can't open camera: " + error.getMessage());
-                    if (cameraOpenListener != null) {
-                        uiHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                cameraOpenListener.onCameraOpenError();
-                            }
-                        });
-                    }
+        backgroundHandler.post(() -> {
+            try {
+                camera = Camera.open(cameraId);
+                prepareCameraOutputs();
+                if (cameraOpenListener != null) {
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            cameraOpenListener.onCameraOpened(cameraId, previewSize, currentInstance);
+                        }
+                    });
+                }
+            } catch (Exception error) {
+                Log.d(TAG, "Can't open camera: " + error.getMessage());
+                if (cameraOpenListener != null) {
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            cameraOpenListener.onCameraOpenError();
+                        }
+                    });
                 }
             }
         });
@@ -245,10 +238,7 @@ public class Camera1Manager extends BaseCameraManager<Integer, SurfaceHolder.Cal
 
             List<Size> previewSizes = Size.fromList(camera.getParameters().getSupportedPreviewSizes());
             List<Size> pictureSizes = Size.fromList(camera.getParameters().getSupportedPictureSizes());
-            List<Size> videoSizes;
-            if (Build.VERSION.SDK_INT > 10)
-                videoSizes = Size.fromList(camera.getParameters().getSupportedVideoSizes());
-            else videoSizes = previewSizes;
+            List<Size> videoSizes = Size.fromList(camera.getParameters().getSupportedVideoSizes());
 
             videoSize = CameraHelper.getSizeWithClosestRatio(
                     (videoSizes == null || videoSizes.isEmpty()) ? previewSizes : videoSizes,
@@ -418,8 +408,8 @@ public class Camera1Manager extends BaseCameraManager<Integer, SurfaceHolder.Cal
 
         } catch (IOException error) {
             Log.d(TAG, "Error setting camera preview: " + error.getMessage());
-        } catch (Exception ignore) {
-            Log.d(TAG, "Error starting camera preview: " + ignore.getMessage());
+        } catch (Exception exception) {
+            Log.d(TAG, "Error starting camera preview: " + exception.getMessage());
         }
     }
 

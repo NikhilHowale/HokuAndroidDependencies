@@ -3,19 +3,16 @@ package com.sandrios.sandriosCamera.internal;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.view.SurfaceHolder;
+import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.IntRange;
-
 import androidx.fragment.app.Fragment;
-
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.sandrios.sandriosCamera.R;
 import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
-import com.sandrios.sandriosCamera.internal.manager.CameraManager;
-import com.sandrios.sandriosCamera.internal.manager.impl.Camera1Manager;
 import com.sandrios.sandriosCamera.internal.ui.camera.Camera1Activity;
 import com.sandrios.sandriosCamera.internal.ui.camera2.Camera2Activity;
 import com.sandrios.sandriosCamera.internal.utils.CameraHelper;
@@ -23,13 +20,13 @@ import com.sandrios.sandriosCamera.internal.utils.CameraHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 /*import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;*/
 
 public class SandriosCamera {
 
+    private static final String TAG = "SandriosCamera";
     private SandriosCamera mInstance = null;
     private Activity mActivity;
     private int requestCode;
@@ -123,6 +120,9 @@ public class SandriosCamera {
         return mInstance;
     }
 
+    /**
+     *  before opening camera check required permission
+     */
     public void launchCamera() {
         mActivity.runOnUiThread(new Runnable() {
             @Override
@@ -135,14 +135,29 @@ public class SandriosCamera {
 
                     @Override
                     public void onPermissionDenied(List<String> deniedPermissions) {
-
+                        Log.e(TAG, "onPermissionDenied: " + deniedPermissions);
                     }
                 };
 
-                TedPermission.create()
-                        .setPermissionListener(permissionListener)
-                        .setPermissions(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .check();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    TedPermission.create()
+                            .setPermissionListener(permissionListener)
+                            .setPermissions(
+                                    Manifest.permission.CAMERA,
+                                    Manifest.permission.READ_MEDIA_IMAGES,
+                                    Manifest.permission.READ_MEDIA_VIDEO
+                            )
+                            .check();
+                } else {
+                    TedPermission.create()
+                            .setPermissionListener(permissionListener)
+                            .setPermissions(
+                                    Manifest.permission.CAMERA,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                            .check();
+                }
 
 
             }
@@ -150,10 +165,9 @@ public class SandriosCamera {
 
     }
 
-    public void launchCamera(Fragment fragment) {
-        launchIntent(fragment);
-    }
-
+    /**
+     *  open custom camera and open image pick from gallery
+     */
     private void launchIntent() {
         if (CameraHelper.hasCamera(mActivity)) {
             Intent cameraIntent;
@@ -195,6 +209,10 @@ public class SandriosCamera {
         }
     }
 
+    /**
+     *  open custom camera with image gallery picker
+     * @param fragment fragment reference
+     */
     private void launchIntent(Fragment fragment) {
         if (CameraHelper.hasCamera(mActivity)) {
             Intent cameraIntent;

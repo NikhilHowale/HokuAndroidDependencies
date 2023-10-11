@@ -5,13 +5,13 @@ import android.graphics.drawable.Drawable;
 public class Image {
     private String imageTitle;
     private String imageName;
-    private String metaData;
+    private final String metaData;
     private String selectedImageName;
     private Drawable oldDrawable;
     private Drawable newDrawable;
     private boolean isSelected;
-    private boolean isLocal;
-    private boolean isDrawLine;
+    private final boolean isLocal;
+    private final boolean isDrawLine;
 
     public Image(Drawable oldDrawable, Drawable newDrawable, String imageTitle, String metaData, boolean isSelected, boolean isLocal, boolean isDrawLine) {
         this.oldDrawable = oldDrawable;

@@ -43,26 +43,8 @@ public class Error {
     /**
      * Initialize object
      *
-     * @param code
-     */
-    public Error(int code) {
-        this.code = code;
-    }
-
-    /**
-     * Initialize object
-     *
-     * @param errMsg
-     */
-    public Error(String errMsg) {
-        this.msg = errMsg;
-    }
-
-    /**
-     * Initialize object
-     *
-     * @param code
-     * @param msg
+     * @param code  error code
+     * @param msg   error message
      */
     public Error(int code, String msg) {
         this.code = code;
@@ -114,7 +96,7 @@ public class Error {
     /**
      * Construct Error object from provided JSON object
      *
-     * @param jsonObject
+     * @param jsonObject jsonObject with error code and error message
      * @return {@link Error}
      */
     public static Error createError(JSONObject jsonObject) {
@@ -151,15 +133,13 @@ public class Error {
         switch (statusCode) {
             case ErrorCode.BAD_REQUEST:
             case ErrorCode.BAD_GATEWAY:
-                return "An error occurred while loading, Please try again...";
             case ErrorCode.NOT_FOUND:
+            case ErrorCode.INTERNAL_SERVER_ERROR:
+            case ErrorCode.SERVICE_UNAVAILABLE:
                 return "An error occurred while loading, Please try again...";
             case ErrorCode.REQUEST_TIMEOUT:
             case ErrorCode.GATEWAY_TIMEOUT:
                 return "Request timeout, please try again.";
-            case ErrorCode.INTERNAL_SERVER_ERROR:
-            case ErrorCode.SERVICE_UNAVAILABLE:
-                return "An error occurred while loading, Please try again...";
 
         }
         return null;

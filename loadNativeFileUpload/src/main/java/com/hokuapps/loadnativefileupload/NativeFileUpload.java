@@ -10,11 +10,13 @@ import static com.hokuapps.loadnativefileupload.constants.FileUploadConstant.opt
 import static com.hokuapps.loadnativefileupload.constants.FileUploadConstant.options.IS_ANNOTATION_WITH_LOCAL_IMAGE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.ANNOTATE_DATA;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.ANNOTATION_COUNT;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.AUTH_TOKEN;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAPTION;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_NAME;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_NM;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IMAGE_PATH;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_IMAGE;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LOCAL_IMAGE_NAME;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MEDIA_ID;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.NEXT_BUTTON_CALLBACK;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_DATA_ID;
@@ -28,6 +30,7 @@ import static com.hokuapps.loadnativefileupload.utilities.FileUploadUtility.move
 import static com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration.REQUEST_CROP_IMAGE;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -35,6 +38,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +54,7 @@ import com.hokuapps.loadnativefileupload.annotate.FreeDrawingActivity;
 import com.hokuapps.loadnativefileupload.backgroundtask.ImageCompression;
 import com.hokuapps.loadnativefileupload.backgroundtask.FileUploader;
 import com.hokuapps.loadnativefileupload.constants.FileUploadConstant;
+import com.hokuapps.loadnativefileupload.database.FileContentProvider;
 import com.hokuapps.loadnativefileupload.imageEditor.IPRectangleAnnotationActivity;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 import com.hokuapps.loadnativefileupload.models.JSResponseData;
@@ -72,16 +77,15 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-
+@SuppressLint("StaticFieldLeak")
 public class NativeFileUpload {
     public WebView mWebView;
     public static Activity mActivity;
     public static Context mContext;
-    private String[] requiredJSONObjectKey = {};
     private JSResponseData jsResponseData;
     private String appAuthToken = "";
     public String offlineID = null;
-    private int instucationNumberClockIn = 0;
+    private int instructionNumberClockIn = 0;
     public static final int ACTION_REQUEST_EDIT_IMAGE = 9006;
     public static final int ACTION_REQUEST_EDIT_IMAGE_MAP_PLAN = 9008;
     public static final int SELECT_GALLERY_IMAGE_CODE_WITHOUT_EDITOR = 7002;
@@ -90,10 +94,9 @@ public class NativeFileUpload {
     private String caption;
     private Uri mImageCaptureUri = null;
 
-    private String authorizationToken;
+    private String serverAuthToken;
     private static NativeFileUpload Instance;
     public static String APP_FILE_URL = "";
-    public static String AUTHORITY = "com.pearlista.database";
 
     public NativeFileUpload() {
 
@@ -102,7 +105,7 @@ public class NativeFileUpload {
     /**
      * get the instance of the class
      *
-     * @return
+     * @return instance of NativeFileUpload
      */
     public static NativeFileUpload getInstance() {
         if (Instance == null) {
@@ -114,36 +117,46 @@ public class NativeFileUpload {
     /**
      * Initialize the given variables
      *
-     * @param mWebView
-     * @param mActivity
-     * @param mContext
-     * @param authorizationToken
-     * @param appAuthToken
-     * @param uploadUrl
-     * @param authority
+     * @param mWebView require to call javascript function
+     * @param mActivity activity context
+     * @param mContext context
+     * @param uploadUrl upload capture images or draw images to this url
+     * @param authority access application database
      */
-    public void initialization(WebView mWebView, Activity mActivity, Context mContext,
-                               String authorizationToken, String appAuthToken, String uploadUrl, String authority) {
+    public void initialization(WebView mWebView, Activity mActivity, Context mContext,String uploadUrl, String authority) {
         this.mWebView = mWebView;
         NativeFileUpload.mActivity = mActivity;
         NativeFileUpload.mContext = mContext;
-        this.authorizationToken = authorizationToken;
-        this.appAuthToken = appAuthToken;
         APP_FILE_URL = uploadUrl;
-        AUTHORITY = authority;
+        FileContentProvider.getInstance().setUpDatabase(authority);
+    }
 
+
+    /**
+     *  set data for authorization
+     * @param responseData jsonObject for retrieve auth data
+     */
+    public void setAuthDetails(String responseData){
+        try {
+            JSONObject object = new JSONObject(responseData);
+            this.serverAuthToken = FileUploadUtility.getStringObjectValue(object, AUTH_TOKEN);
+            this.appAuthToken = "";
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
      * Entry point of the NativeFileUpload module
      *
-     * @param responseData
-     * @throws JSONException
+     * @param responseData provide option and require data for that option
+     * @throws  JSONException occur when key mis match
      */
     public void loadNativeFileUpload(final String responseData) throws JSONException {
 
         JSResponseData jsResponseDataModel = FileUploadUtility.parseLoadNativeFileUploadJsResponseData(responseData);
         setJsResponseData(jsResponseDataModel);
+        offlineID = jsResponseDataModel.getOfflineID();
 
         if (jsResponseData == null) return;
         JSONObject jsonObject = null;
@@ -181,7 +194,7 @@ public class NativeFileUpload {
                 default:
                     CustomCameraManager.launchCameraFromActivity(mActivity, !jsResponseData.isSkipLibrary(),
                             jsResponseData.getInstructionText(), false, false,
-                            jsResponseData.isCroped(),
+                            jsResponseData.isCropped(),
                             false, jsResponseData.isRectangle(),
                             jsResponseData.getResponseData());
                     break;
@@ -195,8 +208,8 @@ public class NativeFileUpload {
     /**
      * Draw shape over image(line,circle,rectangle,path)
      *
-     * @param responseData
-     * @throws JSONException
+     * @param responseData provide data for image annotation with previous annotations on image
+     * @throws JSONException  occur when key mis match
      */
     private void startShapeAnnotation(String responseData) throws JSONException {
         File outputFile = new File(FileUploadUtility.getHtmlDirFromSandbox(mContext) + File.separator +
@@ -219,14 +232,14 @@ public class NativeFileUpload {
     /**
      * Start free drawing activity
      *
-     * @param jsResponseData
+     * @param jsResponseData provide image url for free drawing on image
      */
     private void startFreeDrawingActivity(JSResponseData jsResponseData) {
         File outputFile = new File(FileUploadUtility.getHtmlDirFromSandbox(mContext) + File.separator +
                 "draw_" + System.currentTimeMillis() + ".png");
         String filePath = null;
         try {
-            filePath = jsResponseData.getImageURL();
+            filePath =jsResponseData.getImageURL();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -245,15 +258,15 @@ public class NativeFileUpload {
     /**
      * Start annotation activity
      *
-     * @param jsResponseData
-     * @param filePath
+     * @param jsResponseData provide draw type to draw circle, rect or line on image
+     * @param filePath show image using file path
      */
     private void startAnnotationActivity(JSResponseData jsResponseData, String filePath) {
         File outputFile = new File(FileUploadUtility.getHtmlDirFromSandbox(mContext) + File.separator +
                 "draw_" + System.currentTimeMillis() + ".png");
         String colorCode = jsResponseData != null ? jsResponseData.getColorCode() : null;
         assert jsResponseData != null;
-        int drawType = jsResponseData.getDrawtype();
+        int drawType = jsResponseData.getDrawType();
         String type = null;
         switch (drawType){
             case 0 :
@@ -286,7 +299,7 @@ public class NativeFileUpload {
     /**
      * parse Scanned Text Response data
      *
-     * @param jsonObject
+     * @param jsonObject scan image to retrieve text and add to jsonObject for callback
      */
     private void parseScanTextResponse(final JSONObject jsonObject) {
         mActivity.runOnUiThread(() -> {
@@ -316,10 +329,21 @@ public class NativeFileUpload {
                 }
             };
 
-            TedPermission.create()
-                    .setPermissionListener(permissionlistener)
-                    .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    .check();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                TedPermission.create()
+                        .setPermissionListener(permissionlistener)
+                        .setPermissions(
+                                Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                        .check();
+            } else {
+                TedPermission.create()
+                        .setPermissionListener(permissionlistener)
+                        .setPermissions(
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .check();
+            }
         });
     }
 
@@ -327,7 +351,7 @@ public class NativeFileUpload {
     /**
      * get the response data
      *
-     * @return
+     * @return json response data
      */
     public JSResponseData getJsResponseData() {
         return jsResponseData != null ? jsResponseData : new JSResponseData();
@@ -337,12 +361,26 @@ public class NativeFileUpload {
     /**
      * handle captured image result data
      *
-     * @param intent
+     * @param intent contain annotated images path with caption as result in intent
      */
     public void handleImageResultIntent(Intent intent) {
 
         String filePath = intent.getStringExtra(CameraConfiguration.Arguments.FILE_PATH);
+        if(filePath == null) return;
+
         caption = intent.getStringExtra(CameraConfiguration.Arguments.CAPTION);
+        boolean isFromGallery = intent.getBooleanExtra(CameraConfiguration.Arguments.IS_FROM_GALLERY, false);
+
+        if(isFromGallery){
+            Intent previewActivityIntent = PreviewActivity.newIntent(mActivity,
+                    CameraConfiguration.MEDIA_ACTION_PHOTO, filePath, false,
+                    getJsResponseData().isShowCaption(), getJsResponseData().getCaption(),
+                    true, true, getJsResponseData().getResponseData());
+
+            mActivity.startActivityForResult(previewActivityIntent, CustomCameraManager.CAPTURE_MEDIA_PHOTO);
+            return;
+        }
+
         mImageCaptureUri = Uri.fromFile(new File(filePath));
 
         saveImageToSyncHtmlFilesDir(mImageCaptureUri, mContext, null);
@@ -351,18 +389,18 @@ public class NativeFileUpload {
 
 
     /**
-     * @param filename
-     * @param offlineID
+     * @param filename name of selected image
+     * @param offlineID upload image against offlineID
      */
     private void setNativeSelectedPhotoCallbackFunction(String filename, String offlineID) {
-        setNativeSelectedPhotoCallbackFunction(filename, offlineID, getJsResponseData().getCallbackfunction());
+        setNativeSelectedPhotoCallbackFunction(filename, offlineID, getJsResponseData().getCallbackFunction());
     }
 
 
     /**
-     * @param filename
-     * @param offlineID
-     * @param callbackName
+     * @param filename name of selected image
+     * @param offlineID upload image against offlineID
+     * @param callbackName provide image data to callback
      */
     private void setNativeSelectedPhotoCallbackFunction(String filename, String offlineID, String callbackName) {
         JSONObject responseJsonObj = setFileNameAndOfflineIDToResponseData(filename, offlineID);
@@ -379,9 +417,9 @@ public class NativeFileUpload {
     /**
      * set file name and offline id to response data
      *
-     * @param filename
-     * @param offlineID
-     * @return
+     * @param filename name of selected image
+     * @param offlineID upload image against offlineID
+     * @return jsonObject with filename and offlineID
      */
     private JSONObject setFileNameAndOfflineIDToResponseData(String filename, String offlineID) {
         try {
@@ -401,8 +439,8 @@ public class NativeFileUpload {
     /**
      * Start image upload to server and save to local db with its information
      *
-     * @param filePath
-     * @param offlineID
+     * @param filePath  filePath to upload server
+     * @param offlineID upload image against offlineID
      */
     private void startImageUpload(final String filePath, String offlineID) {
         startImageUpload(filePath, offlineID, getJsResponseData().getAppID(), getJsResponseData().getSrcImageName(), AppMediaDetails.INSTRUCTION_IMAGE_TYPE);
@@ -413,19 +451,19 @@ public class NativeFileUpload {
     /**
      * start uploading image
      *
-     * @param filePath
-     * @param offlineID
-     * @param appID
-     * @param srcName
-     * @param imageType
+     * @param filePath filePath to upload file on server
+     * @param offlineID upload image against offlineID
+     * @param appID ID of app
+     * @param srcName set image name if provided
+     * @param imageType give info of image type to upload
      */
     private void startImageUpload(final String filePath, String offlineID, String appID, String srcName, int imageType) {
         File file = new File(filePath);
         String fileName = FileUtility.getFileNameWithoutExists(filePath);
-        final AppMediaDetails appMediaDetails = FileUploadUtility.saveAppMediaDetails(file, offlineID, instucationNumberClockIn,
+        final AppMediaDetails appMediaDetails = FileUploadUtility.saveAppMediaDetails(file, offlineID, instructionNumberClockIn,
                 TextUtils.isEmpty(srcName) ? fileName : srcName, imageType, caption, mContext);
 
-        instucationNumberClockIn = appMediaDetails.getInstructionNumber();
+        instructionNumberClockIn = appMediaDetails.getInstructionNumber();
 
         if (appMediaDetails == null) {
             return;
@@ -433,8 +471,7 @@ public class NativeFileUpload {
         FileUploader roofingUploader = FileUploader.getInstance(appMediaDetails, mContext);
         roofingUploader.setFilePath(file.getPath());
         roofingUploader.setAppID(appID);
-        roofingUploader.setAppsServerToken(appAuthToken);
-        roofingUploader.setAuthToken(authorizationToken);
+        roofingUploader.setAppsServerToken(serverAuthToken);
         roofingUploader.setUiCallBack(new FileUploader.IUICallBackRoofing() {
             @Override
             public void onSuccess(final ServiceRequest serviceRequest) {
@@ -444,7 +481,7 @@ public class NativeFileUpload {
 
 
                         if (jsResponseData != null && jsResponseData.isWaitForResponse()) {
-                            setCallbackFunction(serviceRequest.getAppMediaDetails(), jsResponseData.getCallbackfunction());
+                            setCallbackFunction(serviceRequest.getAppMediaDetails(), jsResponseData.getCallbackFunction());
                         }
 
                     }
@@ -469,8 +506,8 @@ public class NativeFileUpload {
     /**
      * put details in json object and set callback function
      *
-     * @param appMediaDetails
-     * @param callbackName
+     * @param appMediaDetails contain image related info like filename, status, id, uploaded path of image
+     * @param callbackName provide image data to callback
      */
     private void setCallbackFunction(AppMediaDetails appMediaDetails, String callbackName) {
         try {
@@ -495,7 +532,7 @@ public class NativeFileUpload {
     /**
      * set json response data
      *
-     * @param jsResponseData
+     * @param jsResponseData provide jsonObject
      */
     public void setJsResponseData(JSResponseData jsResponseData) {
         this.jsResponseData = jsResponseData;
@@ -505,8 +542,9 @@ public class NativeFileUpload {
     /**
      * show dialogue for options (gallery/camera/Document)
      *
-     * @param jsResponseData
+     * @param jsResponseData provide data to open custom dialog of file selection
      */
+    @SuppressLint("InflateParams")
     private void launchNativeFileUploadByOptions(final JSResponseData jsResponseData) {
 
         try {
@@ -515,7 +553,7 @@ public class NativeFileUpload {
                     R.style.MaterialDialogSheet);
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            View view = inflater.inflate(R.layout.popup_load_native_upload_type_window_layout, null);
+             View view = inflater.inflate(R.layout.popup_load_native_upload_type_window_layout, null);
             Button takePhoto = view.findViewById(R.id.btn_take_photo);
             Button fromGallery = view.findViewById(R.id.btn_from_gallery);
             Button documents = view.findViewById(R.id.btn_documents);
@@ -531,9 +569,13 @@ public class NativeFileUpload {
 
             mBottomSheetDialog.setContentView(view);
             mBottomSheetDialog.setCancelable(true);
-            mBottomSheetDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            mBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+
+            if(mBottomSheetDialog.getWindow() != null ){
+                mBottomSheetDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                mBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+            }
+
             mBottomSheetDialog.show();
             takePhoto.setOnClickListener(v -> {
                 mBottomSheetDialog.dismiss();
@@ -617,10 +659,10 @@ public class NativeFileUpload {
     /**
      * handle scanned text results
      *
-     * @param mActivity
-     * @param requestCode
-     * @param resultCode
-     * @param intent
+     * @param mActivity activity context
+     * @param requestCode provide info of which intent requested
+     * @param resultCode provide status of requested intent
+     * @param intent contain data if result is success
      */
     public void handleScanTextResult(Activity mActivity, int requestCode, int resultCode, Intent intent) {
         ScanTextUtility.getInstance(mActivity).onActivityResult(requestCode, resultCode, intent);
@@ -629,7 +671,7 @@ public class NativeFileUpload {
     /**
      * handle file browsing
      *
-     * @param intent
+     * @param intent contain data if result is success
      */
     public void handleFileBrowsing(Intent intent) {
         Uri fileUri = intent.getData();
@@ -642,8 +684,8 @@ public class NativeFileUpload {
         }
         String extension = filepathImg.substring(filepathImg.lastIndexOf(".") + 1);
 
-        if (jsResponseData.getExtention() != null) {
-            if (!jsResponseData.getExtention().equals(extension)) {
+        if (jsResponseData.getExtension() != null) {
+            if (!jsResponseData.getExtension().equals(extension)) {
                 Toast.makeText(mContext, extension + " not supported.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -660,7 +702,7 @@ public class NativeFileUpload {
             }
         }
         if (fileUri == null) {
-            FileUploadUtility.cancelJavaScriptCall(mActivity, mWebView, getJsResponseData().getCallbackfunction());
+            FileUploadUtility.cancelJavaScriptCall(mActivity, mWebView, getJsResponseData().getCallbackFunction());
             return;
         }
 
@@ -676,7 +718,7 @@ public class NativeFileUpload {
             }
             Intent intentCrop = PreviewActivity.newIntent(mContext,
                     CameraConfiguration.MEDIA_ACTION_PHOTO,
-                    filepathImg, getJsResponseData().isCroped(), getJsResponseData().isShowCaption(), getJsResponseData().getCaption(), true, true);
+                    filepathImg, getJsResponseData().isCropped(), getJsResponseData().isShowCaption(), getJsResponseData().getCaption(), true, true);
             mActivity.startActivityForResult(intentCrop, REQUEST_CROP_IMAGE);
         } else {
             uploadFileAndCallback(filepathImg);
@@ -686,7 +728,7 @@ public class NativeFileUpload {
     /**
      * start image upload and set callback function
      *
-     * @param filePath
+     * @param filePath filePath to upload file on server
      */
     private void uploadFileAndCallback(String filePath) {
         try {
@@ -703,7 +745,7 @@ public class NativeFileUpload {
     /**
      * handle custom image gallery
      *
-     * @param intent
+     * @param intent contain image path of selected image from gallery
      */
     public void handleCustomImageGallery(Intent intent) {
         String filepath = intent.getStringExtra("imgPath");
@@ -721,14 +763,14 @@ public class NativeFileUpload {
     /**
      * takes image from file path and add drawing in canvas
      *
-     * @param stringExtra
-     * @param filePath
-     * @param toolbarColor
-     * @param toolbarTitle
-     * @param actionRequestEditimage
-     * @param drawType
+     * @param stringExtra json data for activity to perform work
+     * @param filePath show image with filePath to draw
+     * @param toolbarColor set toolbar color
+     * @param toolbarTitle title for toolbar
+     * @param actionRequestEditImage action for image edit
+     * @param drawType type of draw on image like circle , line
      */
-    public static void setFreeDrawing(String stringExtra, String filePath, String toolbarColor, String toolbarTitle, int actionRequestEditimage, int drawType) {
+    public static void setFreeDrawing(String stringExtra, String filePath, String toolbarColor, String toolbarTitle, int actionRequestEditImage, int drawType) {
         File outputFile = new File(FileUploadUtility.getHtmlDirFromSandbox(mContext) + File.separator +
                 "draw_" + System.currentTimeMillis() + ".png");
         FreeDrawingActivity.start(mActivity, stringExtra, filePath, outputFile.getAbsolutePath(),
@@ -739,7 +781,7 @@ public class NativeFileUpload {
     /**
      * handle onActivity result of free drawing and upload it to file directory
      *
-     * @param intent
+     * @param intent contain image path of selected draw image
      */
     public void handleFreeDrawingImage(Intent intent) {
         String newFilePath = intent.getStringExtra(IPRectangleAnnotationActivity.SAVE_FILE_PATH);
@@ -752,8 +794,8 @@ public class NativeFileUpload {
     /**
      * compress captured image and save captured image to web html folder
      *
-     * @param imageCaptureUri
-     * @param context
+     * @param imageCaptureUri file uri of capture image
+     * @param context context
      */
     private void saveImageToSyncHtmlFilesDir(Uri imageCaptureUri, Context context, Intent intent) {
         try {
@@ -812,7 +854,7 @@ public class NativeFileUpload {
                                     intent.getIntExtra(AnnotateActivity.ANNOTATION_COUNT, 0),
                                     annotationData);
                         } else {
-                            setNativeSelectedPhotoCallbackFunction(FileUtility.getFileName(uploadFilePath.getAbsolutePath()), offlineID, jsResponseData.getCallbackfunction());
+                            setNativeSelectedPhotoCallbackFunction(FileUtility.getFileName(uploadFilePath.getAbsolutePath()), offlineID, jsResponseData.getCallbackFunction());
                         }
 
                     }
@@ -830,12 +872,12 @@ public class NativeFileUpload {
     /**
      * sending image data to bridge call
      *
-     * @param filename
-     * @param offlineID
-     * @param filePath
-     * @param originalImagePath
-     * @param badgeCount
-     * @param annotationData
+     * @param filename name of file
+     * @param offlineID upload image against offlineID
+     * @param filePath image path after annotation
+     * @param originalImagePath path of original image
+     * @param badgeCount count of annotation added
+     * @param annotationData provide which annotation added to image
      */
     private void setNativeSelectedPhotoCallbackFunctionV1(String filename, String offlineID, String filePath, String originalImagePath, int badgeCount, String annotationData) {
         try {
@@ -844,7 +886,7 @@ public class NativeFileUpload {
             responseJsonObj.put(ORIGINAL_IMAGE_PATH, originalImagePath);
             responseJsonObj.put(ANNOTATION_COUNT, badgeCount);
             responseJsonObj.put(ANNOTATE_DATA, new JSONArray(annotationData));
-            mWebView.evaluateJavascript(String.format("javascript:" + getJsResponseData().getCallbackfunction() + "(%s)", responseJsonObj), null);
+            mWebView.evaluateJavascript(String.format("javascript:" + getJsResponseData().getCallbackFunction() + "(%s)", responseJsonObj), null);
         } catch (Exception e) {
             e.printStackTrace();
         }

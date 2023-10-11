@@ -1,6 +1,5 @@
 package com.hokuapps.biometricauthentication;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -67,7 +66,7 @@ public class BiometricAuthentication extends AppCompatActivity {
                 intent.putExtra("nextButtonCallBack",nextButtonCallBacK);
                 intent.putExtra("jasonObject",jsonObjec);
                 intent.putExtra("Result", "0");
-                setResult(BIOMETRIC_AUT,intent);
+                setResult(RESULT_OK,intent);
             }
 
             @Override
@@ -77,7 +76,7 @@ public class BiometricAuthentication extends AppCompatActivity {
                 intent.putExtra("nextButtonCallBack",nextButtonCallBacK);
                 intent.putExtra("jasonObject",jsonObjec);
                 intent.putExtra("Result", "1");
-                setResult(BIOMETRIC_AUT,intent);
+                setResult(RESULT_OK,intent);
                 finish();
             }
 
@@ -88,7 +87,7 @@ public class BiometricAuthentication extends AppCompatActivity {
                 intent.putExtra("nextButtonCallBack",nextButtonCallBacK);
                 intent.putExtra("jasonObject",jsonObjec);
                 intent.putExtra("Result", "0");
-                setResult(BIOMETRIC_AUT,intent);
+                setResult(RESULT_OK,intent);
             }
         });
         return biometricPrompt;

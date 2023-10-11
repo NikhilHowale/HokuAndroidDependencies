@@ -57,7 +57,7 @@ public class TurboImageViewFree extends View {
         setBackgroundColor(Color.TRANSPARENT);
     }
 
-    public void setListener(TurboImageViewListener TurboImageViewFreeListener) {
+    public void setListener() {
         brush.setStyle(Paint.Style.STROKE);
         brush.setColor(Color.RED);
         brush.setStrokeWidth(10);

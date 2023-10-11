@@ -23,7 +23,7 @@ public class Tables {
         public static Uri CONTENT_URI = getContentUri(PATH_APP_MEDIA_DETAILS);
     }
     private static Uri getContentUri(String path) {
-        return FileContentProvider.CONTENT_URI
+        return FileContentProvider.getInstance().CONTENT_URI
                 .buildUpon().appendPath(path).build();
     }
 }

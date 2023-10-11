@@ -1,24 +1,6 @@
 package com.hokuapps.loadnativefileupload;
 
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.APP_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.APP_MEDIA_ARRAY;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAPTION;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_NAME;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_NM;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.FILE_PATH;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_MEDIA_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_FILE_NAME;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_FILE_NM;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_MEDIA_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_S3_FILE_PATH;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_PLAN_STATUS;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MEDIA_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.NEXT_BUTTON_CALLBACK;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OBJ_PARAMS;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_DATA_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.S3_FILE_PATH;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STATUS;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STEP;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.*;
 
 import android.app.Activity;
 import android.content.Context;
@@ -27,6 +9,7 @@ import android.webkit.WebView;
 
 import com.hokuapps.loadnativefileupload.backgroundtask.FileUploader;
 import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
+import com.hokuapps.loadnativefileupload.database.FileContentProvider;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 import com.hokuapps.loadnativefileupload.restrequest.ServiceRequest;
 import com.hokuapps.loadnativefileupload.utilities.FileUploadUtility;
@@ -40,40 +23,48 @@ import java.util.ArrayList;
 
 public class UploadPendingFiles {
 
-    private Context mContext;
-    private WebView mWebView;
-    private Activity mActivity;
-    private boolean isGetAllFileStatusCalled = false;
-    private String[] requiredJSONObjectKey = {};
-    private String fileStatusCallBackFunction = "";
+    private final Context mContext;
+    private final WebView mWebView;
+    private final Activity mActivity;
     private String syncOfflineNextButtonCallBack = "";
     private String objParams = "";
-    private String appAuthToken = "";
-    private int instucationNumberClockIn = 0;
+    private String serverAuthToken = "";
+    private int instructionNumberClockIn = 0;
+
 
     /**
      * Parameterized constructor
-     * @param mContext
-     * @param appAuthToken
-     * @param webView
-     * @param activity
+     * @param mContext context
+     * @param webView webView reference
+     * @param activity activity context
      */
-    public UploadPendingFiles(Context mContext, String appAuthToken,WebView webView,Activity activity) {
+    public UploadPendingFiles(Context mContext,WebView webView,Activity activity,String authority) {
         this.mContext = mContext;
-        this.appAuthToken = appAuthToken;
         this.mWebView = webView;
         this.mActivity = activity;
+        FileContentProvider.getInstance().setUpDatabase(authority);
+    }
+
+    /**
+     *  set data for authorization
+     * @param responseData jsonObject for retrieve auth data
+     */
+    public void setAuthDetails(String responseData){
+        try {
+            JSONObject object = new JSONObject(responseData);
+            this.serverAuthToken = FileUploadUtility.getStringObjectValue(object, AUTH_TOKEN);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
      * Entry point for uploadPendingFiles module
-     * @param fileStatusRes
+     * @param fileStatusRes jsonObject with file details for retry upload file
      */
     public void uploadPendingFiles(final String fileStatusRes){
         try {
             if (TextUtils.isEmpty(fileStatusRes)) return;
-
-            requiredJSONObjectKey = new String[]{"offlineDataID", "fileNm", "appID"};
 
             JSONObject jOFileStatus = new JSONObject(fileStatusRes);
             syncOfflineNextButtonCallBack = FileUploadUtility.getStringObjectValue(jOFileStatus, NEXT_BUTTON_CALLBACK);
@@ -91,10 +82,10 @@ public class UploadPendingFiles {
 
     /**
      * retry file upload if file is failed during upload
-     * @param appID
-     * @param fileName
-     * @param offlineID
-     * @param filePath
+     * @param appID ID of app
+     * @param fileName name of file
+     * @param offlineID upload file whose offline ID matches with file name
+     * @param filePath file path
      */
     private void retryFileUploadClient(String appID, String fileName, String offlineID, String filePath) {
         File file;
@@ -106,11 +97,11 @@ public class UploadPendingFiles {
         AppMediaDetails appMediaDetails = AppMediaDetailsDAO.getAppMediaDetailsByFileName(mContext, offlineID, fileName);
 
         //save as in progress
-        appMediaDetails.setUploadStatus(AppMediaDetails.UPLOAD_INPROGRESS);
+        appMediaDetails.setUploadStatus(AppMediaDetails.UPLOAD_IN_PROGRESS);
 
         appMediaDetails.save(mContext);
 
-        instucationNumberClockIn = appMediaDetails.getInstructionNumber();
+        instructionNumberClockIn = appMediaDetails.getInstructionNumber();
 
         if (appMediaDetails == null) {
             return;
@@ -119,7 +110,7 @@ public class UploadPendingFiles {
         FileUploader roofingUploader = FileUploader.getInstance(appMediaDetails,mContext);
         roofingUploader.setFilePath(file.getPath());
         roofingUploader.setAppID(appID);
-        roofingUploader.setAppsServerToken(appAuthToken);
+        roofingUploader.setAppsServerToken(serverAuthToken);
         roofingUploader.setUiCallBack(new FileUploader.IUICallBackRoofing() {
             @Override
             public void onSuccess(ServiceRequest serviceRequest) {
@@ -145,14 +136,10 @@ public class UploadPendingFiles {
     /**
      * update file status on summary page by its offlineID
      *
-     * @param offlineDataID
+     * @param offlineDataID search file details against offlineID
      */
     private void updateFileStatus(String offlineDataID) {
-        if (isGetAllFileStatusCalled && !TextUtils.isEmpty(fileStatusCallBackFunction)) {
-            JSONObject jsonObjectFileStatus = getAllFileStatusList(offlineDataID);
-
-            FileUploadUtility.callJavaScriptFunction(mActivity, mWebView, fileStatusCallBackFunction, jsonObjectFileStatus);
-        } else if (!TextUtils.isEmpty(syncOfflineNextButtonCallBack)) {
+        if (!TextUtils.isEmpty(syncOfflineNextButtonCallBack)) {
             JSONObject jsonObjectFileStatus = getAllFileStatusList(offlineDataID);
             if (objParams != null && !objParams.isEmpty()) {
                 try {
@@ -167,8 +154,8 @@ public class UploadPendingFiles {
 
     /**
      * Check the status of all the files uploads and send all the file details to callback function
-     * @param offlineDataID
-     * @return
+     * @param offlineDataID search file details against offlineID
+     * @return return all file details for offlineID
      */
     private JSONObject getAllFileStatusList(String offlineDataID) {
 
@@ -176,8 +163,7 @@ public class UploadPendingFiles {
             JSONObject jsonObjectResponse = new JSONObject();
             JSONArray jsonArray = new JSONArray();
 
-            ArrayList<AppMediaDetails> appMediaDetailsArrayList = AppMediaDetailsDAO.getAppMediaDetailsListByOfflineID(
-                    mContext, offlineDataID);
+            ArrayList<AppMediaDetails> appMediaDetailsArrayList = AppMediaDetailsDAO.getAppMediaDetailsListByOfflineID(mContext, offlineDataID);
             String mapFileMediaID = "";
             String mapFileName = "";
             int mapFileStatus = 0;

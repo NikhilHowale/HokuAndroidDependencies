@@ -8,7 +8,7 @@ public class JSResponseData {
 
     private String appID;
     private String languagePref;
-    private String callbackfunction;
+    private String callbackFunction;
     private String responseData;
     private String srcImageName;
     private String OfflineID;
@@ -34,11 +34,11 @@ public class JSResponseData {
     private String pageTitle;
     private boolean isWaitForResponse;
     private boolean isFileFormat;
-    private boolean isCroped;
+    private boolean isCropped;
     private String fileMimeType;
     private String type;
     private String color;
-    private int drawtype;
+    private int drawType;
     private int maxFileSize;
 
     private boolean isDefaultCamera = false;
@@ -56,7 +56,7 @@ public class JSResponseData {
     private String originalImagePath;
     private boolean usedForAnnotation;
     private String[] supportedFormat = new String[]{};
-    private String extention;
+    private String extension;
     private String localImageName;
 
     public String getLocalImageName() {
@@ -126,12 +126,12 @@ public class JSResponseData {
         this.supportedFormat = supportedFormat;
     }
 
-    public String getExtention() {
-        return extention;
+    public String getExtension() {
+        return extension;
     }
 
-    public void setExtention(String extention) {
-        this.extention = extention;
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     public boolean isAudioRecording() {
@@ -150,12 +150,12 @@ public class JSResponseData {
         isBase64Data = base64Data;
     }
 
-    public boolean isCroped() {
-        return isCroped;
+    public boolean isCropped() {
+        return isCropped;
     }
 
-    public void setCroped(boolean croped) {
-        isCroped = croped;
+    public void setCropped(boolean isCropped) {
+        this.isCropped = isCropped;
     }
 
     public String getAppID() {
@@ -166,12 +166,12 @@ public class JSResponseData {
         this.appID = appID;
     }
 
-    public String getCallbackfunction() {
-        return callbackfunction;
+    public String getCallbackFunction() {
+        return callbackFunction;
     }
 
-    public void setCallbackfunction(String callbackfunction) {
-        this.callbackfunction = callbackfunction;
+    public void setCallbackFunction(String callbackFunction) {
+        this.callbackFunction = callbackFunction;
     }
 
     public String getResponseData() {
@@ -382,12 +382,12 @@ public class JSResponseData {
         isRectangle = rectangle;
     }
 
-    public int getDrawtype() {
-        return drawtype;
+    public int getDrawType() {
+        return drawType;
     }
 
-    public void setDrawtype(int drawtype) {
-        this.drawtype = drawtype;
+    public void setDrawType(int drawType) {
+        this.drawType = drawType;
     }
 
     public int getMaxFileSize() {

@@ -102,7 +102,7 @@ public class Error {
         try {
             jsonObject = new JSONObject(arg.toString());
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         if (jsonObject == null || jsonObject.length() == 0) {
             return null;

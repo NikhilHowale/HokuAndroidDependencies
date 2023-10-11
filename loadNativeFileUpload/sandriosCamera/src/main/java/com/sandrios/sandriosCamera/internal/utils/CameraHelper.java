@@ -1,12 +1,10 @@
 package com.sandrios.sandriosCamera.internal.utils;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.media.CamcorderProfile;
-import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,10 +39,8 @@ public final class CameraHelper {
                 context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static boolean hasCamera2(Context context) {
         if (context == null) return false;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return false;
         try {
             CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
             String[] idList = manager.getCameraIdList();
@@ -73,8 +69,6 @@ public final class CameraHelper {
     }
 
     public static File getOutputMediaFile(Context context, @CameraConfiguration.MediaAction int mediaAction) {
-        /*File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), context.getPackageName());*/
 
         File dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
 
@@ -109,7 +103,6 @@ public final class CameraHelper {
         return mediaFile;
     }
 
-    @SuppressWarnings("deprecation")
     public static Size getPictureSize(List<Size> choices, @CameraConfiguration.MediaQuality int mediaQuality) {
         if (choices == null || choices.isEmpty()) return null;
         if (choices.size() == 1) return choices.get(0);
@@ -118,7 +111,7 @@ public final class CameraHelper {
         Size maxPictureSize = Collections.max(choices, new CompareSizesByArea2());
         Size minPictureSize = Collections.min(choices, new CompareSizesByArea2());
 
-        Collections.sort(choices, new CompareSizesByArea2());
+        choices.sort(new CompareSizesByArea2());
 
         if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_HIGHEST) {
             result = maxPictureSize;
@@ -149,7 +142,6 @@ public final class CameraHelper {
         return result;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static Size getPictureSize(Size[] sizes, @CameraConfiguration.MediaQuality int mediaQuality) {
         if (sizes == null || sizes.length == 0) return null;
 
@@ -161,7 +153,7 @@ public final class CameraHelper {
         Size maxPictureSize = Collections.max(choices, new CompareSizesByArea2());
         Size minPictureSize = Collections.min(choices, new CompareSizesByArea2());
 
-        Collections.sort(choices, new CompareSizesByArea2());
+        choices.sort(new CompareSizesByArea2());
 
         if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_HIGHEST) {
             result = maxPictureSize;
@@ -192,40 +184,7 @@ public final class CameraHelper {
         return result;
     }
 
-    @SuppressWarnings("deprecation")
-    public static Size getOptimalPreviewSize(List<Size> sizes, int width, int height) {
-        final double ASPECT_TOLERANCE = 0.1;
-        double targetRatio = (double) height / width;
 
-        if (sizes == null) return null;
-
-        Size optimalSize = null;
-        double minDiff = Double.MAX_VALUE;
-
-        int targetHeight = height;
-
-        for (Size size : sizes) {
-            double ratio = (double) size.getWidth() / size.getHeight();
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
-            if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
-                optimalSize = size;
-                minDiff = Math.abs(size.getHeight() - targetHeight);
-            }
-        }
-
-        if (optimalSize == null) {
-            minDiff = Double.MAX_VALUE;
-            for (Size size : sizes) {
-                if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
-                    optimalSize = size;
-                    minDiff = Math.abs(size.getHeight() - targetHeight);
-                }
-            }
-        }
-        return optimalSize;
-    }
-
-    @SuppressWarnings("deprecation")
     public static Size getSizeWithClosestRatio(List<Size> sizes, int width, int height) {
 
         if (sizes == null) return null;
@@ -264,7 +223,6 @@ public final class CameraHelper {
         return optimalSize;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static Size getOptimalPreviewSize(Size[] sizes, int width, int height) {
 
         if (sizes == null) return null;
@@ -277,8 +235,6 @@ public final class CameraHelper {
         int targetHeight = height;
 
         for (Size size : sizes) {
-//            if (size.getWidth() == width && size.getHeight() == height)
-//                return size;
             double ratio = (double) size.getWidth() / size.getHeight();
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
             if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
@@ -299,7 +255,6 @@ public final class CameraHelper {
         return optimalSize;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static Size getSizeWithClosestRatio(Size[] sizes, int width, int height) {
 
         if (sizes == null) return null;
@@ -312,9 +267,6 @@ public final class CameraHelper {
         int targetHeight = height;
 
         for (Size size : sizes) {
-//            if (size.getWidth() == width && size.getHeight() == height)
-//                return size;
-
             double ratio = (double) size.getHeight() / size.getWidth();
 
             if (Math.abs(ratio - targetRatio) < MIN_TOLERANCE) MIN_TOLERANCE = ratio;
@@ -338,7 +290,6 @@ public final class CameraHelper {
         return optimalSize;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static Size chooseOptimalSize(Size[] choices, int width, int height, Size aspectRatio) {
         // Collect the supported resolutions that are at least as big as the preview Surface
         List<Size> bigEnough = new ArrayList<>();
@@ -372,7 +323,6 @@ public final class CameraHelper {
         return 8 * maxFileSize / seconds - camcorderProfile.audioBitRate;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static CamcorderProfile getCamcorderProfile(String cameraId, long maximumFileSize, int minimumDurationInSeconds) {
         if (TextUtils.isEmpty(cameraId)) {
             return null;
@@ -390,8 +340,8 @@ public final class CameraHelper {
                 CameraConfiguration.MEDIA_QUALITY_LOW, CameraConfiguration.MEDIA_QUALITY_LOWEST};
 
         CamcorderProfile camcorderProfile;
-        for (int i = 0; i < qualities.length; ++i) {
-            camcorderProfile = CameraHelper.getCamcorderProfile(qualities[i], currentCameraId);
+        for (int quality : qualities) {
+            camcorderProfile = CameraHelper.getCamcorderProfile(quality, currentCameraId);
             double fileSize = CameraHelper.calculateApproximateVideoSize(camcorderProfile, minimumDurationInSeconds);
 
             if (fileSize > maximumFileSize) {
@@ -406,7 +356,6 @@ public final class CameraHelper {
         return CameraHelper.getCamcorderProfile(CameraConfiguration.MEDIA_QUALITY_LOWEST, currentCameraId);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static CamcorderProfile getCamcorderProfile(@CameraConfiguration.MediaQuality int mediaQuality, String cameraId) {
         if (TextUtils.isEmpty(cameraId)) {
             return null;
@@ -416,54 +365,37 @@ public final class CameraHelper {
     }
 
     public static CamcorderProfile getCamcorderProfile(@CameraConfiguration.MediaQuality int mediaQuality, int cameraId) {
-        if (Build.VERSION.SDK_INT > 10) {
-            if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_HIGHEST) {
-                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_HIGH);
-            } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_HIGH) {
-                if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_1080P)) {
-                    return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_1080P);
-                } else if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
-                    return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_720P);
-                } else {
-                    return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_HIGH);
-                }
-            } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_MEDIUM) {
-                if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
-                    return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_720P);
-                } else if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
-                    return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_480P);
-                } else {
-                    return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
-                }
-            } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_LOW) {
-                if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
-                    return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_480P);
-                } else {
-                    return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
-                }
-            } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_LOWEST) {
-                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
+        if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_HIGHEST) {
+            return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_HIGH);
+        } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_HIGH) {
+            if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_1080P)) {
+                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_1080P);
+            } else if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
+                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_720P);
             } else {
                 return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_HIGH);
             }
+        } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_MEDIUM) {
+            if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_720P)) {
+                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_720P);
+            } else if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
+                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_480P);
+            } else {
+                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
+            }
+        } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_LOW) {
+            if (CamcorderProfile.hasProfile(cameraId, CamcorderProfile.QUALITY_480P)) {
+                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_480P);
+            } else {
+                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
+            }
+        } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_LOWEST) {
+            return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
         } else {
-            if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_HIGHEST) {
-                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_HIGH);
-            } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_HIGH) {
-                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_HIGH);
-            } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_MEDIUM) {
-                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
-            } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_LOW) {
-                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
-            } else if (mediaQuality == CameraConfiguration.MEDIA_QUALITY_LOWEST) {
-                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_LOW);
-            } else {
-                return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_HIGH);
-            }
+            return CamcorderProfile.get(cameraId, CamcorderProfile.QUALITY_HIGH);
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static class CompareSizesByArea2 implements Comparator<Size> {
         @Override
         public int compare(Size lhs, Size rhs) {

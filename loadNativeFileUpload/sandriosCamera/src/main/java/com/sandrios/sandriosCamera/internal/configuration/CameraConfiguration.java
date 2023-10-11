@@ -91,6 +91,7 @@ public final class CameraConfiguration {
         String CAPTION = "com.sandrios.sandriosCamera.CAPTION";
         String IS_MULTIPLE_IMAGES = "is_multiple_images";
         String ARRAY_LIST_OF_IMAGES = "selectedImages";
+        String IS_FROM_GALLERY = "isFromGallery";
     }
 
     @IntDef({MEDIA_QUALITY_AUTO, MEDIA_QUALITY_LOWEST, MEDIA_QUALITY_LOW, MEDIA_QUALITY_MEDIUM, MEDIA_QUALITY_HIGH, MEDIA_QUALITY_HIGHEST})

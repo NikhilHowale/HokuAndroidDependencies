@@ -2,7 +2,6 @@ package com.hokuapps.loadnativefileupload.restrequest;
 
 import android.text.TextUtils;
 
-import com.hokuapps.loadnativefileupload.delegate.IUICallBack;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 
 import java.net.URI;
@@ -27,7 +26,6 @@ public class ServiceRequest {
     private String filePath;
     private String profileKey;
 
-    public boolean canQueue;
     public URI uri;
     private boolean isMediaFileUploader;
 
@@ -35,11 +33,6 @@ public class ServiceRequest {
     private String fileName;
     private String responseString;
     private AppMediaDetails appMediaDetails;
-    private IUICallBack iuiCallBack;
-
-    public IUICallBack getIuiCallBack() {
-        return iuiCallBack;
-    }
 
     public AppMediaDetails getAppMediaDetails() {
         return appMediaDetails;
@@ -81,25 +74,14 @@ public class ServiceRequest {
     }
 
     public ServiceRequest() {
-
     }
 
-    /**
-     * Parameterized Constructor
-     *
-     * @param url
-     * @param tag
-     */
-    public ServiceRequest(String url, int tag) {
-        this.url = url;
-        this.tag = tag;
-    }
 
     /**
      * Add request parameters
      *
-     * @param key
-     * @param value
+     * @param key header key
+     * @param value value for key
      */
     public void addRequestParameter(String key, String value) {
         if (requestParams == null) {
@@ -111,8 +93,8 @@ public class ServiceRequest {
     /**
      * Add Http headers
      *
-     * @param key
-     * @param value
+     * @param key header key
+     * @param value value for key
      */
     public void addHTTPHeader(String key, String value) {
         if (additionalHTTPHeaders == null) {
@@ -128,12 +110,6 @@ public class ServiceRequest {
         return additionalHTTPHeaders;
     }
 
-    /**
-     * do request.
-     */
-    public void doRequest() {
-        // TODO: Need to add AsyncTask to send http request
-    }
 
     public URI getUri() {
 

@@ -35,18 +35,14 @@ public class ScalingUtility {
         CROP, FIT
     }
 
-    public static Bitmap getSampledBitmap(String filePath, int reqWidth, int reqHeight) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, options);
-        int inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        options.inSampleSize = inSampleSize;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        options.inJustDecodeBounds = false;
-        return checkAndGetRotatedBitmap(filePath, BitmapFactory.decodeFile(filePath, options));
-    }
 
-
+    /**
+     * check size of image from width and height return how small image require
+     * @param options bitmap factory reference
+     * @param reqWidth require width
+     * @param reqHeight require height
+     * @return return size
+     */
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
@@ -69,6 +65,11 @@ public class ScalingUtility {
         return inSampleSize;
     }
 
+    /**
+     * check orientation and size of bitmap then scale according need
+     * @param filePath file path of capture image
+     * @return return bitmap after orientation and size change
+     */
     public static Bitmap decodeFile(String filePath) {
         BitmapFactory.Options options = new BitmapFactory.Options();
 
@@ -80,30 +81,6 @@ public class ScalingUtility {
         try {
             int actualHeight = options.outHeight;
             int actualWidth = options.outWidth;
-
-            //max Height and width values of the compressed image is taken as 816x612
-
-             /*float maxHeight = 816.0f;
-            float maxWidth = 612.0f;
-            float imgRatio = actualWidth / actualHeight;
-            float maxRatio = maxWidth / maxHeight;
-
-            // width and height values are set maintaining the aspect ratio of the image
-
-            if (actualHeight > maxHeight || actualWidth > maxWidth) {
-                if (imgRatio < maxRatio) {
-                    imgRatio = maxHeight / actualHeight;
-                    actualWidth = (int) (imgRatio * actualWidth);
-                    actualHeight = (int) maxHeight;
-                } else if (imgRatio > maxRatio) {
-                    imgRatio = maxWidth / actualWidth;
-                    actualHeight = (int) (imgRatio * actualHeight);
-                    actualWidth = (int) maxWidth;
-                } else {
-                    actualHeight = (int) maxHeight;
-                    actualWidth = (int) maxWidth;
-                }
-            }*/
 
             //setting inSampleSize value allows to load a scaled down version of the original image
             options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
@@ -122,28 +99,30 @@ public class ScalingUtility {
             } catch (OutOfMemoryError exception) {
                 exception.printStackTrace();
             }
-        } catch (ArithmeticException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
         ExifInterface exifObject = null;
+        int orientation = 0;
         try {
             exifObject = new ExifInterface(filePath);
+            orientation = exifObject.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        int orientation = exifObject.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-//        Bitmap imageRotate = rotateBitmap(bmp, orientation);
-//        capturedPhoto.setImageBitmap(imageRotate);
+
         return rotateBitmap(bmp, orientation);
     }
 
+    /**
+     * rotate bitmap
+     * @param bitmap bitmap
+     * @param orientation orientation
+     * @return return rotated bitmap other wise same bitmap
+     */
     public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
         Matrix matrix = new Matrix();
         switch (orientation) {
-            case ExifInterface.ORIENTATION_NORMAL:
-                return bitmap;
             case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
                 matrix.setScale(-1, 1);
                 break;
@@ -172,9 +151,7 @@ public class ScalingUtility {
                 return bitmap;
         }
         try {
-            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-//            bitmap.recycle();
-            return bmRotated;
+            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         }
         catch (OutOfMemoryError e) {
             e.printStackTrace();
@@ -182,50 +159,13 @@ public class ScalingUtility {
         }
     }
 
-    public static Bitmap checkAndGetRotatedBitmap(String filePath, Bitmap bitmap) {
-        //check the rotation of the image and display it properly
-        try {
-            if (bitmap != null) {
-                ExifInterface exif = new ExifInterface(filePath);
 
-                if (exif == null) return bitmap;
-
-                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-
-                Matrix matrix = new Matrix();
-
-                switch (orientation) {
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        matrix.postRotate(180);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        matrix.postRotate(90);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        matrix.postRotate(270);
-                        break;
-                    case ExifInterface.ORIENTATION_NORMAL:
-                    default:
-                        return bitmap;
-                }
-
-                try {
-                    Bitmap newOrientedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                            bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                    bitmap.recycle();
-                    return newOrientedBitmap;
-                } catch (OutOfMemoryError e) {
-                    e.printStackTrace();
-                    return bitmap;
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return bitmap;
-    }
-
+    /**
+     * save bitmap into local storage
+     * @param bm bitmap
+     * @param filePath file path of selected or capture image
+     * @return return return file path of save image
+     */
     public static String saveBitmap(Bitmap bm, String filePath) {
         File f = new File(filePath);
         File croppedFile = null;
@@ -264,7 +204,7 @@ public class ScalingUtility {
                         newFilePath = uri.getPath();
                         FileOutputStream out = null;
                         try {
-                            out = new FileOutputStream(new File(uri.getPath()));
+                            out = new FileOutputStream(uri.getPath());
                             bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
                             out.flush();
                             out.close();
@@ -276,11 +216,7 @@ public class ScalingUtility {
                     e.printStackTrace();
                 }
             }
-
-
         }
-
-
         return newFilePath;
     }
 }

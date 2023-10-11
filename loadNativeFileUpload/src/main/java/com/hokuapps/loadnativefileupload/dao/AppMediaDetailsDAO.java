@@ -23,6 +23,7 @@ public class AppMediaDetailsDAO extends BaseDAO {
     AppMediaDetails appMediaDetails;
     public SQLiteDatabase mdb;
     FileDatabaseHelper databaseHelper;
+    @SuppressLint("StaticFieldLeak")
     static Context mContext;
 
     public AppMediaDetailsDAO(Context context) {
@@ -31,7 +32,7 @@ public class AppMediaDetailsDAO extends BaseDAO {
 
     public AppMediaDetailsDAO(Context context, AppMediaDetails appMediaDetails) {
         super(context);
-        this.mContext = context;
+        mContext = context;
         databaseHelper = new FileDatabaseHelper(getContext());
         mdb = databaseHelper.getWritableDatabase();
         this.appMediaDetails = appMediaDetails;

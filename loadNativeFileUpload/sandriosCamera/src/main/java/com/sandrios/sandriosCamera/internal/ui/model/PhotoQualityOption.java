@@ -1,5 +1,7 @@
 package com.sandrios.sandriosCamera.internal.ui.model;
 
+import androidx.annotation.NonNull;
+
 import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
 import com.sandrios.sandriosCamera.internal.utils.Size;
 
@@ -34,11 +36,13 @@ public class PhotoQualityOption implements CharSequence {
         return title.charAt(index);
     }
 
+    @NonNull
     @Override
     public CharSequence subSequence(int start, int end) {
         return title.subSequence(start, end);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return title;

@@ -28,14 +28,14 @@ public abstract class BaseDAO {
     /**
      * Query according to specific URI
      *
-     * @param uri
-     * @param projection
-     * @param where
-     * @param whereArgs
-     * @param sortOrder
+     * @param uri query uri for table
+     * @param projection table name to retrieve data for that tabel
+     * @param where condition for query
+     * @param whereArgs argument for condition
+     * @param sortOrder decide sort order
      * @return {@link Cursor}
      */
-    protected Cursor query(Uri uri, String[] projection, String where, String whereArgs[], String sortOrder) {
+    protected Cursor query(Uri uri, String[] projection, String where, String[] whereArgs, String sortOrder) {
         if (context == null) {
             throw new IllegalArgumentException("Invalid context");
         }
@@ -43,7 +43,4 @@ public abstract class BaseDAO {
         return getContext().getContentResolver().query(uri, projection, where, whereArgs, sortOrder);
     }
 
-    protected ContentResolver getContentResolver() {
-        return context.getContentResolver();
-    }
 }

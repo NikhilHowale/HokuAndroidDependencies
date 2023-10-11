@@ -1,8 +1,6 @@
 package com.sandrios.sandriosCamera.internal.utils;
 
-import android.annotation.TargetApi;
 import android.media.Image;
-import android.os.Build;
 import android.util.Log;
 
 import java.io.File;
@@ -27,7 +25,6 @@ public class ImageSaver implements Runnable {
         this.imageSaverCallback = imageSaverCallback;
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void run() {
         ByteBuffer buffer = image.getPlanes()[0].getBuffer();

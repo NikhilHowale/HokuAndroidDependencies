@@ -4,10 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Looper;
 
+
+import androidx.exifinterface.media.ExifInterface;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,9 +31,9 @@ public  class ImageCompression {
 
     /**
      * Compress image asynchronously
-     * @param from
-     * @param to
-     * @param callback
+     * @param from image path for compress
+     * @param to save compress image to this location
+     * @param callback return compress image path
      */
     public void executeAsync(String from,String to, OnCompressedListener callback) {
         executor.execute(() -> {
@@ -50,11 +51,11 @@ public  class ImageCompression {
 
     /**
      * Compress image according to given width and height and returns compressed image path
-     * @param originalPath
-     * @param compressedPath
-     * @param reqWidth
-     * @param reqHeight
-     * @return
+     * @param originalPath original path for image compress
+     * @param compressedPath compress image path
+     * @param reqWidth require compress image width
+     * @param reqHeight require compress image height
+     * @return return compress image path
      */
     static String compressImageV3(String originalPath, String compressedPath, int reqWidth, int reqHeight) {
         try {
@@ -82,11 +83,11 @@ public  class ImageCompression {
 
     /**
      *
-     * @param imageFile
-     * @param reqWidth
-     * @param reqHeight
-     * @return
-     * @throws IOException
+     * @param imageFile image file
+     * @param reqWidth require compress width
+     * @param reqHeight require compress height
+     * @return return scale bitmap
+     * @throws IOException occur when file decoding failed
      */
     static Bitmap decodeSampledBitmapFromFile(File imageFile, int reqWidth, int reqHeight) throws IOException {
         // First decode with inJustDecodeBounds=true to check dimensions
@@ -121,10 +122,10 @@ public  class ImageCompression {
     /**
      *
      * resizing image according to width and height
-     * @param options
-     * @param reqWidth
-     * @param reqHeight
-     * @return
+     * @param options bitmap factory reference
+     * @param reqWidth require compress width
+     * @param reqHeight require compress height
+     * @return return how small image you want
      */
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image

@@ -18,7 +18,6 @@ import java.util.List;
 /**
  * Created by Arpit Gandhi on 7/6/16.
  */
-@SuppressWarnings("deprecation")
 public class Camera1Activity extends BaseSandriosActivity<Integer> {
 
     @Override

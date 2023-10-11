@@ -1,59 +1,17 @@
 package com.hokuapps.loadnativefileupload.utilities;
 
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.APP_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CALLBACK_FUNCTION;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAN_CROP_IMAGE;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAPTION;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.COLOR;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.COLOR_CODE;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.DRAW_TYPE;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.EXTENSION;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IMAGE_URL;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.INSTRUCTION_TEXT;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_AUDIO_RECORDING;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_BASE_64_DATA;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_CANCEL;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_DEFAULT_CAMERA;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_DOCUMENTS_ONLY;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_DOCUMENTS_UPLOAD;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_DRAWING;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_MAP_PLAN;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_PROFILE_IMAGE;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_PROFILE_UPLOAD_START;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_RECTANGLE;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_SCAN_DOCUMENT;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_SCAN_TEXT;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_SELECT_VIDEO;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_WAIT_FOR_RESPONSE;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LANGUAGE_PREF;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LOAD_PHOTO_EDITOR;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LOCAL_IMAGE_NAME;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAX_FILE_SIZE;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_DATA_ID;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.ORIGINAL_IMAGE_PATH;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.PAGE_TITLE;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SHOW_CAPTION;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SKIP_CAMERA;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SKIP_LIBRARY;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SRC;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SUPPORTED_FORMAT;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.TYPE;
-import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.USED_FOR_ANNOTATION;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.*;
 
 import android.app.Activity;
 import android.content.Context;
-
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebView;
 
-import com.hokuapps.loadnativefileupload.R;
 import com.hokuapps.loadnativefileupload.backgroundtask.FileUploader;
 import com.hokuapps.loadnativefileupload.constants.FileUploadConstant;
 import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
@@ -71,27 +29,17 @@ import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.Objects;
 
 
 public class FileUploadUtility {
 
-    private Context context;
-
-    private SharedPreferences preferences;
-    private ReentrantReadWriteLock reentrantReadWriteLock;
-
-    public FileUploadUtility(Context context) {
-        this.context = context;
-        reentrantReadWriteLock = new ReentrantReadWriteLock();
-        preferences = context.getSharedPreferences(context.getString(R.string.pref_name), Context.MODE_PRIVATE);
-    }
 
     /**
      * check if the string is empty
      *
-     * @param string
-     * @return
+     * @param string value for check
+     * @return true if string value is empty other wise false
      */
     public static boolean isEmpty(String string) {
         if (string != null) {
@@ -104,7 +52,7 @@ public class FileUploadUtility {
      * Change color to primary color
      *
      * @param color - String color as #FFFFFF
-     * @return
+     * @return return parse color in int format
      */
     public static int changeColorToPrimaryHSB(String color) {
         float[] hsv = new float[3];
@@ -120,7 +68,7 @@ public class FileUploadUtility {
     /**
      * returns current date and time in milli seconds
      *
-     * @return
+     * @return return time in long
      */
     public static long getCurrentDateTimeInMS() {
         Calendar calendar = Calendar.getInstance();
@@ -130,10 +78,10 @@ public class FileUploadUtility {
     /**
      * return json object value
      *
-     * @param obj
-     * @param fieldName
-     * @return
-     * @throws JSONException
+     * @param obj jsonObject response
+     * @param fieldName key for retrieve JSONObject value
+     * @return JSONObject value for filedName
+     * @throws JSONException if jsonObject is invalid
      */
     public static Object getJsonObjectValue(JSONObject obj, String fieldName) throws JSONException {
         try {
@@ -150,9 +98,9 @@ public class FileUploadUtility {
     /**
      * returns boolean value from the json object
      *
-     * @param obj
-     * @param fieldName
-     * @return
+     * @param obj jsonObject response
+     * @param fieldName key for retrieve boolean value
+     * @return boolean value for filedName
      */
     public static boolean getJsonObjectBooleanValue(JSONObject obj, String fieldName) {
         if (obj == null) return false;
@@ -171,9 +119,9 @@ public class FileUploadUtility {
     /**
      * returns string value from the json object
      *
-     * @param obj
-     * @param fieldName
-     * @return
+     * @param obj jsonObject response
+     * @param fieldName key for retrieve String value
+     * @return String value for filedName
      */
     public static String getStringObjectValue(JSONObject obj, String fieldName) {
         try {
@@ -196,10 +144,10 @@ public class FileUploadUtility {
     /**
      * returns integer value from the json object
      *
-     * @param obj
-     * @param fieldName
-     * @return
-     * @throws JSONException
+     * @param obj jsonObject response
+     * @param fieldName key for retrieve int value
+     * @return int value for filedName
+     * @throws JSONException if jsonObject is invalid
      */
     public static int getJsonObjectIntValue(JSONObject obj, String fieldName) throws JSONException {
         if (obj == null) return 0;
@@ -216,21 +164,17 @@ public class FileUploadUtility {
     /**
      * calls function
      *
-     * @param activity
-     * @param webView
-     * @param callingJavaScriptFn
-     * @param response
+     * @param activity context of activity
+     * @param webView reference of webView
+     * @param callingJavaScriptFn function name of java script
+     * @param response jsonObject for javascript function
      */
     public static void callJavaScriptFunction(Activity activity, final WebView webView, final String callingJavaScriptFn, final JSONObject response) {
 
         if (activity == null) return;
         activity.runOnUiThread(() -> {
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    webView.evaluateJavascript(String.format("javascript:" + callingJavaScriptFn + "(%s)", response), null);
-                } else {
-                    webView.loadUrl(String.format("javascript:" + callingJavaScriptFn + "(%s)", response));
-                }
+                webView.evaluateJavascript(String.format("javascript:" + callingJavaScriptFn + "(%s)", response), null);
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -240,8 +184,8 @@ public class FileUploadUtility {
     }
 
     /**
-     * @param mContext
-     * @return
+     * @param mContext context
+     * @return return sandbox path of file
      */
     public static File getHtmlDirFromSandbox(Context mContext) {
         File htmlDir = new File(mContext.getFilesDir() + File.separator + FileUploadConstant.FOLDER_NAME_WEB_HTML);
@@ -256,7 +200,7 @@ public class FileUploadUtility {
     /**
      * Create the storage directory if it does not exist
      *
-     * @param mediaStorageDir
+     * @param mediaStorageDir file directory with associate path
      * @return true if directory created successfully
      * false Otherwise
      */
@@ -272,16 +216,16 @@ public class FileUploadUtility {
     /**
      * Move file to new file
      *
-     * @param file
-     * @param newFile
-     * @return
-     * @throws IOException
+     * @param file for move to new location
+     * @param newFile new location for file move
+     * @return status of file transfer
+     * @throws IOException when error in file transfer
      */
     public static boolean moveFile(File file, File newFile) throws IOException {
 
         FileChannel outputChannel = null;
         FileChannel inputChannel = null;
-        boolean isMoved = false;
+        boolean isMoved;
         try {
             outputChannel = new FileOutputStream(newFile).getChannel();
             inputChannel = new FileInputStream(file).getChannel();
@@ -303,14 +247,13 @@ public class FileUploadUtility {
     /**
      * copy file to internal storage
      *
-     * @param uri
-     * @param newDirName
-     * @return
+     * @param uri file uri to copy
+     * @param newDirName directory to store file
+     * @return path after file is save to directory
      */
     public static String copyFileToInternalStorage(Uri uri, String newDirName, Context mContext) {
-        Uri returnUri = uri;
 
-        Cursor returnCursor = mContext.getContentResolver().query(returnUri, new String[]{
+        Cursor returnCursor = mContext.getContentResolver().query(uri, new String[]{
                 OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE
         }, null, null, null);
         /*
@@ -347,10 +290,10 @@ public class FileUploadUtility {
 
             inputStream.close();
             outputStream.close();
-
+            returnCursor.close();
         } catch (Exception e) {
-
-            Log.e("Exception", e.getMessage());
+            returnCursor.close();
+            Log.e("Exception", Objects.requireNonNull(e.getLocalizedMessage()));
         }
 
         return output.getPath();
@@ -359,15 +302,15 @@ public class FileUploadUtility {
     /**
      * save the media details to local database
      *
-     * @param file
-     * @param offlineID
-     * @param instucationNumberClockIn
-     * @param srcFileName
-     * @param imageType
-     * @param caption
-     * @return
+     * @param file contain detail related file
+     * @param offlineID save file against offlineID
+     * @param instructionNumberClockIn count for number of save against offlineID
+     * @param srcFileName add file name if available
+     * @param imageType type of image
+     * @param caption add additional text with image
+     * @return all detail about image in local database
      */
-    public static AppMediaDetails saveAppMediaDetails(File file, String offlineID, int instucationNumberClockIn,
+    public static AppMediaDetails saveAppMediaDetails(File file, String offlineID, int instructionNumberClockIn,
                                                       String srcFileName, int imageType, String caption, Context mContext) {
         AppMediaDetails appMediaDetails = null;
         try {
@@ -379,7 +322,7 @@ public class FileUploadUtility {
             if (appMediaDetails == null) {
                 appMediaDetails = new AppMediaDetails();
 
-                appMediaDetails.setInstructionNumber(instucationNumberClockIn);
+                appMediaDetails.setInstructionNumber(instructionNumberClockIn);
 
             } else {
                 stopUploadingAndDeletedOldImageFile(appMediaDetails, mContext);
@@ -389,7 +332,7 @@ public class FileUploadUtility {
             appMediaDetails.setImageType(imageType);
             appMediaDetails.setFileSizeBytes(String.valueOf(file.length()));
             appMediaDetails.setInstructionNumber(appMediaDetails.getInstructionNumber());
-            appMediaDetails.setUploadStatus(AppMediaDetails.UPLOAD_INPROGRESS);
+            appMediaDetails.setUploadStatus(AppMediaDetails.UPLOAD_IN_PROGRESS);
             appMediaDetails.setImageCaption(caption);
             appMediaDetails.save(mContext);
         } catch (Exception ex) {
@@ -419,8 +362,8 @@ public class FileUploadUtility {
     /**
      * Create image file name by app id and current system time
      *
-     * @param extension
-     * @return
+     * @param extension extension for image file
+     * @return create image name with app ID and add extension
      */
     public static String generateImageFileNameByAppID(String extension, String appId) {
         try {
@@ -437,7 +380,7 @@ public class FileUploadUtility {
     /**
      * checks if any file is remained to upload
      *
-     * @return
+     * @return remaining file upload status
      */
     public static boolean isAnyFileRenamingToUploadV2(Context mContext, String offlineId) {
         ArrayList<AppMediaDetails> appMediaDetailsArrayList = AppMediaDetailsDAO.getAppMediaDetailsListByOfflineIDWithUploadedFile(mContext,
@@ -477,7 +420,7 @@ public class FileUploadUtility {
     /**
      * Parse the response data and put it in json object
      *
-     * @param responseData
+     * @param responseData parsing json object to JSResponseData
      */
     public static JSResponseData parseLoadNativeFileUploadJsResponseData(String responseData) {
 
@@ -488,10 +431,10 @@ public class FileUploadUtility {
             jsResponseDataModel.setLanguagePref((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, LANGUAGE_PREF));
             jsResponseDataModel.setType((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, TYPE));
             jsResponseDataModel.setColor((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, COLOR));
-            jsResponseDataModel.setDrawtype(FileUploadUtility.getJsonObjectIntValue(responseJsonObj, DRAW_TYPE));
+            jsResponseDataModel.setDrawType(FileUploadUtility.getJsonObjectIntValue(responseJsonObj, DRAW_TYPE));
             jsResponseDataModel.setMaxFileSize(FileUploadUtility.getJsonObjectIntValue(responseJsonObj, MAX_FILE_SIZE));
             jsResponseDataModel.setAppID((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, APP_ID));
-            jsResponseDataModel.setCallbackfunction((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, CALLBACK_FUNCTION));
+            jsResponseDataModel.setCallbackFunction((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, CALLBACK_FUNCTION));
             jsResponseDataModel.setSrcImageName((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, SRC));
             jsResponseDataModel.setInstructionText((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, INSTRUCTION_TEXT));
             jsResponseDataModel.setSkipCamera(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, SKIP_CAMERA));
@@ -503,9 +446,9 @@ public class FileUploadUtility {
             jsResponseDataModel.setProfileUploadStart(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, IS_PROFILE_UPLOAD_START));
             jsResponseDataModel.setColorCode(responseJsonObj.has(COLOR_CODE) ? responseJsonObj.getString(COLOR_CODE) : "#448aff");
             jsResponseDataModel.setMapPlan(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, IS_MAP_PLAN));
-            jsResponseDataModel.setCroped(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, CAN_CROP_IMAGE));
+            jsResponseDataModel.setCropped(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, CAN_CROP_IMAGE));
             jsResponseDataModel.setPageTitle((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, PAGE_TITLE));
-            jsResponseDataModel.setExtention((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, EXTENSION));
+            jsResponseDataModel.setExtension((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, EXTENSION));
             jsResponseDataModel.setShowCaption(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, SHOW_CAPTION));
             jsResponseDataModel.setCaption(FileUploadUtility.getStringObjectValue(responseJsonObj, CAPTION));
             String offlineDataID = FileUploadUtility.getStringObjectValue(responseJsonObj, OFFLINE_DATA_ID);
@@ -543,7 +486,7 @@ public class FileUploadUtility {
             return FileUploadConstant.options.IS_DEFAULT_CAMERA;
         }
 
-        if (jsResponseData.getDrawtype() == 5) {
+        if (jsResponseData.getDrawType() == 5) {
             return FileUploadConstant.options.IS_FREE_DRAW;
         }
         if (jsResponseData.isUsedForAnnotation()) {

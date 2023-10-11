@@ -61,7 +61,6 @@ public class KeyConstants {
         String LOCAL_IMAGE_NAME = "localImageName";
         String SCANNED_TEXT = "scannedText";
         String IMAGE_PATH = "imagePath";
-        String IMAGE_DATA = "imageData";
         String MAP_FILE_STATUS = "mapFileStatus";
         String IS_IMAGE = "IsImage";
         String REQUEST_PARAMS = "requestParams";
@@ -74,12 +73,22 @@ public class KeyConstants {
         String SELECTED_IMAGE_NAME = "selectedImageName";
         String TITLE = "title";
         String METADATA = "metadata";
+
+        String AUTH_TOKEN = "tokenKey";
+
+    }
+
+    public interface AnnotationData {
         String BADGE = "badge";
+        String TYPE = "type";
+        String TITLE = "title";
+        String COLOR = "color";
         String X = "x";
         String Y = "y";
         String START = "start";
         String END = "end";
-
+        String METADATA = "metadata";
+        String DRAW_TYPE = "drawType";
     }
 
 }

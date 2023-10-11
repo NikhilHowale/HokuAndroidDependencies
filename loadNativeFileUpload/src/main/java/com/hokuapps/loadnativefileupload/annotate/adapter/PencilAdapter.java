@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hokuapps.loadnativefileupload.R;
@@ -19,14 +20,15 @@ import java.util.ArrayList;
 public class PencilAdapter extends RecyclerView.Adapter<PencilAdapter.MyViewHolder> {
 
     public Bitmap bitmap;
-    private ArrayList<Pencil> imageList;
-    private Context activity;
+    private final ArrayList<Pencil> imageList;
+    private final Context activity;
 
     public PencilAdapter(ArrayList<Pencil> list, Context activity) {
         this.imageList = list;
         this.activity = activity;
     }
 
+    @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -36,7 +38,7 @@ public class PencilAdapter extends RecyclerView.Adapter<PencilAdapter.MyViewHold
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
         Pencil image = imageList.get(position);
         if (image.isSelected()) {
@@ -59,7 +61,7 @@ public class PencilAdapter extends RecyclerView.Adapter<PencilAdapter.MyViewHold
         // return 10;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView image;
 
         public MyViewHolder(View view) {

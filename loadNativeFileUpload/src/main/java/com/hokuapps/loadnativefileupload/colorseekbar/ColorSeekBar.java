@@ -28,7 +28,7 @@ import java.util.List;
 public class ColorSeekBar extends View {
     private int mBackgroundColor = 0xffffffff;
     private int[] mColorSeeds = new int[]{0xFF000000, 0xFF9900FF, 0xFF0000FF, 0xFF00FF00, 0xFF00FFFF, 0xFFFF0000, 0xFFFF00FF, 0xFFFF6600, 0xFFFFFF00, 0xFFFFFFFF, 0xFF000000};
-    ;
+
     private int c0, c1, mAlpha, mRed, mGreen, mBlue;
     private float x, y;
     private OnColorChangeListener mOnColorChangeLister;
@@ -147,8 +147,8 @@ public class ColorSeekBar extends View {
     }
 
     /**
-     * @param id
-     * @return
+     * @param id color id
+     * @return color
      */
     private int[] getColorsById(int id) {
         if (isInEditMode()) {
@@ -172,7 +172,7 @@ public class ColorSeekBar extends View {
     private void init() {
         Logger.i("init");
         //init size
-        mThumbRadius = mThumbHeight / 2;
+        mThumbRadius = mThumbHeight / 2f;
         mPaddingSize = (int) mThumbRadius;
         int viewBottom = getHeight() - getPaddingBottom() - mPaddingSize;
         int viewRight = getWidth() - getPaddingRight() - mPaddingSize;
@@ -228,7 +228,7 @@ public class ColorSeekBar extends View {
         if (mIsVertical) {
             canvas.rotate(-90);
             canvas.translate(-getHeight(), 0);
-            canvas.scale(-1, 1, getHeight() / 2, getWidth() / 2);
+            canvas.scale(-1, 1, getHeight() / 2f, getWidth() / 2f);
         }
 
         float colorPosition = (float) mColorBarPosition / mMaxPosition * mBarWidth;
@@ -246,15 +246,15 @@ public class ColorSeekBar extends View {
         canvas.drawRect(mColorRect, mColorRectPaint);
         //draw color bar thumb
         float thumbX = colorPosition + realLeft;
-        float thumbY = mColorRect.top + mColorRect.height() / 2;
-        canvas.drawCircle(thumbX, thumbY, mBarHeight / 2 + 5, colorPaint);
+        float thumbY = mColorRect.top + mColorRect.height() / 2f;
+        canvas.drawCircle(thumbX, thumbY, mBarHeight / 2f + 5, colorPaint);
 
         //draw color bar thumb radial gradient shader
         RadialGradient thumbShader = new RadialGradient(thumbX, thumbY, mThumbRadius, toAlpha, null, Shader.TileMode.MIRROR);
         Paint thumbGradientPaint = new Paint();
         thumbGradientPaint.setAntiAlias(true);
         thumbGradientPaint.setShader(thumbShader);
-        canvas.drawCircle(thumbX, thumbY, mThumbHeight / 2, thumbGradientPaint);
+        canvas.drawCircle(thumbX, thumbY, mThumbHeight / 2f, thumbGradientPaint);
 
         if (mIsShowAlphaBar) {
 
@@ -272,15 +272,15 @@ public class ColorSeekBar extends View {
             //draw alpha bar thumb
             float alphaPosition = (float) mAlphaBarPosition / 255 * mBarWidth;
             float alphaThumbX = alphaPosition + realLeft;
-            float alphaThumbY = mAlphaRect.top + mAlphaRect.height() / 2;
-            canvas.drawCircle(alphaThumbX, alphaThumbY, mBarHeight / 2 + 5, colorPaint);
+            float alphaThumbY = mAlphaRect.top + mAlphaRect.height() / 2f;
+            canvas.drawCircle(alphaThumbX, alphaThumbY, mBarHeight / 2f + 5, colorPaint);
 
             //draw alpha bar thumb radial gradient shader
             RadialGradient alphaThumbShader = new RadialGradient(alphaThumbX, alphaThumbY, mThumbRadius, toAlpha, null, Shader.TileMode.MIRROR);
             Paint alphaThumbGradientPaint = new Paint();
             alphaThumbGradientPaint.setAntiAlias(true);
             alphaThumbGradientPaint.setShader(alphaThumbShader);
-            canvas.drawCircle(alphaThumbX, alphaThumbY, mThumbHeight / 2, alphaThumbGradientPaint);
+            canvas.drawCircle(alphaThumbX, alphaThumbY, mThumbHeight / 2f, alphaThumbGradientPaint);
         }
 
         if (mFirstDraw) {
@@ -341,9 +341,9 @@ public class ColorSeekBar extends View {
 
 
     /**
-     * @param r
-     * @param x
-     * @param y
+     * @param r rect
+     * @param x touch x point
+     * @param y touch y point
      * @return whether MotionEvent is performing on bar or not
      */
     private boolean isOnBar(Rect r, float x, float y) {
@@ -360,7 +360,7 @@ public class ColorSeekBar extends View {
 
 
     /**
-     * @param value
+     * @param value position of color from color list
      * @return color
      */
     private int pickColor(int value) {
@@ -368,7 +368,7 @@ public class ColorSeekBar extends View {
     }
 
     /**
-     * @param position
+     * @param position position of color from color list
      * @return color
      */
     private int pickColor(float position) {
@@ -405,9 +405,9 @@ public class ColorSeekBar extends View {
         return getColor(mIsShowAlphaBar);
     }
 
-    /**
-     * @param withAlpha
-     * @return
+    /** get color by list or rgb
+     * @param withAlpha true if color pick from list other wise false
+     * @return return color
      */
     public int getColor(boolean withAlpha) {
         //pick mode
@@ -446,8 +446,8 @@ public class ColorSeekBar extends View {
         void onColorChangeListener(int colorBarPosition, int alphaBarPosition, int color);
     }
 
-    /**
-     * @param onColorChangeListener
+    /** set color change listener
+     * @param onColorChangeListener listener for color change
      */
     public void setOnColorChangeListener(OnColorChangeListener onColorChangeListener) {
         this.mOnColorChangeLister = onColorChangeListener;
@@ -462,7 +462,7 @@ public class ColorSeekBar extends View {
     /**
      * Set colors by resource id. The resource's type must be ArrayRes
      *
-     * @param resId
+     * @param resId color resource id
      */
     public void setColorSeeds(@ArrayRes int resId) {
         setColorSeeds(getColorsById(resId));
@@ -477,13 +477,6 @@ public class ColorSeekBar extends View {
             mOnColorChangeLister.onColorChangeListener(mColorBarPosition, mAlphaBarPosition, getColor());
     }
 
-    /**
-     * @param color
-     * @return the color's position in the bar, if not in the bar ,return -1;
-     */
-    public int getColorIndexPosition(int color) {
-        return mColors.indexOf(color);
-    }
 
     public List<Integer> getColors() {
         return mColors;
@@ -510,7 +503,7 @@ public class ColorSeekBar extends View {
     }
 
     /**
-     * @param dp
+     * @param dp bar height in dp
      */
     public void setBarHeight(float dp) {
         mBarHeight = dp2px(dp);
@@ -519,7 +512,7 @@ public class ColorSeekBar extends View {
     }
 
     /**
-     * @param px
+     * @param px bar height in pixel
      */
     public void setBarHeightPx(int px) {
         mBarHeight = px;
@@ -550,7 +543,7 @@ public class ColorSeekBar extends View {
     /**
      * set margin between bars
      *
-     * @param mBarMargin
+     * @param mBarMargin margin in dp
      */
     public void setBarMargin(float mBarMargin) {
         this.mBarMargin = dp2px(mBarMargin);
@@ -561,7 +554,7 @@ public class ColorSeekBar extends View {
     /**
      * set margin between bars
      *
-     * @param mBarMargin
+     * @param mBarMargin margin
      */
     public void setBarMarginPx(int mBarMargin) {
         this.mBarMargin = mBarMargin;
@@ -572,12 +565,12 @@ public class ColorSeekBar extends View {
     /**
      * Set the value of color bar, if out of bounds , it will be 0 or maxValue;
      *
-     * @param value
+     * @param value color bar position
      */
     public void setColorBarPosition(int value) {
         this.mColorBarPosition = value;
-        mColorBarPosition = mColorBarPosition > mMaxPosition ? mMaxPosition : mColorBarPosition;
-        mColorBarPosition = mColorBarPosition < 0 ? 0 : mColorBarPosition;
+        mColorBarPosition = Math.min(mColorBarPosition, mMaxPosition);
+        mColorBarPosition = Math.max(mColorBarPosition, 0);
         invalidate();
         if (mOnColorChangeLister != null)
             mOnColorChangeLister.onColorChangeListener(mColorBarPosition, mAlphaBarPosition, getColor());
@@ -604,11 +597,11 @@ public class ColorSeekBar extends View {
     /**
      * set thumb's height by dpi
      *
-     * @param dp
+     * @param dp height in dp
      */
     public void setThumbHeight(float dp) {
         this.mThumbHeight = dp2px(dp);
-        mThumbRadius = mThumbHeight / 2;
+        mThumbRadius = mThumbHeight / 2f;
         refreshLayoutParams();
         invalidate();
     }
@@ -616,11 +609,11 @@ public class ColorSeekBar extends View {
     /**
      * set thumb's height by pixels
      *
-     * @param px
+     * @param px thumb height in pixel
      */
     public void setThumbHeightPx(int px) {
         this.mThumbHeight = px;
-        mThumbRadius = mThumbHeight / 2;
+        mThumbRadius = mThumbHeight / 2f;
         refreshLayoutParams();
         invalidate();
     }

@@ -125,6 +125,64 @@ android {
             manifestPlaceholders.screenOrientation = "unspecified"
 
         }
+
+        parinternational {
+
+            applicationId "com.parinternationv1mob"
+
+            versionCode 4
+
+            versionName "1.0.1.3"
+
+            buildConfigField 'String', 'COFIG_REST_API_HOST', '"https://login.hokuapps.com"'
+
+            buildConfigField 'String', 'SOCKET_HOST', '"https://socket.hokuapps.com"'
+
+            buildConfigField 'String', 'FILE_HOST', '"https://files.hokuapps.com"'
+
+            buildConfigField 'String', 'APP_FILE_HOST', '"https://devfiles.hokuapps.com"'
+
+            buildConfigField 'String', 'INTEGRATION_HOST', '"https://integration.hokuapps.com"'
+
+            buildConfigField 'String', 'REST_API_HOST', '"https://login.hokuapps.com"'
+
+            buildConfigField 'String', 'ELASTIC_SEARCH_HOST', '"https://login.hokuapps.com"'
+
+            buildConfigField "String", "AUTHORITY", "\"${applicationId}.database\""
+
+            buildConfigField 'int', 'DB_VERSION', DB_VERSION
+
+            buildConfigField 'int', 'APP_DEFAULT_THEME', '4'
+
+            buildConfigField 'String', 'DOMAIN_NAME', '"hokuapps.com"'
+
+            buildConfigField 'String', 'SENDER_ID', '"  1008433256799 "'
+
+            buildConfigField 'String', 'DB_NAME', '" parinternational"'
+
+            buildConfigField 'String', 'DEFAULT_TEMPLATE_SUB_DOMAIN', '"parinternationv1mob"'
+
+            resValue 'string', 'app_name', 'ParInternational'
+
+            resValue 'string', 'private_policy_url', 'https://hokuapps.com/mprivacypolicy.html'
+
+            resValue 'string', 'terms_url', 'https://hokuapps.com/mtermsofservice.html'
+
+            buildConfigField 'boolean', 'IS_DEFAULT_USER_LOGIN', 'false'
+
+            buildConfigField 'String', 'APP_URL_CONTENT_TYPE', '"https://apps.hokuapps.com"'
+
+            buildConfigField 'boolean', 'IS_HIDE_NOTE', 'false'
+
+            buildConfigField 'boolean', 'IS_HIDE_POST', 'false'
+
+            buildConfigField 'boolean', 'IS_HIDE_FILE_SECTION', 'true'
+
+            buildConfigField 'boolean', 'LOAD_HTML_DIRECTLY', 'true'
+            buildConfigField 'String', 'HEADER_COLOR', '"#FFFFFF"'
+            resValue 'string', 'facebook_provider', 'com.facebook.app.FacebookContentProvider  7342337 '
+            dimension "api"
+        }
     }
 }
 

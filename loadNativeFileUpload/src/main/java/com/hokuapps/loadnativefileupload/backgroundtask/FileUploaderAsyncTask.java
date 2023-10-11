@@ -130,8 +130,7 @@ public class FileUploaderAsyncTask extends AsyncTask<ServiceRequest, Integer, Se
             serviceResponse.setErrorMsg(e.getMessage());
             serviceResponse.setResponseCode(EXCEPTION_CODE);
          Log.e(TAG , "Exception : " + e.getMessage());
-        }
-        return serviceResponse;
+        }return serviceResponse;
     }
 
     private void printRequestDetails() {
@@ -192,7 +191,7 @@ public class FileUploaderAsyncTask extends AsyncTask<ServiceRequest, Integer, Se
 
                 AppMediaDetails appMediaDetails = appMediaDetailsDAO.getStoredAppMediaDetails(context, filename);
 
-                if (appMediaDetails != null) {
+                 if (appMediaDetails != null) {
                     appMediaDetails.setMediaID(mediaID);
                     appMediaDetails.setS3FilePath(s3FilePath);
                     appMediaDetails.setUploadDate(FileUtility.convertToUTCTimeZone(FileUploadUtility.getCurrentDateTimeInMS()));

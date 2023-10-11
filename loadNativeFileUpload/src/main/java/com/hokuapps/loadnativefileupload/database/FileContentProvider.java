@@ -8,29 +8,30 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import com.hokuapps.loadnativefileupload.NativeFileUpload;
+
+import androidx.annotation.NonNull;
 
 
 
 public class FileContentProvider extends ContentProvider {
 
-    public static final String AUTHORITY = NativeFileUpload.AUTHORITY;
-    public static final Uri CONTENT_URI = Uri.parse("content://" + NativeFileUpload.AUTHORITY);
+    public String AUTHORITY = "";
+    public  Uri CONTENT_URI = Uri.parse("");
     private static final int APP_MEDIA_DETAILS = 730;
-    private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private static FileContentProvider provider;
-
-    static {
-
-        sURIMatcher.addURI(AUTHORITY, Tables.PATH_APP_MEDIA_DETAILS, APP_MEDIA_DETAILS);
-
-    }
 
     public SQLiteDatabase mdb;
     FileDatabaseHelper databaseHelper;
 
     public static FileContentProvider getInstance() {
         return provider;
+    }
+
+    public void setUpDatabase(String authority){
+        AUTHORITY = authority;
+        sURIMatcher.addURI(AUTHORITY, Tables.PATH_APP_MEDIA_DETAILS, APP_MEDIA_DETAILS);
+        CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     }
 
     @Override
@@ -43,13 +44,13 @@ public class FileContentProvider extends ContentProvider {
 
     /**
      * Delete values from database
-     * @param uri
-     * @param selection
-     * @param selectionArgs
-     * @return
+     * @param uri query
+     * @param selection condition for filter records
+     * @param selectionArgs argument on which records will filter
+     * @return return id of deleted row
      */
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         if (mdb == null) return -1;
 
         final int match = sURIMatcher.match(uri);
@@ -73,39 +74,29 @@ public class FileContentProvider extends ContentProvider {
         return id;
     }
 
-    /**
-     *
-     * @param arg0
-     * @return
-     */
     @Override
-    public String getType(Uri arg0) {
+    public String getType(@NonNull Uri uri) {
         return null;
     }
 
     /**
      * Insert values into database
-     * @param uri
-     * @param values
-     * @return
+     * @param uri query
+     * @param values values for insert into table
+     * @return return uri with inserted record
      */
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         if (mdb == null) return null;
 
         final int match = sURIMatcher.match(uri);
         String tableName;
 
         // match for which table we need to perform insert operation
-        switch (match) {
-
-            case APP_MEDIA_DETAILS:
-                tableName = Tables.AppMediaDetails.TABLE_NAME;
-                break;
-
-
-            default:
-                throw new IllegalArgumentException("Unsupported URI: " + uri);
+        if (match == APP_MEDIA_DETAILS) {
+            tableName = Tables.AppMediaDetails.TABLE_NAME;
+        } else {
+            throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
 
         // add record to respective table
@@ -120,16 +111,16 @@ public class FileContentProvider extends ContentProvider {
     }
 
     /**
-     *
-     * @param uri
-     * @param projection
-     * @param selection
-     * @param selectionArgs
-     * @param sortOrder
-     * @return
+     *  perform custom query on table
+     * @param uri query
+     * @param projection selecting specific column from table
+     * @param selection condition for filter records
+     * @param selectionArgs argument on which records will filter
+     * @param sortOrder order of records
+     * @return return cursor with records
      */
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
 
         if (mdb == null) return null;
@@ -142,19 +133,15 @@ public class FileContentProvider extends ContentProvider {
 
         // match for which table we need to perform insert operation
         try {
-            switch (match) {
-
-                case APP_MEDIA_DETAILS:
-                    tableName = Tables.AppMediaDetails.TABLE_NAME;
-                    break;
-
-                default:
-                    throw new IllegalArgumentException("Unsupported URI: " + uri);
+            if (match == APP_MEDIA_DETAILS) {
+                tableName = Tables.AppMediaDetails.TABLE_NAME;
+            } else {
+                throw new IllegalArgumentException("Unsupported URI: " + uri);
             }
 
             //select record from respective table
             builder.setTables(tableName);
-            cursor = builder.query(mdb, projection, selection, selectionArgs, groupBy, null, sortOrder);
+            cursor = builder.query(mdb, projection, selection, selectionArgs, null, null, sortOrder);
             cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
             return cursor;
@@ -167,14 +154,14 @@ public class FileContentProvider extends ContentProvider {
 
     /**
      * Update data in database
-     * @param uri
-     * @param values
-     * @param selection
-     * @param selectionArgs
-     * @return
+     * @param uri query
+     * @param values values for update into table
+     * @param selection condition for filter records
+     * @param selectionArgs argument on which records will filter
+     * @return return id of updated record
      */
     @Override
-    public int update(Uri uri, ContentValues values, String selection,
+    public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         if (mdb == null) return -1;
 

@@ -1,8 +1,6 @@
 package com.hokuapps.loadnativefileupload.models;
 
 import android.content.Context;
-import android.util.Log;
-
 
 import com.hokuapps.loadnativefileupload.constants.FileUploadConstant;
 import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
@@ -11,7 +9,6 @@ import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
  * Created by user on 29/12/16.
  */
 public class AppMediaDetails {
-    private static final String TAG = AppMediaDetails.class.getSimpleName();
     public static final int FILE_TYPE = 4;
     private long row_id;
     private String offlineDataID;
@@ -33,7 +30,7 @@ public class AppMediaDetails {
     public static final int INSTRUCTION_IMAGE_TYPE = 1;
     public static final int MAP_IMAGE_TYPE = 2;
     public static final int MAP_PLAN_IMAGE_TYPE = 3;
-    public static final int UPLOAD_INPROGRESS = 2;
+    public static final int UPLOAD_IN_PROGRESS = 2;
 
     public AppMediaDetails() {
         row_id = -1;
@@ -100,7 +97,7 @@ public class AppMediaDetails {
     }
 
     public boolean isUploadStatus() {
-        return uploadStatus == 1 ? true : false;
+        return uploadStatus == 1;
     }
 
     public void setUploadStatus(int uploadStatus) {
@@ -164,7 +161,7 @@ public class AppMediaDetails {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
         }
     }
 }

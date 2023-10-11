@@ -8,7 +8,6 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
-
 import androidx.activity.result.ActivityResultLauncher;
 
 import com.hokuapps.biometricauthentication.AuthenticateWithTouch;
@@ -30,8 +29,6 @@ import com.hokuapps.logoutnativecall.LogoutNativeCall;
 import com.hokuapps.shareappdata.ShareAppData;
 import com.hokuapps.updateappversion.UpdateAppVersion;
 
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -208,9 +205,10 @@ public class WebAppJavaScriptInterface {
 
             NativeFileUpload nativeFileUpload = NativeFileUpload.getInstance();
             nativeFileUpload.initialization(mWebView, mWebAppActivity,
-                    mContext, AppConstant.AppPref.AUTH_TOKEN,
-                  "", IntegrationManager.APP_FILE_URL,
+                    mContext, IntegrationManager.APP_FILE_URL,
                     BuildConfig.AUTHORITY);
+
+            nativeFileUpload.setAuthDetails(responseData);
             nativeFileUpload.loadNativeFileUpload(responseData);
 
 
@@ -221,7 +219,7 @@ public class WebAppJavaScriptInterface {
 
     @JavascriptInterface
     public void getAllFileStatus(String data){
-        new GetAllFileStatus(mWebAppActivity,mContext,mWebView).getAllFileStatus(data);
+        new GetAllFileStatus(mWebAppActivity,mContext,mWebView,BuildConfig.AUTHORITY).getAllFileStatus(data);
     }
 
     @JavascriptInterface
@@ -231,7 +229,9 @@ public class WebAppJavaScriptInterface {
 
     @JavascriptInterface
     public void uploadPendingFiles(final String fileStatusRes) {
-       new UploadPendingFiles(mContext,AppConstant.AppPref.AUTH_TOKEN,mWebView,mWebAppActivity).uploadPendingFiles(fileStatusRes);
+        UploadPendingFiles pendingFiles = new UploadPendingFiles(mContext,mWebView,mWebAppActivity,BuildConfig.AUTHORITY);
+        pendingFiles.setAuthDetails(fileStatusRes);
+        pendingFiles.uploadPendingFiles(fileStatusRes);
     }
 
 

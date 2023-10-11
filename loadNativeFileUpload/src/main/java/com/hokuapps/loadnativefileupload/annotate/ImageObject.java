@@ -56,7 +56,7 @@ public class ImageObject extends MultiTouchObject {
 
     /**
      * Start drawing on canvas
-     * @param canvas
+     * @param canvas using canvas draw a bitmap
      */
     public void draw(Canvas canvas) {
         canvas.save();
@@ -93,7 +93,6 @@ public class ImageObject extends MultiTouchObject {
 
 
     /** Called by activity's onResume() method to init the images */
-    @SuppressWarnings("deprecation")
     @Override
     public void init(Context context, float startMidX, float startMidY) {
         Resources res = context.getResources();
