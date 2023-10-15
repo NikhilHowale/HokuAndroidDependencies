@@ -1,5 +1,7 @@
 package com.sandrios.sandriosCamera.internal.ui;
 
+import static com.esafirm.imagepicker.features.ImagePickerLauncherKt.createImagePickerIntent;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.features.ImagePickerConfig;
 import com.esafirm.imagepicker.model.Image;
 import com.sandrios.sandriosCamera.R;
 import com.sandrios.sandriosCamera.internal.configuration.CameraConfiguration;
@@ -275,11 +278,12 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
                 && (jsonObjectResponseData.has("isMultiSelectImage") && jsonObjectResponseData.optBoolean("isMultiSelectImage"))) {
 
             try {
-                ImagePicker.create(this) // Activity or Fragment
-                        .folderMode(true)
-                        .multi() // single mode
-                        .showCamera(false)
-                        .start(REQUEST_SELECT_MULTIPLE_PHOTOS_FROM_GALLERY_CODE);
+                ImagePickerConfig imagePickerConfig = new ImagePickerConfig();
+                imagePickerConfig.setFolderMode(true);
+                imagePickerConfig.setLimit(30);
+                imagePickerConfig.setShowCamera(false);
+                Intent intent = createImagePickerIntent(BaseSandriosActivity.this,imagePickerConfig);
+                startActivityForResult(intent, REQUEST_SELECT_MULTIPLE_PHOTOS_FROM_GALLERY_CODE);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -562,7 +566,7 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
                 finish();
             } else if (requestCode == REQUEST_SELECT_MULTIPLE_PHOTOS_FROM_GALLERY_CODE) {
                 // Get a list of picked images
-                images = ImagePicker.getImages(data);
+                images = ImagePicker.INSTANCE.getImages(data);
                 if (images != null && images.size() == 1) {
                     String imgPath = images.get(0).getPath();
                     Intent resultIntent = new Intent();
@@ -582,7 +586,7 @@ public abstract class BaseSandriosActivity<CameraId> extends SandriosCameraActiv
                     finish();
                 } else {
 //                    Handle multiple images here.
-                    images = ImagePicker.getImages(data);
+                    images = ImagePicker.INSTANCE.getImages(data);
                     if (images != null && images.size() > 1) {
 
                         Intent resultIntent = new Intent();

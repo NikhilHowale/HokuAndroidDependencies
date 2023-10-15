@@ -73,7 +73,7 @@ dependencies {
 
 
     //    Multiple images/video picker library.
-    implementation 'com.github.esafirm:android-image-picker:2.4.5'
+    implementation 'com.github.esafirm:android-image-picker:3.0.0'
     implementation project(path: ':loadNativeFileUpload:imageeditlibrary')
     implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
 
