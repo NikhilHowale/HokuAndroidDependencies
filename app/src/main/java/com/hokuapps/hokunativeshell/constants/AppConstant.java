@@ -3,7 +3,7 @@ package com.hokuapps.hokunativeshell.constants;
 public class AppConstant {
 
     public static final String LOGGED_IN_USER_ID = "user_id";
-    public static final int BIOMETRIC_RESULT_CODE = 0001;
+    public static final int BIOMETRIC_RESULT_CODE = 1001;
 
     private AppConstant() {
     }
@@ -47,5 +47,23 @@ public class AppConstant {
         String ROLE_NAME = "roleName";
 
         String AUTHORIZATION_KEY = "authorizationKey";
+    }
+
+    public interface ActivityResultCode {
+        int BIOMETRIC_RESULT_CODE = 1001;
+
+        int CAPTURE_MEDIA_PHOTO = 368;
+
+        int REQUEST_FILE_BROWSER = 9012;
+
+        int SCAN_IMAGE_REQUEST_CAMERA = 9032;
+
+        int SCAN_IMAGE_REQUEST_GALLERY = 9031;
+
+        int SELECT_GALLERY_IMAGE_CODE = 7000;
+
+        int ACTION_REQUEST_EDIT_IMAGE = 9006;
+
+        int ACTION_MAP_GET_ADDRESS = 2400;
     }
 }

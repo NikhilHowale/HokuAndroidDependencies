@@ -23,7 +23,6 @@ import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
 import com.hokuapps.loadmapviewbyconfig.models.PlaceModel;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,10 +127,10 @@ public class GooglePlacesAutocompleteAdapter extends ArrayAdapter<PlaceModel> im
             }
         } catch (MalformedURLException e) {
             Log.e(CLASS_TAG, "Error processing Places API URL", e);
-            return resultList;
+            return null;
         } catch (IOException e) {
             Log.e(CLASS_TAG, "Error connecting to Places API", e);
-            return resultList;
+            return null;
         } finally {
             if (conn != null) {
                 conn.disconnect();
@@ -143,7 +142,7 @@ public class GooglePlacesAutocompleteAdapter extends ArrayAdapter<PlaceModel> im
             JSONArray predsJsonArray = jsonObj.getJSONArray(PREDICTIONS);
 
             // Extract the Place descriptions from the results
-            resultList = new ArrayList(predsJsonArray.length());
+            resultList = new ArrayList<>(predsJsonArray.length());
 
 
             for (int i = 0; i < predsJsonArray.length(); i++) {
@@ -162,6 +161,7 @@ public class GooglePlacesAutocompleteAdapter extends ArrayAdapter<PlaceModel> im
     }
 
 
+    @NonNull
     @Override
     public Filter getFilter() {
         return new Filter() {

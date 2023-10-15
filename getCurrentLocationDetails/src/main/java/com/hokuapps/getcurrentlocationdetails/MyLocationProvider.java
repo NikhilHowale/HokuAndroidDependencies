@@ -7,6 +7,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 public class MyLocationProvider {
 
     private LocationManager locationManager;
@@ -26,7 +28,7 @@ public class MyLocationProvider {
 
         locationListener = new LocationListener() {
             @Override
-            public void onLocationChanged(Location location) {
+            public void onLocationChanged(@NonNull Location location) {
                 if (location != null) {
                     callback.onNewLocationAvailable(location);
                 }
@@ -37,11 +39,11 @@ public class MyLocationProvider {
             }
 
             @Override
-            public void onProviderEnabled(String provider) {
+            public void onProviderEnabled(@NonNull String provider) {
             }
 
             @Override
-            public void onProviderDisabled(String provider) {
+            public void onProviderDisabled(@NonNull String provider) {
             }
         };
 

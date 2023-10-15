@@ -22,7 +22,6 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.koushikdutta.ion.Ion;
 
-
 import org.json.JSONObject;
 
 import java.io.File;
@@ -61,7 +60,7 @@ public class FCMMessagingService extends FirebaseMessagingService {
             if (remoteMessage.getData() != null) {
             }
 
-            if (gcmData.containsKey("msg")) {
+            if (gcmData.containsKey("msg") && gcmData.get("msg") != null ) {
 
                 JSONObject jsonObject = new JSONObject(gcmData.get("msg"));
 
@@ -125,10 +124,6 @@ public class FCMMessagingService extends FirebaseMessagingService {
             // intent to be launched when click on notification
             PendingIntent pIntent = null;
 
-            //PendingIntent.getActivity(App.getInstance().getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            //JSONArray jsonArray = getNotificationTextFromLocal(jsonObject);
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 
                 pIntent = PendingIntent.getActivity(
@@ -188,21 +183,18 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
             Bitmap bmImg = null;
 
-            if (Build.VERSION.SDK_INT >= 16) {
+            NotificationCompat.Style style;
 
-                NotificationCompat.Style style;
+            if (TextUtils.isEmpty(notifImgUrl)) {
+                style = getNotificationStyle(contentTitle, messageText);
+            } else {
+                bmImg = Ion.with(context)
+                        .load(notifImgUrl).asBitmap().get();
+                style = getNotificationPictureStyle(bmImg, messageText);
+            }
 
-                if (TextUtils.isEmpty(notifImgUrl)) {
-                    style = getNotificationStyle(contentTitle, messageText);
-                } else {
-                    bmImg = Ion.with(context)
-                            .load(notifImgUrl).asBitmap().get();
-                    style = getNotificationPictureStyle(bmImg, messageText);
-                }
-
-                if (style != null) {
-                    builder.setStyle(style);
-                }
+            if (style != null) {
+                builder.setStyle(style);
             }
 
             builder.setLargeIcon(bmImg != null

@@ -3,7 +3,6 @@ package com.hokuapps.loadmapviewbyconfig.synchronizer;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 import com.hokuapps.loadmapviewbyconfig.utility.Utility;
 
 import org.json.JSONObject;
@@ -30,7 +29,6 @@ public class MapAsyncTask extends AsyncTask<String, Void, String> {
 
     /**
      * initialize OnMapAsyncListener
-     * @param onMapAsyncListener
      */
     public void setOnMapAsyncListener(OnMapAsyncListener onMapAsyncListener) {
         this.onMapAsyncListener = onMapAsyncListener;
@@ -68,10 +66,10 @@ public class MapAsyncTask extends AsyncTask<String, Void, String> {
 
 
     /**
-     *
-     * @param strUrl
-     * @return
-     * @throws IOException
+     * call api to get places details
+     * @param strUrl places api
+     * @return return place object in json format
+     * @throws IOException return if response read failed
      */
     private String downloadUrl(String strUrl) throws IOException {
 
@@ -89,7 +87,7 @@ public class MapAsyncTask extends AsyncTask<String, Void, String> {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             String line;
             while ((line = br.readLine()) != null) {

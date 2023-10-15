@@ -1,5 +1,7 @@
 package com.hokuapps.loadmapviewbyconfig.models;
 
+import androidx.annotation.NonNull;
+
 /**
  * Created by user on 6/4/18.
  */
@@ -42,6 +44,7 @@ public class PlaceModel {
         this.placeId = placeId;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return getTitleAddress() + ", " + getDescription();

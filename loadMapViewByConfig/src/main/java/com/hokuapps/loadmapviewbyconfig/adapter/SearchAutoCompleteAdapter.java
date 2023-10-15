@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -21,6 +22,9 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
+/**
+ *  populate adapter with address when searching location
+ */
 public class SearchAutoCompleteAdapter extends ArrayAdapter<JSONObject> implements Filterable {
 
     private Context context;

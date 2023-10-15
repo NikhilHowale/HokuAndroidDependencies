@@ -1,14 +1,26 @@
 package com.hokuapps.loadmapviewbyconfig;
 
 
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.*;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.API_KEY;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.AUTH_SECRET_KEY;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.AUTH_TOKEN;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.EXTRA_MAP_RESULT_CALLBACK;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.*;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.MAP_LOCATION_MODEL;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.THEME_ID;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.TeacherPlace;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.TeacherPlace.PLACE_ICON;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace.DESTINATION;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace.PLACE_LAT;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace.PLACE_LNG;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace.SOURCE;
-import static com.hokuapps.loadmapviewbyconfig.utility.ThemeUtils.*;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.google_DirectionsUrl;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.google_LatLongFromPlaceId;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.google_NearBy_place;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.google_location_blue_pointer;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.themeId;
+import static com.hokuapps.loadmapviewbyconfig.utility.ThemeUtils.changedToolbarTextColorByTheme;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -84,7 +96,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
@@ -110,17 +121,16 @@ import com.google.maps.android.PolyUtil;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.TravelMode;
+import com.hokuapps.getCurrentLatLong.HokuLocationProvider;
 import com.hokuapps.getCurrentLatLong.LocationDetails;
 import com.hokuapps.loadmapviewbyconfig.adapter.GooglePlacesAutocompleteAdapter;
 import com.hokuapps.loadmapviewbyconfig.adapter.SearchAutoCompleteAdapter;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
 import com.hokuapps.loadmapviewbyconfig.delegate.IWebSocketClientEvent;
-import com.hokuapps.loadmapviewbyconfig.locationProvider.LocationProvider;
 import com.hokuapps.loadmapviewbyconfig.models.Error;
 import com.hokuapps.loadmapviewbyconfig.models.JSResponseData;
 import com.hokuapps.loadmapviewbyconfig.models.LocationMapModel;
 import com.hokuapps.loadmapviewbyconfig.models.PlaceModel;
-
 import com.hokuapps.loadmapviewbyconfig.synchronizer.GetNearByPlacesClientEvent;
 import com.hokuapps.loadmapviewbyconfig.synchronizer.MapAsyncTask;
 import com.hokuapps.loadmapviewbyconfig.synchronizer.UpdateCurrentLocationClientEvent;
@@ -131,7 +141,6 @@ import com.hokuapps.loadmapviewbyconfig.utility.ToolbarColorizeHelper;
 import com.hokuapps.loadmapviewbyconfig.utility.Utility;
 import com.hokuapps.loadmapviewbyconfig.widgets.behavior.AnchorBottomSheetBehavior;
 import com.koushikdutta.ion.Ion;
-
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -152,7 +161,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @SuppressWarnings("ALL")
-public class MapsAppCompactActivity extends AppCompatActivity implements OnMapReadyCallback, LocationProvider.LocationCallback, View.OnClickListener {
+public class MapsAppCompactActivity extends AppCompatActivity implements OnMapReadyCallback, HokuLocationProvider.NewLocationCallback, View.OnClickListener {
 
     public static final String TAG = MapsAppCompactActivity.class.getSimpleName();
     public static final int RESULT_CODE_MAP_GET_ADDRESS_ACTION_ACTIVITY = 2400;
@@ -304,7 +313,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
     private int globalPeekHeight = 0;
     private Bitmap mSourceIconBitmap = null;
     private Bitmap mDestIconBitmap = null;
-    private LocationProvider mLocationProvider;
+    private HokuLocationProvider mLocationProvider;
 
 
     /**
@@ -325,7 +334,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                     if (mCurrentLocation != null) {
                         getNearByPlacesFromCustomApi(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
-                        mLocationProvider.getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), new LocationProvider.OnCapturedLocationString() {
+                        mLocationProvider.getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), new HokuLocationProvider.OnCapturedLocationString() {
                             @Override
                             public void onCapturedAddress(String addressString) {
                                 searchAddressAutoCompleteText.setText(addressString);
@@ -374,7 +383,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
     /**
      * start map activity
-     * @param activity
+     * @param activity activity refrence
      * @param mapModel Location details model object
      */
     public static void startActivityForResult(Activity activity, LocationMapModel mapModel) {
@@ -392,7 +401,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 //        Apply settings for mobo here.
         context = this;
 
-        mLocationProvider = new LocationProvider(context, (LocationProvider.LocationCallback) this);
+        mLocationProvider = new HokuLocationProvider(context, (HokuLocationProvider.NewLocationCallback) this);
 
         loadBundleData();
 
@@ -570,13 +579,13 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 mGoogleMap.addMarker(markerOptions);
             }
-//            Add new parameter for loading static map loadStaticMapFromPoints: true,
-//            and draw polyline on the map with given points of array.
+             // Add new parameter for loading static map loadStaticMapFromPoints: true,
+             // and draw polyline on the map with given points of array.
             if (Utility.getJsonObjectBooleanValue(mResponseJson, LOAD_STATIC_MAP_FROM_POINTS)) {
                 drawStaticMap(mGoogleMap, jsonObjectMapPoints);
             }
 
-//                Call places api to show markers on the map.
+             // Call places api to show markers on the map.
             if (Utility.getJsonObjectBooleanValue(mResponseJson, LOAD_PLACES_AND_ROUTE_BOTH)) {
 
                 getNearByPlacesFromCustomApi(Utility.getJsonObjectDoubleValue(mResponseJson, LATITUDE), Utility.getJsonObjectDoubleValue(mResponseJson, LONGITUDE));
@@ -626,6 +635,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
                         String driverName = Utility.getStringObjectValue(jsonObject, DRIVER_ID_NAME);
                         String iuNumber = Utility.getStringObjectValue(jsonObject, IU_NUMBER);
+                        String status = Utility.getStringObjectValue(jsonObject, STATUS);
 
                         String markerText = "";
                         if (driverName != null) {
@@ -634,6 +644,10 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
                         if (iuNumber != null) {
                             markerText += "IuNumber : " + iuNumber;
+                        }
+
+                        if(status != null){
+                            markerText += "Status : "+status;
                         }
 
                         View view = getLayoutInflater().inflate(R.layout.layout_driver_details, null);
@@ -1438,6 +1452,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    anchorBottomSheetBehavior.setAllowUserDragging(false);
                 }
 
                 if (newState == AnchorBottomSheetBehavior.STATE_ANCHORED || newState == AnchorBottomSheetBehavior.STATE_COLLAPSED) {
@@ -1855,7 +1870,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
     private void showMyLocationAddress(final double latitude, final double longitude) {
         if (latitude > 0 && longitude > 0) {
             sourceLatLong = new LatLng(latitude, longitude);
-            mLocationProvider.getCompleteAddressString(latitude, longitude, new LocationProvider.OnCapturedLocationString() {
+            mLocationProvider.getCompleteAddressString(latitude, longitude, new HokuLocationProvider.OnCapturedLocationString() {
                 @Override
                 public void onCapturedAddress(String addressString) {
                     auto_complete_text_my_location.setText(addressString);
@@ -1905,7 +1920,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
     private void showDestinationAddress(final double latitude, final double longitude) {
         if (latitude > 0 && longitude > 0) {
             destinationLatLong = new LatLng(latitude, longitude);
-            mLocationProvider.getCompleteAddressString(latitude, longitude, new LocationProvider.OnCapturedLocationString() {
+            mLocationProvider.getCompleteAddressString(latitude, longitude, new HokuLocationProvider.OnCapturedLocationString() {
                 @Override
                 public void onCapturedAddress(String addressString) {
                     if (Utility.getStringObjectValue(mResponseJson, DESTINATION_LOCATION) != null) {
@@ -1999,8 +2014,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
             rlp.addRule(RelativeLayout.ALIGN_PARENT_END, 0);
             rlp.addRule(RelativeLayout.ALIGN_END, 0);
             rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            rlp.setMargins((int) Utility.getDimension(R.dimen.activity_horizontal_margin_16, getApplicationContext()),
-                    0, 0, (int) Utility.getDimension(R.dimen.activity_horizontal_margin_16, getApplicationContext()));
+            rlp.setMargins((int) Utility.getDimension(R.dimen.activity_horizontal_margin_16, getApplicationContext()),0, 0, (int) Utility.getDimension(R.dimen.activity_horizontal_margin_16, getApplicationContext()));
         }
 
         if (mMap != null && mMap.findViewById(4) != null) {
@@ -2030,7 +2044,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                         jsonObject = getMapMovedNewLocation(jsonObject);
 //                        To add location for mobo app if the showBottomButtonLeft is :  true.
                         if (showBottomButtonLeft) {
-                            mLocationProvider.getCompleteAddressJsonObject(mapCenterLatLng.latitude, mapCenterLatLng.longitude, new LocationProvider.OnCapturedLocationObject() {
+                            mLocationProvider.getCompleteAddressJsonObject(mapCenterLatLng.latitude, mapCenterLatLng.longitude, new HokuLocationProvider.OnCapturedLocationObject() {
                                 @Override
                                 public void onCaptured(JSONObject jsonObjectAddress) {
                                     locatinDictJsonObject = jsonObjectAddress;
@@ -2783,7 +2797,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                                     loadUrlOvelayPage(mLocationMapModel.getOverlayPage());
                                 }
                                 //check if live tracking is enable with timer
-                                if ((mLocationMapModel.getIsLiveTracking() == 1 || Utility.isIpLimomob())
+                               if ((mLocationMapModel.getIsLiveTracking() == 1 || Utility.isIpLimomob())
                                         && mLocationMapModel.getLiveTrackingIntervalInMs() > 0) {
                                     cancelLiveTrackerCallApiTimer();
                                     liveTrackerCallApiTimer(mLocationMapModel.getLiveTrackingIntervalInMs());
@@ -3012,7 +3026,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
         if (clickLatitude == 0.0 || clickLongitude == 0.0) return;
 
-        mLocationProvider.getCompleteAddressString(clickLatitude, clickLongitude, new LocationProvider.OnCapturedLocationString() {
+        mLocationProvider.getCompleteAddressString(clickLatitude, clickLongitude, new HokuLocationProvider.OnCapturedLocationString() {
             @Override
             public void onCapturedAddress(String addressString) {
                 clickAddress = addressString;
@@ -3739,12 +3753,18 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                 setToolbarTitle(address.toString());
                 loadLatLongOnMap(new LatLng(Utility.getJsonObjectDoubleValue(mResponseJson, LAT), Utility.getJsonObjectDoubleValue(mResponseJson, LONG)));
             } else {
-                mLocationProvider.getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), new LocationProvider.OnCapturedLocationString() {
+                mLocationProvider.getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), new HokuLocationProvider.OnCapturedLocationString() {
                     @Override
                     public void onCapturedAddress(String addressString) {
-                        clickLatitude = mCurrentLocation.getLatitude();
-                        clickLongitude = mCurrentLocation.getLongitude();
-                        setToolbarTitle(addressString);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                clickLatitude = mCurrentLocation.getLatitude();
+                                clickLongitude = mCurrentLocation.getLongitude();
+                                setToolbarTitle(addressString);
+                            }
+                        });
+
 
                     }
                 });
@@ -3845,7 +3865,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                 }
 
                 if (showOnlyMyLocationCard) {
-                    mLocationProvider.getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), new LocationProvider.OnCapturedLocationString() {
+                    mLocationProvider.getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), new HokuLocationProvider.OnCapturedLocationString() {
                         @Override
                         public void onCapturedAddress(String addressString) {
                             auto_complete_text_my_location.setText(addressString);
@@ -3900,6 +3920,23 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
             try {
                 LocationDetails locationDetails = new LocationDetails(mWebviewConfirm, context, MapsAppCompactActivity.this);
                 locationDetails.getCurLocationLatLong(currentLatLong);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @JavascriptInterface
+        public void loadMapViewByConfig(final String respData) {
+            try {
+                requiredJSONObjectKey = new String[]{IS_SHOW_WAZE};
+                String missingKeysMsg = Utility.showAlertBridgeMissingKeys( respData, requiredJSONObjectKey);
+                if (whileDebuggingShowMissingAlert && !missingKeysMsg.equals(missingKeys) && BuildConfig.DEBUG) {
+                    Utility.showAlertMessage(context, missingKeysMsg, "loadMapViewByConfig");
+                    return;
+                }
+
+                parseLoadMapViewByConfig(respData);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

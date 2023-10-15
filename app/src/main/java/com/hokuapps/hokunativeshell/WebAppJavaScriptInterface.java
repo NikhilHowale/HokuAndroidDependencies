@@ -242,10 +242,7 @@ public class WebAppJavaScriptInterface {
     @JavascriptInterface
     public void loadMapViewByConfig(final String respData){
         String app_id = BuildConfig.APPLICATION_ID;
-
         boolean html = BuildConfig.LOAD_HTML_DIRECTLY;
-
-        new LoadMapViewByConfig(mContext,mWebAppActivity,
-                1,app_id,html).loadMapViewByConfig(respData);
+        new LoadMapViewByConfig(mContext,mWebAppActivity,1,app_id,html).loadMapViewByConfig(respData);
     }
 }

@@ -1,7 +1,9 @@
 package com.hokuapps.loadmapviewbyconfig;
 
 import static com.hokuapps.loadmapviewbyconfig.MapsAppCompactActivity.REQUEST_CHECK_SETTINGS;
-import static com.hokuapps.loadmapviewbyconfig.R.string.*;
+import static com.hokuapps.loadmapviewbyconfig.R.string.label_loading;
+import static com.hokuapps.loadmapviewbyconfig.R.string.navigation;
+import static com.hokuapps.loadmapviewbyconfig.R.string.navigation_via;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.ADDRESS_STRING;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.API_NAME;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.BOTTOM_BUTTON_TEXT;
@@ -60,12 +62,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.text.TextUtils;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -82,8 +84,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
+import com.hokuapps.getCurrentLatLong.HokuLocationProvider;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
-import com.hokuapps.loadmapviewbyconfig.locationProvider.LocationProvider;
 import com.hokuapps.loadmapviewbyconfig.models.JSResponseData;
 import com.hokuapps.loadmapviewbyconfig.models.LocationMapModel;
 import com.hokuapps.loadmapviewbyconfig.utility.Utility;
@@ -94,15 +96,15 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class LoadMapViewByConfig {
-    private final Context mContext;
+    private Context mContext;
     private final Activity mActivity;
     private int isShowWase = 0;
     private String destinationAddress = "";
     private Location location;
     private JSResponseData jsResponseData;
-    private final int themeId;
+    private int themeId;
     private ProgressDialog progressDialog;
-    public LocationProvider mLocationProvider;
+    public HokuLocationProvider mLocationProvider;
     public final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     /**
@@ -119,6 +121,10 @@ public class LoadMapViewByConfig {
         this.themeId = themeId;
         MapConstant.APPLICATION_ID = app_id;
         MapConstant.LOAD_HTML_DIRECTLY = html;
+    }
+
+    public LoadMapViewByConfig(Activity activity) {
+        this.mActivity = activity;
     }
 
     /**
@@ -297,9 +303,6 @@ public class LoadMapViewByConfig {
     private void showOrHideProgressDialogPopup(boolean shown) {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(mContext, R.style.AppCompatAlertDialogStyle);
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-                progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            }
             progressDialog.setCancelable(false);
             progressDialog.setMessage(mContext.getResources().getString(label_loading));
         }
@@ -381,6 +384,51 @@ public class LoadMapViewByConfig {
      */
     public void setJsResponseData(JSResponseData jsResponseData) {
         this.jsResponseData = jsResponseData;
+    }
+
+
+    public void handleMapResult(int resultCode, Intent intent, WebView mWebView){
+        try {
+            if (intent != null && intent.getExtras() != null ) {
+                LocationMapModel locationMapModel = intent.getExtras().getParcelable(MapConstant.MAP_LOCATION_MODEL);
+
+                if(locationMapModel == null) return;
+                if (resultCode == Activity.RESULT_OK) {
+
+                    JSONObject jsonObjResponse = new JSONObject();
+
+                    String mapResultCallback = intent.getExtras().containsKey(MapConstant.EXTRA_MAP_RESULT_CALLBACK)
+                            ? intent.getExtras().getString(MapConstant.EXTRA_MAP_RESULT_CALLBACK)
+                            : "";
+
+                    if (!TextUtils.isEmpty(mapResultCallback)) {
+                        jsonObjResponse = new JSONObject(mapResultCallback);
+                    }
+
+                    Utility.callJavaScriptFunction(mActivity, mWebView,
+                            locationMapModel.getNextButtonCallback(), jsonObjResponse);
+
+                }
+                else {
+
+                    JSONObject jsonObj = new JSONObject(locationMapModel.getResponseData());
+
+                    if (Utility.getJsonObjectBooleanValue(jsonObj, "isMenuShow")) {
+                        mActivity.finish();
+                    } else {
+                        String backQueryCallBackName = Utility.getStringObjectValue(jsonObj, "backCallbackFunction");
+
+                        if (!TextUtils.isEmpty(backQueryCallBackName)) {
+                            Utility.callJavaScriptFunction(mActivity, mWebView, backQueryCallBackName, jsonObj);
+                        } else if (!TextUtils.isEmpty(Utility.getStringObjectValue(jsonObj, "nextButtonCallback"))) {
+                            Utility.callJavaScriptFunction(mActivity, mWebView,backQueryCallBackName, jsonObj);
+                        }
+                    }
+                }
+            }
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
     }
 
     /**

@@ -2,18 +2,14 @@ package com.hokuapps.hokunativeshell.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -32,7 +28,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -46,18 +41,16 @@ import com.hokuapps.hokunativeshell.BuildConfig;
 import com.hokuapps.hokunativeshell.R;
 import com.hokuapps.hokunativeshell.WebAppJavaScriptInterface;
 import com.hokuapps.hokunativeshell.constants.AppConstant;
-import com.hokuapps.hokunativeshell.networkcheck.NetworkUtil;
 import com.hokuapps.hokunativeshell.pref.MybeepsPref;
 import com.hokuapps.hokunativeshell.receivers.NotificationReceiver;
 import com.hokuapps.hokunativeshell.utils.Utility;
+import com.hokuapps.loadmapviewbyconfig.LoadMapViewByConfig;
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
-import com.hokuapps.loadnativefileupload.utilities.CustomCameraManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.List;
 
 
 public class WebAppActivity extends AppCompatActivity {
@@ -304,33 +297,42 @@ public class WebAppActivity extends AppCompatActivity {
             try {
                 if (resultCode == Activity.RESULT_OK) {
                     switch (requestCode) {
-
-                        case AppConstant.BIOMETRIC_RESULT_CODE:
-                            new AuthenticateWithTouch(WebAppActivity.this,mWebView).handleActivityResultCallback(intent);
+                        case AppConstant.ActivityResultCode.BIOMETRIC_RESULT_CODE:
+                            new AuthenticateWithTouch(WebAppActivity.this, mWebView).handleActivityResultCallback(intent);
                             break;
 
-                        case CustomCameraManager.CAPTURE_MEDIA_PHOTO:
+                        case AppConstant.ActivityResultCode.CAPTURE_MEDIA_PHOTO:
                             NativeFileUpload.getInstance().handleImageResultIntent(intent);
                             break;
 
-                        case CustomCameraManager.REQUEST_FILE_BROWSER:
+                        case AppConstant.ActivityResultCode.REQUEST_FILE_BROWSER:
                             NativeFileUpload.getInstance().handleFileBrowsing(intent);
                             break;
 
-                        case CustomCameraManager.SCAN_IMAGE_REQUEST_CAMERA:
+                        case AppConstant.ActivityResultCode.SCAN_IMAGE_REQUEST_CAMERA:
 
-                        case CustomCameraManager.SCAN_IMAGE_REQUEST_GALLERY:
+                        case AppConstant.ActivityResultCode.SCAN_IMAGE_REQUEST_GALLERY:
                             NativeFileUpload.getInstance().handleScanTextResult(this, requestCode, resultCode, intent);
                             break;
 
-                        case CustomCameraManager.SELECT_GALLERY_IMAGE_CODE:
+                        case AppConstant.ActivityResultCode.SELECT_GALLERY_IMAGE_CODE:
                             NativeFileUpload.getInstance().handleCustomImageGallery(intent);
 
                             break;
-                        case  CustomCameraManager.ACTION_REQUEST_EDITIMAGE:
+                        case AppConstant.ActivityResultCode.ACTION_REQUEST_EDIT_IMAGE:
                             NativeFileUpload.getInstance().handleFreeDrawingImage(intent);
                             break;
 
+                        case AppConstant.ActivityResultCode.ACTION_MAP_GET_ADDRESS:
+                            new LoadMapViewByConfig(this).handleMapResult(resultCode,intent,mWebView);
+                            break;
+
+                    }
+                } else if(resultCode == RESULT_CANCELED){
+                    switch (requestCode) {
+                        case AppConstant.ActivityResultCode.ACTION_MAP_GET_ADDRESS:
+                            new LoadMapViewByConfig(this).handleMapResult(resultCode, intent, mWebView);
+                            break;
                     }
                 }
 

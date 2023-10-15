@@ -2,7 +2,6 @@ package com.hokuapps.loadmapviewbyconfig.models;
 
 import android.content.Context;
 
-
 import androidx.annotation.NonNull;
 
 import com.hokuapps.loadmapviewbyconfig.App;
@@ -37,18 +36,14 @@ public class Error {
     }
 
     /**
-     * Initialize object
-     *
-     * @param code
+     * Initialize object with code
      */
     public Error(int code) {
         this.code = code;
     }
 
     /**
-     * Initialize object
-     *
-     * @param errMsg
+     * Initialize object with message
      */
     public Error(String errMsg) {
         this.msg = errMsg;
@@ -57,8 +52,8 @@ public class Error {
     /**
      * Initialize object
      *
-     * @param code
-     * @param msg
+     * @param code code
+     * @param msg error message
      */
     public Error(int code, String msg) {
         this.code = code;
@@ -113,7 +108,7 @@ public class Error {
             }
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         return new Error(statusCode, msg);
@@ -124,15 +119,13 @@ public class Error {
         switch (statusCode) {
             case ErrorCode.BAD_REQUEST:
             case ErrorCode.BAD_GATEWAY:
-                return context.getResources().getString(R.string.err_occurred_msg);
             case ErrorCode.NOT_FOUND:
+            case ErrorCode.INTERNAL_SERVER_ERROR:
+            case ErrorCode.SERVICE_UNAVAILABLE:
                 return context.getResources().getString(R.string.err_occurred_msg);
             case ErrorCode.REQUEST_TIMEOUT:
             case ErrorCode.GATEWAY_TIMEOUT:
                 return context.getResources().getString(R.string.timeout_error_message);
-            case ErrorCode.INTERNAL_SERVER_ERROR:
-            case ErrorCode.SERVICE_UNAVAILABLE:
-                return context.getResources().getString(R.string.err_occurred_msg);
 
         }
         return null;

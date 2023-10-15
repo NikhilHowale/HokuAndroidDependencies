@@ -231,12 +231,12 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     @Override
-    public Parcelable onSaveInstanceState(CoordinatorLayout parent, V child) {
+    public Parcelable onSaveInstanceState(@NonNull CoordinatorLayout parent, @NonNull V child) {
         return new SavedState(super.onSaveInstanceState(parent, child), mState);
     }
 
     @Override
-    public void onRestoreInstanceState(CoordinatorLayout parent, V child, Parcelable state) {
+    public void onRestoreInstanceState(@NonNull CoordinatorLayout parent, @NonNull V child, @NonNull Parcelable state) {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(parent, child, ss.getSuperState());
         // Intermediate states are restored as collapsed state
@@ -248,7 +248,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     @Override
-    public boolean onLayoutChild(CoordinatorLayout parent, V child, int layoutDirection) {
+    public boolean onLayoutChild(@NonNull CoordinatorLayout parent, @NonNull V child, int layoutDirection) {
         if (ViewCompat.getFitsSystemWindows(parent) && !ViewCompat.getFitsSystemWindows(child)) {
             ViewCompat.setFitsSystemWindows(child, true);
         }
@@ -259,10 +259,6 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         mParentHeight = parent.getHeight();
         int peekHeight;
         if (mPeekHeightAuto) {
-            if (mPeekHeightMin == 0) {
-                /*mPeekHeightMin = parent.getResources().getDimensionPixelSize(
-                        android.support.design.R.dimen.design_bottom_sheet_peek_height_min);*/
-            }
             peekHeight = Math.max(mPeekHeightMin, mParentHeight - parent.getWidth() * 9 / 16);
         } else {
             peekHeight = mPeekHeight;
@@ -301,7 +297,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     @Override
-    public boolean onInterceptTouchEvent(CoordinatorLayout parent, V child, MotionEvent event) {
+    public boolean onInterceptTouchEvent(@NonNull CoordinatorLayout parent, V child, @NonNull MotionEvent event) {
         if (!child.isShown() || !mAllowUserDragging) {
             mIgnoreEvents = true;
             return false;
@@ -312,18 +308,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
 //            To enable scroll only on header red strip, make mIgnoreEvents = true;
             mIgnoreEvents = false;
         }
-         /*else */
 
-        /*if (((RelativeLayout) ((CardView) child).getChildAt(0)).getChildAt(1).getScrollY() > 0) {
-//            If user scrolling the content in overlay (i.e webView content) and again scrolling vertically down,
-//            then block the user for overlay scroll and ignore the scrolling events for overlay.
-            mIgnoreEvents = true;
-            return false;
-            *//*if (!isClickInsideHeaderOverlay(child, (int)event.getX(), (int) event.getY())) {
-                mIgnoreEvents = true;
-                return false;
-            }*//*
-        }*/
 
         int action = MotionEventCompat.getActionMasked(event);
         // Record the velocity
@@ -401,8 +386,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     @Override
-    public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, V child,
-                                       View directTargetChild, View target, int nestedScrollAxes) {
+    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull V child,
+                                       @NonNull View directTargetChild, @NonNull View target, int nestedScrollAxes) {
         if (!mAllowUserDragging) {
             return false;
         }
@@ -411,8 +396,8 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     @Override
-    public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, V child, View target, int dx,
-                                  int dy, int[] consumed) {
+    public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull V child, @NonNull View target, int dx,
+                                  int dy, @NonNull int[] consumed) {
         if (!mAllowUserDragging) {
             return;
         }
@@ -450,7 +435,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     @Override
-    public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, V child, View target) {
+    public void onStopNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull V child, @NonNull View target) {
         if (!mAllowUserDragging) {
             return;
         }
@@ -481,7 +466,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     @Override
-    public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, V child, View target,
+    public boolean onNestedPreFling(@NonNull CoordinatorLayout coordinatorLayout, @NonNull V child, @NonNull View target,
                                     float velocityX, float velocityY) {
         if (!mAllowUserDragging) {
             return false;
@@ -778,14 +763,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         if (view instanceof NestedScrollingChild) {
             return view;
         }
-       /* if (view instanceof ViewPager) {
-            ViewPager viewPager = (ViewPager) view;
-            View currentViewPagerChild = ViewPagerUtils.getCurrentView(viewPager);
-            View scrollingChild = findScrollingChild(currentViewPagerChild);
-            if (scrollingChild != null) {
-                return scrollingChild;
-            }
-        }*/
+
         if (view instanceof WebView) {
             return view.getScrollY() > 0 ? view : null;
         } else if (view instanceof ViewGroup) {
@@ -840,7 +818,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         }
 
         @Override
-        public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
+        public void onViewPositionChanged(@NonNull View changedView, int left, int top, int dx, int dy) {
             dispatchOnSlide(top);
         }
 
@@ -852,7 +830,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         }
 
         @Override
-        public void onViewReleased(View releasedChild, float xvel, float yvel) {
+        public void onViewReleased(@NonNull View releasedChild, float xvel, float yvel) {
             int[] out = new int[2];
             calculateTopAndTargetState(releasedChild, xvel, yvel, out);
             int top = out[0];
@@ -863,23 +841,18 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
                 ViewCompat.postOnAnimation(releasedChild,
                         new SettleRunnable(releasedChild, targetState));
 
-                /*if (!(yvel == 0.f)) {
-                    ViewCompat.postOnAnimation(releasedChild,
-                            new SettleRunnable(releasedChild, targetState));
-                }*/
-
             } else {
                 setStateInternal(targetState);
             }
         }
 
         @Override
-        public int clampViewPositionVertical(View child, int top, int dy) {
+        public int clampViewPositionVertical(@NonNull View child, int top, int dy) {
             return constrain(top, mMinOffset, mHideable ? mParentHeight : mMaxOffset);
         }
 
         private int constrain(int amount, int low, int high) {
-            return amount < low ? low : (amount > high ? high : amount);
+            return amount < low ? low : (Math.min(amount, high));
         }
 
         @Override
@@ -888,7 +861,7 @@ public class AnchorBottomSheetBehavior<V extends View> extends CoordinatorLayout
         }
 
         @Override
-        public int getViewVerticalDragRange(View child) {
+        public int getViewVerticalDragRange(@NonNull View child) {
             if (mHideable) {
                 return mParentHeight - mMinOffset;
             } else {

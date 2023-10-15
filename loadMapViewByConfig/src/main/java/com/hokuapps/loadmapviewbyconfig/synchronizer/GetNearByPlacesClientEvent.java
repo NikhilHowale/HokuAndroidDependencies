@@ -1,9 +1,11 @@
 package com.hokuapps.loadmapviewbyconfig.synchronizer;
 
-import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.*;
+import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.DataListener;
 import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.STATUS_TIMEOUT;
 import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.getErrorMessage;
 import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.getLoginHeaders;
+import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.getRefreshTokenHeaders;
+import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.getTokenAndVersionHeaders;
 
 import android.content.Context;
 import android.os.Handler;
@@ -14,10 +16,10 @@ import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.backgroundTask.DispatchQueue;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
 import com.hokuapps.loadmapviewbyconfig.models.Error;
-import com.hokuapps.loadmapviewbyconfig.socketio.SocketWatcher;
 import com.hokuapps.loadmapviewbyconfig.utility.Utility;
 
 import org.json.JSONObject;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -60,12 +62,16 @@ public class GetNearByPlacesClientEvent extends WebSocketClientEvent implements 
     public void fire() {
         try {
             final JSONObject jsonObject = new JSONObject();
-            taskQueue.postRunnable(() -> fireAsyncTask("getEventName()", jsonObject, GetNearByPlacesClientEvent.this));
+            taskQueue.postRunnable(() -> fireAsyncTask(getEventName(), jsonObject, GetNearByPlacesClientEvent.this));
 
         } catch (Exception e) {
             Log.e(TAG, "fire: " +e.getMessage());
 
         }
+    }
+
+    protected String getEventName() {
+        return TAG;
     }
 
     @Override
@@ -99,10 +105,10 @@ public class GetNearByPlacesClientEvent extends WebSocketClientEvent implements 
     }
 
     /**
-     *
-     * @param event
-     * @param jsonObject
-     * @param listener
+     * Call rest api and check response and return callback
+     * @param event event name
+     * @param jsonObject parameter in json string
+     * @param listener listener for api response
      */
     protected void fireAsyncTask(final String event, final JSONObject jsonObject, final DataListener<JSONObject> listener) {
 
@@ -131,16 +137,15 @@ public class GetNearByPlacesClientEvent extends WebSocketClientEvent implements 
             ex.printStackTrace();
         }
 
-        SocketWatcher.getInstance().updateLastActiveTime(System.currentTimeMillis());
     }
 
 
     /**
-     *
-     * @param event
-     * @param jsonObject
+     * Call api with parameter and return response object
+     * @param event event name
+     * @param jsonObject parameter in json string
      * @return return the response got from api call
-     * @throws IOException
+     * @throws IOException if response is fail
      */
     protected Response fireAsyncTask(final String event, final JSONObject jsonObject) throws IOException {
 

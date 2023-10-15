@@ -9,7 +9,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -45,13 +44,13 @@ public class HokuLocationProvider implements
     private String requestData = "";
 
     public static int UPDATE_INTERVAL = 5000; // 10 sec 10000
-    public static int FATEST_INTERVAL = 2000; // 05 sec 5000
+    public static int FASTEST_INTERVAL = 2000; // 05 sec 5000
     public static int DISPLACEMENT = 0;
 
-    public abstract interface NewLocationCallback {
-        public void handleNewLocation(Location location);
+    public interface NewLocationCallback {
+        void handleNewLocation(Location location);
 
-        public void handleLastLocation(Location location);
+        void handleLastLocation(Location location);
     }
 
     public static final String TAG = HokuLocationProvider.class.getSimpleName();
@@ -62,11 +61,11 @@ public class HokuLocationProvider implements
      */
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
-    private NewLocationCallback mLocationCallback;
-    private Context mContext;
+    private final NewLocationCallback mLocationCallback;
+    private final Context mContext;
     private GoogleApiClient mGoogleApiClient;
     public LocationRequest mLocationRequest;
-    //    =============== ******** Google location CallBack object *************** ==============
+
     private LocationCallback locationCallback;
 
     public HokuLocationProvider(Context context, NewLocationCallback callback) {
@@ -84,7 +83,7 @@ public class HokuLocationProvider implements
         // Create the LocationRequest object
         mLocationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL)
                 .setWaitForAccurateLocation(false)
-                .setMinUpdateIntervalMillis(FATEST_INTERVAL)
+                .setMinUpdateIntervalMillis(FASTEST_INTERVAL)
                 .setMaxUpdateDelayMillis(UPDATE_INTERVAL)
                 .build();
 
@@ -109,7 +108,7 @@ public class HokuLocationProvider implements
 
     }
 
-    public GoogleApiClient getmGoogleApiClient() {
+    public GoogleApiClient getGoogleApiClient() {
         return mGoogleApiClient;
     }
 
@@ -126,9 +125,7 @@ public class HokuLocationProvider implements
 
     public void disconnect() {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             LocationServices.getFusedLocationProviderClient(mContext).removeLocationUpdates(locationCallback);
-
             mGoogleApiClient.disconnect();
         }
     }
@@ -146,8 +143,6 @@ public class HokuLocationProvider implements
             public void onPermissionDenied(List<String> deniedPermissions) {
 
             }
-
-
         };
 
         TedPermission.create()
@@ -183,16 +178,11 @@ public class HokuLocationProvider implements
                 // Log the error
                 e.printStackTrace();
             }
-        } else {
-            /*
-             * If no resolution is available, display a dialog to the
-             * user with the error.
-             */
         }
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(@NonNull Location location) {
         mLocationCallback.handleNewLocation(location);
     }
 
@@ -262,6 +252,12 @@ public class HokuLocationProvider implements
     }
 
 
+    /**
+     * Get json object containing complete address
+     * @param lat latitude
+     * @param lng longitude
+     * @param onCapturedLocationObject interface
+     */
     public void getCompleteAddressJsonObject(double lat, double lng, final OnCapturedLocationObject onCapturedLocationObject) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -288,9 +284,9 @@ public class HokuLocationProvider implements
     /**
      * Get complete address string from lat/lng.
      *
-     * @param lat
-     * @param lng
-     * @param capturedLocationString
+     * @param lat latitude
+     * @param lng longitude
+     * @param capturedLocationString interface
      */
     public void getCompleteAddressString(double lat, double lng, final OnCapturedLocationString capturedLocationString) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -301,7 +297,7 @@ public class HokuLocationProvider implements
             public void run() {
 
                 //Background work here
-                JSONObject addressString = getAddressJsonObjectFromLatLng(lat, lng);
+                StringBuilder addressString = getCompleteAddressString(lat, lng);
                 capturedLocationString.onCapturedAddress(addressString.toString());
 
                 handler.post(new Runnable() {
@@ -318,19 +314,19 @@ public class HokuLocationProvider implements
     /**
      * Get JSONObject of address provided with parameter lat/lng.
      *
-     * @param latitude
-     * @param longitude
-     * @return JSONObject build by this method, look here for detailed view {@link com.mybeeps.utils.Utility#getAddressJson(android.location.Address)}
+     * @param latitude latitude
+     * @param longitude longitude
+     * @return JSONObject build by this method, look here for detailed view
      */
     private JSONObject getAddressJsonObjectFromLatLng(double latitude, double longitude) {
 
         Geocoder gc = new Geocoder(mContext, Locale.ENGLISH);
-        if (gc.isPresent()) {
+        if (Geocoder.isPresent()) {
             try {
                 List<Address> addresses;
                 addresses = gc.getFromLocation(latitude, longitude, 1);
 
-                if (addresses.size() > 0) {
+                if (addresses != null && addresses.size() > 0) {
                     Address fetchedAddress = addresses.get(0);
                     StringBuilder strAddress = new StringBuilder();
                     for (int i = 0; i <= fetchedAddress.getMaxAddressLineIndex(); i++) {
@@ -354,32 +350,26 @@ public class HokuLocationProvider implements
     }
 
     /**
-     * Get complete address of lat/lng.
+     * Get complete address from latitude and longitude
      *
-     * @param latitude
-     * @param longitude
-     * @return
+     * @param latitude latitude
+     * @param longitude longitude
+     * @return returns string containing address details
      */
     public StringBuilder getCompleteAddressString(double latitude, double longitude) {
 
         Geocoder gc = new Geocoder(mContext, Locale.ENGLISH);
-        if (gc.isPresent()) {
+        if (Geocoder.isPresent()) {
             try {
                 List<Address> addresses;
                 addresses = gc.getFromLocation(latitude, longitude, 1);
 
-                if (addresses.size() > 0) {
+                if (addresses != null && addresses.size() > 0) {
                     Address fetchedAddress = addresses.get(0);
                     StringBuilder strAddress = new StringBuilder();
                     for (int i = 0; i <= fetchedAddress.getMaxAddressLineIndex(); i++) {
                         strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
                     }
-
-                    JSONObject jsonObjAddress = Utility.getAddressJson(fetchedAddress);
-
-                   /* jsonObjAddress.put("lat", String.valueOf(latitude));
-                    jsonObjAddress.put("long", String.valueOf(longitude));*/
-
                     return strAddress;
                 }
 

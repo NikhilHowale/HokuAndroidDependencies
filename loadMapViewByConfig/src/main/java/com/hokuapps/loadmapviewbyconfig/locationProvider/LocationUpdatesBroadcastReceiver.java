@@ -82,7 +82,7 @@ public class LocationUpdatesBroadcastReceiver extends BroadcastReceiver {
      * Parse request data into jsonObject
      * @param context Application context
      * @param requestData request data
-     * @param location
+     * @param location location object
      */
     private void parseJsonResponseRequestData(final Context context, String requestData, final Location location) {
         JSONObject jsonObject;
@@ -101,7 +101,6 @@ public class LocationUpdatesBroadcastReceiver extends BroadcastReceiver {
                         }
                         if (process != null) {
                             Toast.makeText(context, "Location CLEARED: " + location.getLatitude() + ", Longitude: " + location.getLongitude(), Toast.LENGTH_LONG).show();
-
                         }
                     }, false,jsonObject);
         } catch (JSONException e) {

@@ -5,12 +5,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.IntentSender;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.text.TextUtils;
 import android.webkit.WebView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -30,11 +29,11 @@ import java.util.List;
 
 public class LocationDetails implements HokuLocationProvider.NewLocationCallback {
 
-    private WebView mWebView;
-    private Context mContext;
-    private Activity mActivity;
+    private final WebView mWebView;
+    private final Context mContext;
+    private final Activity mActivity;
 
-    private JSONObject currenjsonObj;
+    private JSONObject currentJsonObj;
 
     private String currentLatLongCallback = null;
 
@@ -59,7 +58,7 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
             public void onPermissionGranted() {
                 try {
                     JSONObject jsonObj = new JSONObject(currentLatLong);
-                    currenjsonObj = jsonObj;
+                    currentJsonObj = jsonObj;
                     currentLatLongCallback = Utility.getStringObjectValue(jsonObj, "nextButtonCallback");
 
                     if (Utility.isGPSInfo(mContext)) {
@@ -85,7 +84,7 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
                 JSONObject jsonObj = null;
                 try {
                     jsonObj = new JSONObject(currentLatLong);
-                    currenjsonObj = jsonObj;
+                    currentJsonObj = jsonObj;
                     currentLatLongCallback = Utility.getStringObjectValue(jsonObj, "nextButtonCallback");
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -110,14 +109,13 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
     private void gpsSettingsRequestPopup() {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationProvider.mLocationRequest);
-//        builder.setNeedBle(true);
-        builder.setAlwaysShow(true); //this is the key ingredient
+        builder.setAlwaysShow(true);
         Task<LocationSettingsResponse> result =
                 LocationServices.getSettingsClient(mContext).checkLocationSettings(builder.build());
 
         result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
             @Override
-            public void onComplete(Task<LocationSettingsResponse> task) {
+            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
                 try {
                     LocationSettingsResponse response = task.getResult(ApiException.class);
                     // All location settings are satisfied. The client can initialize location
@@ -126,28 +124,20 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
                 } catch (ApiException exception) {
                     switch (exception.getStatusCode()) {
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            // Location settings are not satisfied. But could be fixed by showing the
-                            // user a dialog.
+
                             try {
                                 // Cast to a resolvable exception.
                                 ResolvableApiException resolvable = (ResolvableApiException) exception;
-                                // Show the dialog by calling startResolutionForResult(),
-                                // and check the result in onActivityResult().
                                 resolvable.startResolutionForResult(
                                         mActivity,
                                         REQUEST_CHECK_SETTINGS);
-                            } catch (IntentSender.SendIntentException e) {
-                                // Ignore the error.
-                            } catch (ClassCastException e) {
-                                // Ignore, should be an impossible error.
+                            } catch (IntentSender.SendIntentException | ClassCastException e) {
+                                e.printStackTrace();
                             }
 
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            // Location settings are not satisfied. However, we have no way to fix the
-                            // settings so we won't show the dialog.
                             Toast.makeText(mContext, "Setting change unavailable.", Toast.LENGTH_SHORT).show();
-
                             break;
                     }
                 }
@@ -158,9 +148,6 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
     private void showOrHideProgressDialogPopup(boolean shown, String message) {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(mContext, R.style.AppCompatAlertDialogStyle);
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-                progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            }
 
             progressDialog.setCancelable(false);
             progressDialog.setMessage(message);
@@ -191,13 +178,12 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
                                 @Override
                                 public void onCaptured(JSONObject jsonObjectAddress) {
 
-                                    JSONObject jsonObject = jsonObjectAddress;/*Utility.getCompleteAddressString(WebAppActivity.this, currentLocation.getLatitude(), currentLocation.getLongitude());*/
                                     try {
-                                        jsonObject.put("response", currenjsonObj);
+                                        jsonObjectAddress.put("response", currentJsonObj);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
-                                    Utility.callJavaScriptFunction(mActivity, mWebView, currentLatLongCallback, jsonObject);
+                                    Utility.callJavaScriptFunction(mActivity, mWebView, currentLatLongCallback, jsonObjectAddress);
                                     currentLatLongCallback = null;
                                 }
                             });
@@ -226,16 +212,14 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
                                 @Override
                                 public void onCaptured(JSONObject jsonObjectAddress) {
 
-                                    JSONObject jsonObject = jsonObjectAddress;/*Utility.getCompleteAddressString(WebAppActivity.this, currentLocation.getLatitude(), currentLocation.getLongitude());*/
-
                                     try {
-                                        jsonObject.put("response", currenjsonObj);
-                                        JSONObject object = new JSONObject(jsonObject.toString());
-                                        jsonObject.put("locationDict", object);
+                                        jsonObjectAddress.put("response", currentJsonObj);
+                                        JSONObject object = new JSONObject(jsonObjectAddress.toString());
+                                        jsonObjectAddress.put("locationDict", object);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
-                                    Utility.callJavaScriptFunction(mActivity, mWebView, currentLatLongCallback, jsonObject);
+                                    Utility.callJavaScriptFunction(mActivity, mWebView, currentLatLongCallback, jsonObjectAddress);
                                     currentLatLongCallback = null;
                                 }
                             });

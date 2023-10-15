@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.Address;
 import android.location.LocationManager;
-import android.os.Build;
 import android.webkit.WebView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -87,11 +86,7 @@ public class Utility {
             @Override
             public void run() {
                 try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        mWebView.evaluateJavascript(String.format("javascript:" + callingJavaScriptFn + "(%s)", response), null);
-                    } else {
-                        mWebView.loadUrl(String.format("javascript:" + callingJavaScriptFn + "(%s)", response));
-                    }
+                    mWebView.evaluateJavascript(String.format("javascript:" + callingJavaScriptFn + "(%s)", response), null);
 
                 } catch (Exception ex) {
                     ex.printStackTrace();

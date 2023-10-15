@@ -9,7 +9,9 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
@@ -18,37 +20,36 @@ import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
 public class ThemeUtils {
 
     /**
-     *
-     * @param context
-     * @param colorCode
-     * @return
+     *  Get background theme using color code
+     * @param context context
+     * @param colorCode color Code
+     * @return return shape drawable with theme
      */
     public static ShapeDrawable getBgRoundedRectByTheme(Context context, String colorCode) {
 
-        ShapeDrawable rndrect = new ShapeDrawable(
+        ShapeDrawable shapeDrawable = new ShapeDrawable(
                 new RoundRectShape(new float[]{70, 70, 70, 70, 70, 70, 70, 70},
                         null, null));
-        rndrect.setIntrinsicHeight(50);
-        rndrect.setIntrinsicWidth(100);
-        rndrect.getPaint().setColor(Color.GRAY);
+        shapeDrawable.setIntrinsicHeight(50);
+        shapeDrawable.setIntrinsicWidth(100);
+        shapeDrawable.getPaint().setColor(Color.GRAY);
         try {
             if (MapConstant.LOAD_HTML_DIRECTLY && !TextUtils.isEmpty(colorCode)) {
-                rndrect.getPaint().setColor(Color.parseColor(colorCode));
+                shapeDrawable.getPaint().setColor(Color.parseColor(colorCode));
             } else {
-                rndrect.getPaint().setColor(context.getResources().getColor(getPrimaryColor()));
+                shapeDrawable.getPaint().setColor(ContextCompat.getColor(context,getPrimaryColor()));
             }
-            return rndrect;
+            return shapeDrawable;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        return rndrect;
+        return shapeDrawable;
     }
 
 
     /**
      * Returns the theme primary color according to theme
-     * @return
      */
     public static int getPrimaryColor() {
         int curThemeId;

@@ -8,6 +8,7 @@
     <color name="color_gray_primary">#e0e0e0</color>
     <color name="trasparent_black">#77000000</color>
     <color name="color_gray_primary_dark_700">#616161</color>
+    <color name="primary_light_red_color">#ec6056</color>
 
     <color name="color_primary">#FFFFFF</color>
     <color name="color_primary_dark_700">#FFFFFF</color>

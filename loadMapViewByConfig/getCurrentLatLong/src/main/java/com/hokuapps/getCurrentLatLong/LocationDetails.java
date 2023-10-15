@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.IntentSender;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -21,7 +19,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
-import com.hokuapps.getCurrentLatLong.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -110,29 +107,22 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
     private void gpsSettingsRequestPopup() {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationProvider.mLocationRequest);
-//        builder.setNeedBle(true);
-        builder.setAlwaysShow(true); //this is the key ingredient
-        Task<LocationSettingsResponse> result =
-                LocationServices.getSettingsClient(mContext).checkLocationSettings(builder.build());
+        builder.setAlwaysShow(true);
+        Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(mContext).checkLocationSettings(builder.build());
 
         result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
             @Override
             public void onComplete(Task<LocationSettingsResponse> task) {
                 try {
+
                     LocationSettingsResponse response = task.getResult(ApiException.class);
-                    // All location settings are satisfied. The client can initialize location
-                    // requests here.
 
                 } catch (ApiException exception) {
                     switch (exception.getStatusCode()) {
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            // Location settings are not satisfied. But could be fixed by showing the
-                            // user a dialog.
                             try {
                                 // Cast to a resolvable exception.
                                 ResolvableApiException resolvable = (ResolvableApiException) exception;
-                                // Show the dialog by calling startResolutionForResult(),
-                                // and check the result in onActivityResult().
                                 resolvable.startResolutionForResult(
                                         mActivity,
                                         REQUEST_CHECK_SETTINGS);
@@ -144,10 +134,7 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
 
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            // Location settings are not satisfied. However, we have no way to fix the
-                            // settings so we won't show the dialog.
                             Toast.makeText(mContext, "Setting change unavailable.", Toast.LENGTH_SHORT).show();
-
                             break;
                     }
                 }
@@ -158,9 +145,6 @@ public class LocationDetails implements HokuLocationProvider.NewLocationCallback
     private void showOrHideProgressDialogPopup(boolean shown, String message) {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(mContext, R.style.AppCompatAlertDialogStyle);
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-                progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            }
 
             progressDialog.setCancelable(false);
             progressDialog.setMessage(message);

@@ -24,7 +24,6 @@ public class App extends Application {
 
     /**
      * Get the application context
-     * @return
      */
     public Context getApplicationContext() {
         return mApplicationContext;
@@ -34,7 +33,6 @@ public class App extends Application {
 
     /**
      * Get the instance of the class
-     * @return
      */
     public static synchronized App getInstance() {
         return singleTon;
@@ -44,8 +42,8 @@ public class App extends Application {
 
     /**
      * Get bitmap from memory cache
-     * @param key
-     * @return
+     * @param key key to retrieve bitmap
+     * @return return bitmap from cache
      */
     public Bitmap getBitmapFromMemCache(String key) {
         if (key == null) return null;
@@ -56,8 +54,8 @@ public class App extends Application {
 
     /**
      * Add bitmap to memory cache
-     * @param key
-     * @param bitmap
+     * @param key key to add bitmap to cache
+     * @param bitmap bitmap
      */
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (key == null) return;

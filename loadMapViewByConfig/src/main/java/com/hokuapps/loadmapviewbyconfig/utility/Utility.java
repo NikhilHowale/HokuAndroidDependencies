@@ -24,7 +24,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.IBinder;
-import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -32,11 +31,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import androidx.core.text.HtmlCompat;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.hokuapps.loadmapviewbyconfig.App;
+import com.hokuapps.loadmapviewbyconfig.BuildConfig;
 import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
-import com.hokuapps.loadmapviewbyconfig.delegate.HtmlTagHandler;
 import com.hokuapps.loadmapviewbyconfig.models.Error;
 import com.hokuapps.loadmapviewbyconfig.services.SocketManager;
 import com.hokuapps.loadmapviewbyconfig.widgets.bottomsheetshare.AppAdapter;
@@ -88,7 +89,7 @@ public class Utility {
     }
 
     public static Spanned fromHtml(String htmlText) {
-        return Html.fromHtml(htmlText, null, new HtmlTagHandler());
+        return HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_LEGACY);
     }
 
     public static CharSequence getValidString(String value) {
@@ -102,8 +103,8 @@ public class Utility {
     /**
      * Get latitude and longitude from address
      * @param strAddress Address string to get the location
-     * @param context
-     * @return
+     * @param context context
+     * @return return lat and long value from address
      */
     public static LatLng getLocationFromAddress(String strAddress, Context context) {
 
@@ -128,8 +129,8 @@ public class Utility {
 
     /**
      * get map Api key
-     * @param context
-     * @return
+     * @param context context
+     * @return return map key for app
      */
     public static String getMapApiKey(Context context) {
         String map_api_key;
@@ -153,9 +154,9 @@ public class Utility {
 
     /**
      * Open external map with given latitude and longitude
-     * @param context
-     * @param latitude
-     * @param longitude
+     * @param context context
+     * @param latitude latitude
+     * @param longitude longitude
      */
     @SuppressLint("QueryPermissionsNeeded")
     public static void openInExternalMapByLatLong(Context context, double latitude, double longitude) {
@@ -173,8 +174,8 @@ public class Utility {
 
     /**
      * Open external map with given address
-     * @param context
-     * @param address
+     * @param context context
+     * @param address address value to navigate using google map
      */
     @SuppressLint("QueryPermissionsNeeded")
     public static void openInExternalMapByAddress(Context context, String address) {
@@ -191,10 +192,10 @@ public class Utility {
 
 
     /**
-     *
-     * @param context
-     * @param dstLat
-     * @param dstLong
+     * open External google map for provided lat and long
+     * @param context context
+     * @param dstLat destination latitude
+     * @param dstLong destination longitude
      */
     public static void openGoogleMapDirection(Context context, double dstLat, double dstLong) {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?f=d" +
@@ -205,12 +206,12 @@ public class Utility {
 
 
     /**
-     *
-     * @param context
-     * @param srcLat
-     * @param srcLong
-     * @param dstLat
-     * @param dstLong
+     * open External google map for provided source location and destination location
+     * @param context context
+     * @param srcLat source latitude
+     * @param srcLong source longitude
+     * @param dstLat destination latitude
+     * @param dstLong destination longitude
      */
     public static void openGoogleMapDirection(Context context, double srcLat, double srcLong, double dstLat, double dstLong) {
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?f=d&saddr=" +
@@ -222,13 +223,13 @@ public class Utility {
 
 
     /**
-     * Parce the response
-     * @param arg
-     * @param listener
+     * Parse the response
+     * @param object api response
+     * @param listener callback - return data after parse
      */
-    public static void parseResponse(Object arg, SocketManager.DataListener<JSONObject> listener) {
+    public static void parseResponse(Object object, SocketManager.DataListener<JSONObject> listener) {
         try {
-            JSONObject jsonObject = new JSONObject(arg.toString());
+            JSONObject jsonObject = new JSONObject(object.toString());
             int statusCode = 0;
 
             if (jsonObject.has(MapConstant.AuthIO.STATUS_CODE))
@@ -249,7 +250,7 @@ public class Utility {
 
     /**
      * Get random id
-     * @return
+     * @return return random number string
      */
     public static String getRandomUUID() {
         Random rnd = new Random();
@@ -264,8 +265,8 @@ public class Utility {
 
     /**
      * Get version name
-     * @param context
-     * @return
+     * @param context context
+     * @return return version name
      */
     public static String getVersionName(Context context) {
 
@@ -281,9 +282,9 @@ public class Utility {
 
     /**
      * Get drawable with given color id
-     * @param drawable
-     * @param colorId
-     * @return
+     * @param drawable drawable
+     * @param colorId color string
+     * @return return drawable after changing color
      */
     public static Drawable getColorDrawable( Drawable drawable, String colorId) {
 
@@ -296,9 +297,9 @@ public class Utility {
 
     /**
      * Get resource string by id
-     * @param resId
-     * @param context
-     * @return
+     * @param resId string resource id
+     * @param context context
+     * @return return string
      */
     public static String getResString(int resId,Context context) {
         return context.getResources().getString(resId);
@@ -307,7 +308,6 @@ public class Utility {
 
     /**
      * Get screen height
-     * @return
      */
     public static int getScreenHeight() {
         return Resources.getSystem().getDisplayMetrics().heightPixels;
@@ -316,9 +316,9 @@ public class Utility {
 
     /**
      * Get image drawable from assets folder
-     * @param context
-     * @param fileName
-     * @return
+     * @param context context
+     * @param fileName file name
+     * @return return file as drawable from asset
      */
     public static Drawable getImageDrawableFromAssets(Context context, String fileName) {
 
@@ -335,7 +335,6 @@ public class Utility {
 
     /**
      * Check if application is iplimomob
-     * @return
      */
     public static boolean isIpLimomob() {
 
@@ -345,11 +344,11 @@ public class Utility {
 
 
     /**
-     * get alert missing keys
+     * get string for missing keys
 
-     * @param jsonData
-     * @param requiredJSONObjectKey
-     * @return
+     * @param jsonData jsonObject
+     * @param requiredJSONObjectKey array of require key
+     * @return return string if any key is miss
      */
     public static String showAlertBridgeMissingKeys( String jsonData, String[] requiredJSONObjectKey) {
 
@@ -368,7 +367,6 @@ public class Utility {
 
     /**
      * Get current date and time in milli seconds
-     * @return
      */
     public static long getCurrentDateTimeInMS() {
         Calendar calendar = Calendar.getInstance();
@@ -378,8 +376,8 @@ public class Utility {
 
     /**
      * Get json object that contains address
-     * @param fetchedAddress
-     * @return
+     * @param fetchedAddress address object
+     * @return return jsonObject of address data
      */
     public static JSONObject getAddressJson(Address fetchedAddress) {
         JSONObject jsonObj = new JSONObject();
@@ -403,9 +401,9 @@ public class Utility {
 
     /**
      * Show alert dialog with given message and title
-     * @param context
-     * @param msg
-     * @param title
+     * @param context context
+     * @param msg message
+     * @param title title
      */
     public static void showAlertMessage(Context context, String msg, String title) {
         if (context == null) {
@@ -426,13 +424,13 @@ public class Utility {
 
     /**
      * Get bridge missing keys
-     * @param missingValues
-     * @param requiredValues
-     * @return
+     * @param missingValues jsonObject
+     * @param requiredValues array of require key
+     * @return return string if any key is miss
      */
     public static String checkBridgeMissingKeys( JSONObject missingValues, String[] requiredValues) {
 
-        StringBuffer missingKeys = new StringBuffer();
+        StringBuilder missingKeys = new StringBuilder();
 
         for (String requiredValue : requiredValues) {
 
@@ -453,8 +451,8 @@ public class Utility {
 
     /**
      * Convert string to json
-     * @param strToConvert
-     * @return
+     * @param strToConvert json string
+     * @return return jsonObject from string
      */
     public static JSONObject convertStringToJson(String strToConvert) {
         try {
@@ -471,11 +469,11 @@ public class Utility {
 
     /**
      * Get image from bitmap by size
-     * @param context
-     * @param bitmapOriginal
-     * @param width
-     * @param height
-     * @return
+     * @param context context
+     * @param bitmapOriginal original bitmap
+     * @param width require width
+     * @param height require height
+     * @return return bitmap after scale
      */
     public static Bitmap getImageDrawableFromBitmapBySize(Context context, Bitmap bitmapOriginal, int width, int height) {
 
@@ -495,7 +493,7 @@ public class Utility {
 
     /**
      * Show keyboard
-     * @param context
+     * @param context context
      */
     public static void showKeyboard(Context context) {
         ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).
@@ -506,11 +504,11 @@ public class Utility {
 
     /**
      * get image from assets folder by size
-     * @param context
-     * @param fileName
-     * @param width
-     * @param height
-     * @return
+     * @param context context
+     * @param fileName file name
+     * @param width require width
+     * @param height require height
+     * @return return drawable after scale
      */
     public static Drawable getImageDrawableFromAssetsBySize(Context context, String fileName, int width, int height) {
 
@@ -534,8 +532,8 @@ public class Utility {
 
     /**
      * Get html directory from sandbox
-     * @param context
-     * @return
+     * @param context context
+     * @return return sandbox directory
      */
     public static File getHtmlDirFromSandbox(Context context) {
         File htmlDir = new File(context.getFilesDir() + File.separator + MapConstant.FOLDER_NAME_WEB_HTML);
@@ -550,8 +548,8 @@ public class Utility {
 
     /**
      * Create directory
-     * @param mediaStorageDir
-     * @return
+     * @param mediaStorageDir directory path
+     * @return return true if directory is created otherwise false
      */
     public static boolean makeDirectory(File mediaStorageDir) {
         if (!mediaStorageDir.exists()) {
@@ -563,9 +561,9 @@ public class Utility {
 
     /**
      * get boolean value from json object by field name
-     * @param obj
-     * @param fieldName
-     * @return
+     * @param obj jsonObject
+     * @param fieldName key in jsonObject
+     * @return return value in jsonObject
      */
     public static boolean getJsonObjectBooleanValue(JSONObject obj, String fieldName) {
         if (obj == null) return false;
@@ -584,9 +582,9 @@ public class Utility {
 
     /**
      * get double value from json object by field name
-     * @param obj
-     * @param fieldName
-     * @return
+     * @param obj jsonObject
+     * @param fieldName key in jsonObject
+     * @return return value in jsonObject
      */
     public static double getJsonObjectDoubleValue(JSONObject obj, String fieldName) {
         if (obj == null) return 0;
@@ -604,9 +602,9 @@ public class Utility {
 
     /**
      * get string value from json object by field name
-     * @param obj
-     * @param fieldName
-     * @return
+     * @param obj jsonObject
+     * @param fieldName key in jsonObject
+     * @return return value in jsonObject
      */
     public static String getStringObjectValue(JSONObject obj, String fieldName) {
         try {
@@ -629,8 +627,8 @@ public class Utility {
 
     /**
      * Hide keyboard
-     * @param context
-     * @param windowToken
+     * @param context context
+     * @param windowToken token
      */
     public static void hideSoftKeyboard(Context context, IBinder windowToken) {
         try {
@@ -645,10 +643,10 @@ public class Utility {
 
     /**
      * Call javascript function given function name
-     * @param activity
-     * @param webView
-     * @param callingJavaScriptFn
-     * @param response
+     * @param activity activity
+     * @param webView webView reference
+     * @param callingJavaScriptFn callback name
+     * @param response jsonObject data
      */
     public static void callJavaScriptFunction(Activity activity, final WebView webView, final String callingJavaScriptFn, final JSONObject response) {
 
@@ -668,9 +666,6 @@ public class Utility {
 
     /**
      * Convert dp to pixel
-     * @param dp
-     * @param context
-     * @return
      */
     public static float convertDpToPixel(float dp, Context context) {
         Resources resources = context.getResources();
@@ -681,9 +676,6 @@ public class Utility {
 
     /**
      * Get dimensions from resource id
-     * @param resId
-     * @param applicationContext
-     * @return
      */
     public static float getDimension(int resId, Context applicationContext) {
         return applicationContext.getResources().getDimension(resId);
@@ -692,8 +684,6 @@ public class Utility {
 
     /**
      * Check if string is empty
-     * @param string
-     * @return
      */
     public static boolean isEmpty(String string) {
         if (string != null) {
@@ -705,10 +695,10 @@ public class Utility {
 
     /**
      * Get json object value by field name
-     * @param obj
-     * @param fieldName
-     * @return
-     * @throws JSONException
+     * @param obj jsonObject
+     * @param fieldName key in jsonObject
+     * @return return value in jsonObject
+     * @throws JSONException if jsonObject is inValid
      */
     public static Object getJsonObjectValue(JSONObject obj, String fieldName) throws JSONException {
         try {
@@ -725,10 +715,10 @@ public class Utility {
 
     /**
      * Get json object integer value by field name
-     * @param obj
-     * @param fieldName
-     * @return
-     * @throws JSONException
+     * @param obj jsonObject
+     * @param fieldName key in jsonObject
+     * @return return value in jsonObject
+     * @throws JSONException if jsonObject is inValid
      */
     public static int getJsonObjectIntValue(JSONObject obj, String fieldName) throws JSONException {
         if (obj == null) return 0;

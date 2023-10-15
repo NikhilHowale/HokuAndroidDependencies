@@ -29,15 +29,15 @@ public class UpdateCurrentLocationClientEvent extends WebSocketClientEvent{
 
 
     /**
-     * Call api for current location
-     * @param context
-     * @param latitude
-     * @param longitude
-     * @param apiFullUrl
-     * @param status
-     * @param iWebSocketClientEvent
-     * @param sendPastLocations
-     * @param jsonObject
+     * Call api for update current location
+     * @param context context
+     * @param latitude latitude
+     * @param longitude longitude
+     * @param apiFullUrl api url for update current location
+     * @param status status
+     * @param iWebSocketClientEvent callback
+     * @param sendPastLocations previous location
+     * @param jsonObject response data jsonObject
      */
     public static void callUpdateCurrentLocationAPI(Context context, double latitude, double longitude, String apiFullUrl, String status, IWebSocketClientEvent iWebSocketClientEvent, boolean sendPastLocations, JSONObject jsonObject) {
         UpdateCurrentLocationClientEvent updateCurrentLocationClientEvent =

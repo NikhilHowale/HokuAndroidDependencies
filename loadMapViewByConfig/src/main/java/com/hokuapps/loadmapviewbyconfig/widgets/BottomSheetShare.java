@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +18,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.utility.Utility;
 import com.hokuapps.loadmapviewbyconfig.widgets.bottomsheetshare.AppAdapter;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +36,7 @@ public class BottomSheetShare extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.layout_share, null);
+        View view = inflater.inflate(R.layout.layout_share, container,false);
         listViewShare = (ListView) view.findViewById(R.id.listView_share);
         context = getActivity();
         Intent intent = null;
@@ -93,17 +91,17 @@ public class BottomSheetShare extends BottomSheetDialogFragment {
     /**
      * Get shareable app list.
      *
-     * @param intent
-     * @param appsFilter
-     * @param toExclude
-     * @return
+     * @param intent intent to open share dialog
+     * @param appsFilter app list to filter install app
+     * @param toExclude exclude app from list
+     * @return return intent with filter app for share
      */
     public List<AppAdapter.AppInfo> getListOfActivitiesCanBeShared(Intent intent, ArrayList<String> appsFilter, @Nullable ArrayList<String> toExclude) {
         PackageManager manager = context.getPackageManager();
         List<ResolveInfo> apps = manager.queryIntentActivities(intent, 0);
         List<AppAdapter.AppInfo> appResources = new ArrayList<>(apps.size());
 
-        if (apps != null && !apps.isEmpty()) {
+        if (!apps.isEmpty()) {
             boolean shouldCheckPackages = appsFilter != null && !appsFilter.isEmpty();
 
             for (ResolveInfo resolveInfo : apps) {

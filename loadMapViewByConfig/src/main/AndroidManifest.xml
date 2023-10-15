@@ -3,4 +3,18 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <application>
+        <activity
+            android:name=".MapsAppCompactActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.Base"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+            <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/map_api_key" />
+        </activity>
+    </application>
 </manifest>

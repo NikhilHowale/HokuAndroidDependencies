@@ -47,7 +47,7 @@ public class BiometricAuthentication extends AppCompatActivity {
             intent.putExtra("nextButtonCallBack",nextButtonCallBacK);
             intent.putExtra("jasonObject",jsonObjec);
             intent.putExtra("Result", "1");
-            setResult(BIOMETRIC_AUT,intent);
+            setResult(RESULT_OK,intent);
             finish();
 
         }

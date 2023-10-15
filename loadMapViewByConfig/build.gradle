@@ -51,4 +51,6 @@ dependencies {
 
     implementation project(path: ':loadMapViewByConfig:getCurrentLatLong')
 
+    implementation 'androidx.exifinterface:exifinterface:1.3.6'
+
 }

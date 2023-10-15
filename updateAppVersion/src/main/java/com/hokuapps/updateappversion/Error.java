@@ -2,7 +2,6 @@ package com.hokuapps.updateappversion;
 
 import android.content.Context;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,18 +41,14 @@ public class Error {
     }
 
     /**
-     * Initialize object
-     *
-     * @param code
+     * Initialize object using code
      */
     public Error(int code) {
         this.code = code;
     }
 
     /**
-     * Initialize object
-     *
-     * @param errMsg
+     * Initialize object using message
      */
     public Error(String errMsg) {
         this.msg = errMsg;
@@ -61,9 +56,8 @@ public class Error {
 
     /**
      * Initialize object
-     *
-     * @param code
-     * @param msg
+     * @param code code
+     * @param msg message
      */
     public Error(int code, String msg) {
         this.code = code;
@@ -99,7 +93,7 @@ public class Error {
         try {
             jsonObject = new JSONObject(arg.toString());
         } catch (JSONException e) {
-
+            e.printStackTrace();
         }
         if (jsonObject == null || jsonObject.length() == 0) {
             return null;
@@ -117,27 +111,23 @@ public class Error {
             }
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         return new Error(statusCode, msg);
     }
 
     private static String getErrorMessage(int statusCode, Context mContext) {
-        Context context = mContext;
         switch (statusCode) {
             case ErrorCode.BAD_REQUEST:
             case ErrorCode.BAD_GATEWAY:
-                return context.getResources().getString(R.string.err_occurred_msg);
             case ErrorCode.NOT_FOUND:
-                return context.getResources().getString(R.string.err_occurred_msg);
-            case ErrorCode.REQUEST_TIMEOUT:
-            case ErrorCode.GATEWAY_TIMEOUT:
-                return context.getResources().getString(R.string.timeout_error_message);
             case ErrorCode.INTERNAL_SERVER_ERROR:
             case ErrorCode.SERVICE_UNAVAILABLE:
-                return context.getResources().getString(R.string.err_occurred_msg);
-
+                return mContext.getResources().getString(R.string.err_occurred_msg);
+            case ErrorCode.REQUEST_TIMEOUT:
+            case ErrorCode.GATEWAY_TIMEOUT:
+                return mContext.getResources().getString(R.string.timeout_error_message);
         }
         return null;
     }

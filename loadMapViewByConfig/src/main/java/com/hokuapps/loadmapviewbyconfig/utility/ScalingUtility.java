@@ -3,15 +3,17 @@ package com.hokuapps.loadmapviewbyconfig.utility;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+
+import androidx.exifinterface.media.ExifInterface;
+
 
 public class ScalingUtility {
 
 
     /**
      * create bitmap  from filepath
-     * @param filePath
-     * @return
+     * @param filePath file path
+     * @return return
      */
     public static Bitmap decodeFile(String filePath) {
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -28,7 +30,7 @@ public class ScalingUtility {
 
         float maxHeight = 816.0f;
         float maxWidth = 612.0f;
-        float imgRatio = actualWidth / actualHeight;
+        float imgRatio = (float) actualWidth / actualHeight;
         float maxRatio = maxWidth / maxHeight;
 
         // width and height values are set maintaining the aspect ratio of the image
@@ -71,10 +73,10 @@ public class ScalingUtility {
 
     /**
      * calculate sample size from bitmap
-     * @param options
-     * @param reqWidth
-     * @param reqHeight
-     * @return
+     * @param options bitmap factory refernce
+     * @param reqWidth require width
+     * @param reqHeight require height
+     * @return return calculate how small image require by width and height
      */
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
@@ -102,9 +104,9 @@ public class ScalingUtility {
     /**
      * rotate bitmap according to orientation
      * check the rotation of the image and display it properly
-     * @param filePath
-     * @param bitmap
-     * @return
+     * @param filePath file path
+     * @param bitmap bitmap
+     * @return return bitmap with orientation change
      */
     public static Bitmap checkAndGetRotatedBitmap(String filePath, Bitmap bitmap) {
         try {

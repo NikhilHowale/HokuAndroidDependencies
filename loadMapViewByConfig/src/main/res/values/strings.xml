@@ -19,15 +19,15 @@
     <string name="status_error_connection_timeout">Connection timeout, please check your internet connection and try again.</string>
     <string name="timeout_error_message">Request timeout, please try again.</string>
     <string name="failed_match_otp_code">The code you entered is incorrect , please verify and try again</string>
-    <string name="err_occurred_msg">An error occurred while loading, Please try again...</string>
-    <string name="err_parsing_msg">An error occurred while parsing , Please try again...</string>
+    <string name="err_occurred_msg">An error occurred while loading, Please try again…</string>
+    <string name="err_parsing_msg">An error occurred while parsing , Please try again…</string>
 
     <string name="map_api_key">AIzaSyBVGjGd2Ho6TsGraUek984AJXWpcPJ5-To</string>
     <string name="distance_api_key">AIzaSyC0K6L4snju6_uUfGEgnX7mGk8s5y-YBoY</string>
     <string name="map_api_key_cp_client">AIzaSyDWdXscfNTF5kalttjdD24TIUdILuQmL60</string>
     <string name="map_api_key_cp_driver">AIzaSyDWdXscfNTF5kalttjdD24TIUdILuQmL60</string>
 
-    <string name="label_loading">Loading...</string>
+    <string name="label_loading">Loading…</string>
     <string name="cannot_connect_to_play_service">Cannot Connect To Play Services</string>
     <string name="navigation_via">Navigate via</string>
     <string name="navigation">navigation</string>
