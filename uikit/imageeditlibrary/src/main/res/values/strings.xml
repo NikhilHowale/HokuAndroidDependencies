@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">ImageEditLibrary</string>
+    <string name="no_images">no found the image</string>
+    <string name="images">%d</string>
+    <string name="save">Save</string>
+    <string name="apply">Apply</string>
+
+    <string name="stickers">stickers</string>
+    <string name="fliter">fliter</string>
+    <string name="crop">Crop</string>
+    <string name="rotate">rotate</string>
+    <string name="text">text</string>
+    <string name="edit">Edit</string>
+
+    <string name="add_caption_label">#Add#</string>
+    <string name="materialcolorpicker__app_name">Android Material Color Picker Dialog</string>
+    <string name="materialcolorpicker__descLib">Material Color Picker Dialog</string>
+    <string name="materialcolorpicker__errHex">Hex Code Format incorrect</string>
+    <string name="materialcolorpicker__inputColor">Color:</string>
+    <string name="materialcolorpicker__btnSelectColor">Select</string>
+    <string name="saving_image">save...</string>
+    <string name="input_hint">input text ...</string>
+
+    <string name="no_choose">please choose a image for edit</string>
+
+    <string-array name="fliters">
+        <item>origin</item>
+        <item>soft</item>
+        <item>black</item>
+        <item>classic</item>
+        <item>gorgeous</item>
+        <item>retro</item>
+        <item>grace</item>
+        <item>film</item>
+        <item>memory</item>
+        <item>yogurt</item>
+        <item>fleeting</item>
+        <item>shine</item>
+    </string-array>
+
+    <string name="more">more</string>
+    <string name="lbl_select_images">Select images</string>
+    <string name="lbl_send_to" formatted = "false">Send to %s</string>
+
+</resources>

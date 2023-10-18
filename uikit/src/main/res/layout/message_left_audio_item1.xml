@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layoutDirection="ltr"
+    android:layout_height="wrap_content">
+
+    <com.cometchat.pro.uikit.ui_components.shared.cometchatAvatar.CometChatAvatar
+        android:layout_width="24dp"
+        android:id="@+id/iv_user"
+        app:corner_radius="12dp"
+        tools:src="@tools:sample/avatars"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_height="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_user"
+        tools:text="Iron Man"
+        android:textSize="12sp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toEndOf="@id/iv_user"
+        app:layout_constraintTop_toTopOf="@id/iv_user"
+        app:layout_constraintBottom_toBottomOf="@id/iv_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_below="@+id/tv_user"
+        android:id="@+id/cv_message_container_audio"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/iv_user"
+        app:layout_constraintEnd_toStartOf="@id/layoutStart"
+        app:layout_constraintStart_toStartOf="@id/tv_user"
+        app:layout_constraintTop_toBottomOf="@id/tv_user"
+        android:background="@drawable/cc_message_bubble_left"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="5dp"
+        android:padding="8dp"
+        android:layout_marginBottom="1dp">
+
+        <ImageView
+            android:id="@+id/playBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_play_arrow_black_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/audio_play_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintBottom_toBottomOf="@id/playBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/playBtn"
+            app:layout_constraintTop_toTopOf="@id/playBtn"
+            app:tickMark="@color/colorSecondary" />
+
+        <TextView
+            android:id="@+id/recordTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="00:00"
+            android:textSize="14sp"
+            android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/primaryTextColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/playBtn"
+            app:layout_constraintTop_toBottomOf="@id/audio_play_seekbar" />
+
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center_vertical"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:text="Audio File"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="14sp"
+            android:visibility="gone"
+            android:textColor="@color/primaryTextColor"
+            android:layout_toLeftOf="@+id/playBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/recordTime"
+            />
+
+        <TextView
+            android:id="@+id/audiolength_tv"
+            android:layout_marginLeft="8dp"
+            android:layout_below="@+id/title"
+            tools:text="125 KB"
+            android:textColor="@color/secondaryTextColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/title"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <HorizontalScrollView
+        android:id="@+id/reaction_group"
+        android:layout_width="0dp"
+        android:scrollbars="none"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/cv_message_container_audio"
+        app:layout_constraintTop_toBottomOf="@id/cv_message_container_audio">
+        <com.google.android.material.chip.ChipGroup
+            android:layout_gravity="start"
+            android:visibility="gone"
+            app:singleLine="true"
+            android:orientation="horizontal"
+            android:id="@+id/reactions_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </HorizontalScrollView>
+    <LinearLayout
+        android:layout_marginBottom="16dp"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start"
+        android:layout_below="@+id/reaction_group"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/reaction_group"
+        app:layout_constraintStart_toStartOf="@id/cv_message_container_audio">
+        <TextView
+            android:layout_gravity="start"
+            android:gravity="start"
+            android:clickable="true"
+            android:foreground="?selectableItemBackground"
+            android:id="@+id/thread_reply_count"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            tools:text="2 replies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="11:00 PM"
+        android:layout_marginStart="8dp"
+
+        android:textSize="12sp"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        tools:visibility="visible"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/cv_message_container_audio"
+        app:layout_constraintBottom_toBottomOf="@id/cv_message_container_audio"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/layoutStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

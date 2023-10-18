@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layoutDirection="ltr"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cv_message_container_audio"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_user"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/cc_message_bubble_right"
+        android:padding="10dp"
+        app:layout_constraintStart_toEndOf="@id/layoutStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageView
+            android:id="@+id/playBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_play_arrow_black_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/audio_play_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:progressTint="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@id/playBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/playBtn"
+            app:layout_constraintTop_toTopOf="@id/playBtn"
+            app:tickMark="@color/white" />
+
+        <TextView
+            android:id="@+id/recordTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="00:00"
+            android:textSize="14sp"
+            android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/textColorWhite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/playBtn"
+            app:layout_constraintTop_toBottomOf="@id/audio_play_seekbar" />
+
+        <TextView
+            android:id="@+id/audiolength_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/recordTime"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/textColorWhite"
+            android:visibility="gone"
+            tools:text="125 KB"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recordTime"/>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <HorizontalScrollView
+        android:id="@+id/reaction_group"
+        android:scrollbars="none"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/cv_message_container_audio"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_message_container_audio">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/reactions_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:singleLine="true" />
+    </HorizontalScrollView>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/reaction_group"
+        android:gravity="end"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/cv_message_container_audio"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/thread_reply_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:foreground="?selectableItemBackground"
+            android:gravity="end"
+            android:textColor="@color/colorPrimary"
+            android:visibility="visible"
+            tools:text="2 replies" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_toLeftOf="@+id/cv_message_container_audio"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cv_message_container_audio" />
+
+    <TextView
+        android:id="@+id/txt_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/cv_message_container_audio"
+        android:layout_gravity="center"
+        android:layout_marginEnd="8dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="11:00 PM"
+        tools:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@id/cv_message_container_audio"
+        app:layout_constraintBottom_toBottomOf="@id/cv_message_container_audio"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/layoutStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.35" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,9 +10,11 @@ import android.webkit.WebView;
 
 import androidx.activity.result.ActivityResultLauncher;
 
+import com.cometchat.pro.uikit.CometChatStart;
 import com.hokuapps.biometricauthentication.AuthenticateWithTouch;
 import com.hokuapps.calendaroprations.CalendarOperations;
 import com.hokuapps.getcurrentlocationdetails.LocationDetails;
+import com.hokuapps.getlocalimage.GetLocalImage;
 import com.hokuapps.getnetworkstatus.GetNetworkStatus;
 import com.hokuapps.hokunativeshell.activity.WebAppActivity;
 import com.hokuapps.hokunativeshell.constants.AppConstant;
@@ -119,6 +121,8 @@ public class WebAppJavaScriptInterface {
             LoginNativeCall loginNativeCall = new LoginNativeCall(mWebView,mWebAppActivity,mContext);
             loginNativeCall.doAppLogIn(responseData,mybeepsPref.getValue(AppConstant.NOTIFICATION_TOKEN), Utility.getResString(R.string.app_name));
 
+            // Initialize cometChat for notification to work before opening chat
+            CometChatStart.getInstance().startCometChatInit(mWebAppActivity,responseData,mybeepsPref.getValue(AppConstant.NOTIFICATION_TOKEN),false);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -237,6 +241,41 @@ public class WebAppJavaScriptInterface {
 
     @JavascriptInterface
     public void initCometChat(final String shareObj){
+        CometChatStart.getInstance().startCometChatInit(mWebAppActivity, shareObj, mybeepsPref.getValue(AppConstant.NOTIFICATION_TOKEN),false);
+    }
+
+    @JavascriptInterface
+    public void startCometChat(final String data) {
+        try {
+
+            CometChatStart.getInstance().cometChatSetup(
+                    mWebAppActivity,
+                    data,
+                    mybeepsPref.getValue(AppConstant.NOTIFICATION_TOKEN),
+                    false,
+                    mWebView
+            );
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+    @JavascriptInterface
+    public void openCometChatDashBoard(final String data){
+        try {
+            CometChatStart.getInstance().cometChatSetup(
+                    mWebAppActivity,
+                    data,
+                    mybeepsPref.getValue(AppConstant.NOTIFICATION_TOKEN),
+                    true,
+                    mWebView
+            );
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @JavascriptInterface
@@ -244,5 +283,10 @@ public class WebAppJavaScriptInterface {
         String app_id = BuildConfig.APPLICATION_ID;
         boolean html = BuildConfig.LOAD_HTML_DIRECTLY;
         new LoadMapViewByConfig(mContext,mWebAppActivity,1,app_id,html).loadMapViewByConfig(respData);
+    }
+
+    @JavascriptInterface
+    public void getLocalImage(final String response){
+        new GetLocalImage(mWebView,mWebAppActivity).getLocalImage(response);
     }
 }

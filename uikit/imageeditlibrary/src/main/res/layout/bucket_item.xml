@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/main_backgroud">
+
+    <include
+        android:id="@+id/icon"
+        layout="@layout/imageitem" />
+
+    <ImageView
+        android:id="@+id/imageVideo"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="visible"
+        android:layout_alignBottom="@+id/icon"
+        android:src="@drawable/ic_video"/>
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/icon"
+        android:layout_marginStart="3dp"
+        android:layout_marginBottom="6dp"
+        android:layout_toEndOf="@id/imageVideo"
+        android:layout_marginEnd="5dp"
+        android:layout_toStartOf="@id/countText"
+        android:background="@drawable/bg_end_black"
+        android:padding="5dp"
+        android:textColor="#fff"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/countText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/icon"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="6dp"
+        android:padding="5dp"
+        android:textColor="#fff"
+        android:textSize="12sp"
+        tools:visibility="gone" />
+
+</RelativeLayout>

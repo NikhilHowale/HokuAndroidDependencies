@@ -35,6 +35,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.cometchat.pro.uikit.CometChatStart;
 import com.hokuapps.biometricauthentication.AuthenticateWithTouch;
 import com.hokuapps.getnetworkstatus.GetNetworkStatus;
 import com.hokuapps.hokunativeshell.BuildConfig;
@@ -230,6 +231,12 @@ public class WebAppActivity extends AppCompatActivity {
 
         if(isFromNotification){
             showSplashIcon(false);
+            boolean isCometChat = false;
+            if(getIntent().getExtras().containsKey("isCometChat")){
+                isCometChat = getIntent().getExtras().getBoolean("isCometChat");
+            }
+            CometChatStart.getInstance().handleCometChatNotification(this,notificationData, mybeepsPref.getValue(AppConstant.NOTIFICATION_TOKEN), isCometChat);
+            CometChatStart.getInstance().handleWebChatNotification(this,notificationData,true);
         }
 
         if (loadWebpageFromFileNameOrURL(getIntent())) return;

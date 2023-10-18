@@ -18,6 +18,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.cometchat.pro.uikit.CometChatStart;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.hokuapps.hokunativeshell.App;
@@ -59,13 +60,8 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
             Map<String, String> gcmData = remoteMessage.getData();
 
-            if (remoteMessage.getNotification() != null) {
-            }
 
-            if (remoteMessage.getData() != null) {
-            }
-
-            if (gcmData.containsKey("msg")) {
+            if (gcmData.containsKey("msg") && gcmData.get("msg") != null) {
 
                 JSONObject jsonObject = new JSONObject(gcmData.get("msg"));
 
@@ -79,6 +75,11 @@ public class FCMMessagingService extends FirebaseMessagingService {
                 }
 
                 showNotification(context, jsonObject);
+            } else  if (gcmData.containsKey("message")) {
+                //Handle Comet Chat notification with following conditions
+                String title = gcmData.get("title");
+                JSONObject jsonObject = new JSONObject(gcmData.get("message"));
+                CometChatStart.getInstance().createCometChatNotification(context, title, jsonObject, WebAppActivity.class);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
