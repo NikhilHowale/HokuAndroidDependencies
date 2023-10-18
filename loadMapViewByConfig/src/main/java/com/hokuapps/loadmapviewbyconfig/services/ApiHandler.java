@@ -21,7 +21,7 @@ import java.util.Objects;
 
 import okhttp3.Headers;
 
-public class SocketManager {
+public class ApiHandler {
 
     public static final int STATUS_SUCCESS = 0;
     public static final int STATUS_INVALID_NUMBER = 1000;

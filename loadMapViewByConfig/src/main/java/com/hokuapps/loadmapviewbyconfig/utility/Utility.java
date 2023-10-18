@@ -39,7 +39,7 @@ import com.hokuapps.loadmapviewbyconfig.BuildConfig;
 import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
 import com.hokuapps.loadmapviewbyconfig.models.Error;
-import com.hokuapps.loadmapviewbyconfig.services.SocketManager;
+import com.hokuapps.loadmapviewbyconfig.services.ApiHandler;
 import com.hokuapps.loadmapviewbyconfig.widgets.bottomsheetshare.AppAdapter;
 
 import org.json.JSONException;
@@ -227,7 +227,7 @@ public class Utility {
      * @param object api response
      * @param listener callback - return data after parse
      */
-    public static void parseResponse(Object object, SocketManager.DataListener<JSONObject> listener) {
+    public static void parseResponse(Object object, ApiHandler.DataListener<JSONObject> listener) {
         try {
             JSONObject jsonObject = new JSONObject(object.toString());
             int statusCode = 0;
@@ -235,7 +235,7 @@ public class Utility {
             if (jsonObject.has(MapConstant.AuthIO.STATUS_CODE))
                 statusCode = jsonObject.getInt(MapConstant.AuthIO.STATUS_CODE);
 
-            if (statusCode == SocketManager.STATUS_SUCCESS) {
+            if (statusCode == ApiHandler.STATUS_SUCCESS) {
                 listener.onSuccess(jsonObject);
             } else {
                 listener.onError(jsonObject);

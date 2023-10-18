@@ -5,21 +5,16 @@ import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.API_KEY;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.AUTH_SECRET_KEY;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.AUTH_TOKEN;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.EXTRA_MAP_RESULT_CALLBACK;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.GoogleDirectionsUrl;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.GoogleLatLongFromPlaceId;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.GoogleLocationBluePointer;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.GoogleNearByPlace;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.GooglePlace;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.*;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.MAP_LOCATION_MODEL;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.THEME_ID;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.TeacherPlace;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.TeacherPlace.PLACE_ICON;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace.DESTINATION;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace.PLACE_LAT;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace.PLACE_LNG;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.googlePlace.SOURCE;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.google_DirectionsUrl;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.google_LatLongFromPlaceId;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.google_NearBy_place;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.google_location_blue_pointer;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.themeId;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.ThemeId;
 import static com.hokuapps.loadmapviewbyconfig.utility.ThemeUtils.changedToolbarTextColorByTheme;
 
 import android.annotation.SuppressLint;
@@ -133,7 +128,6 @@ import com.hokuapps.loadmapviewbyconfig.models.LocationMapModel;
 import com.hokuapps.loadmapviewbyconfig.models.PlaceModel;
 import com.hokuapps.loadmapviewbyconfig.synchronizer.GetNearByPlacesClientEvent;
 import com.hokuapps.loadmapviewbyconfig.synchronizer.MapAsyncTask;
-import com.hokuapps.loadmapviewbyconfig.synchronizer.UpdateCurrentLocationClientEvent;
 import com.hokuapps.loadmapviewbyconfig.synchronizer.WebSocketClientEvent;
 import com.hokuapps.loadmapviewbyconfig.utility.KeyboardUtils;
 import com.hokuapps.loadmapviewbyconfig.utility.ThemeUtils;
@@ -180,12 +174,6 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
     public AutoCompleteTextView searchAddressAutoCompleteText;
     public AutoCompleteTextView searchAddressAutoCompleteTextSource, searchAddressAutoCompleteTextDestination;
     public AutoCompleteTextView auto_complete_text_my_location;
-    private String updateLocationApi = "";
-    private int timerInterval = 5;
-    private String status = "";
-    private boolean isOnline = false;
-    private boolean isStartSendUpdate = true;
-    private int pointNumber = 0;
     private JSONObject jsonObjectMapPoints = null;
     private ArrayList<LatLng> arrayListPoints = new ArrayList<>();
     private GoogleMap mGoogleMap;
@@ -268,10 +256,10 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                 public void onMapAsyncTaskResult(JSONObject object) {
                     try {
                         if (object != null) {
-                            JSONObject resultObject = object.getJSONObject(googlePlace.PLACE_RESPONSE_RESULT);
-                            JSONObject locationObject = resultObject.getJSONObject(googlePlace.PLACE_GEOMETRY).getJSONObject(googlePlace.PLACE_LOCATION);
+                            JSONObject resultObject = object.getJSONObject(GooglePlace.PLACE_RESPONSE_RESULT);
+                            JSONObject locationObject = resultObject.getJSONObject(GooglePlace.PLACE_GEOMETRY).getJSONObject(GooglePlace.PLACE_LOCATION);
 
-                            LatLng originLatLng = new LatLng(locationObject.getDouble(PLACE_LAT), locationObject.getDouble(googlePlace.PLACE_LNG));
+                            LatLng originLatLng = new LatLng(locationObject.getDouble(GooglePlace.PLACE_LAT), locationObject.getDouble(GooglePlace.PLACE_LNG));
                             clickLatitude = originLatLng.latitude;
                             clickLongitude = originLatLng.longitude;
 
@@ -570,12 +558,12 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
 
             if (Utility.getJsonObjectBooleanValue(mResponseJson, IS_OTHER_NEARBY_LOCATION)) {
-                getNearByPlacesFromCustomApi(Utility.getJsonObjectDoubleValue(mResponseJson, PLACE_LAT), Utility.getJsonObjectDoubleValue(mResponseJson, LONG));
+                getNearByPlacesFromCustomApi(Utility.getJsonObjectDoubleValue(mResponseJson, GooglePlace.PLACE_LAT), Utility.getJsonObjectDoubleValue(mResponseJson, LONG));
 //                Move camera to provided lat, lng.
-                loadLatLongOnMap(new LatLng(Utility.getJsonObjectDoubleValue(mResponseJson, PLACE_LAT), Utility.getJsonObjectDoubleValue(mResponseJson, LONG)));
+                loadLatLongOnMap(new LatLng(Utility.getJsonObjectDoubleValue(mResponseJson, GooglePlace.PLACE_LAT), Utility.getJsonObjectDoubleValue(mResponseJson, LONG)));
 
                 MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(new LatLng(Utility.getJsonObjectDoubleValue(mResponseJson, PLACE_LAT), Utility.getJsonObjectDoubleValue(mResponseJson, LONG)));
+                markerOptions.position(new LatLng(Utility.getJsonObjectDoubleValue(mResponseJson, GooglePlace.PLACE_LAT), Utility.getJsonObjectDoubleValue(mResponseJson, LONG)));
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 mGoogleMap.addMarker(markerOptions);
             }
@@ -681,11 +669,11 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
             JSONArray jsonArrayPoints = jsonObject.getJSONArray(POINTS);
             if (jsonArrayPoints != null && jsonArrayPoints.length() > 0) {
 
-                final LatLng latLngSource = new LatLng(jsonArrayPoints.getJSONObject(0).getDouble(PLACE_LAT)
-                        , jsonArrayPoints.getJSONObject(0).getDouble(PLACE_LNG));
+                final LatLng latLngSource = new LatLng(jsonArrayPoints.getJSONObject(0).getDouble(GooglePlace.PLACE_LAT)
+                        , jsonArrayPoints.getJSONObject(0).getDouble(GooglePlace.PLACE_LNG));
 
-                final LatLng latLngDestination = new LatLng(jsonArrayPoints.getJSONObject(jsonArrayPoints.length() - 1).getDouble(PLACE_LAT)
-                        , jsonArrayPoints.getJSONObject(jsonArrayPoints.length() - 1).getDouble(PLACE_LNG));
+                final LatLng latLngDestination = new LatLng(jsonArrayPoints.getJSONObject(jsonArrayPoints.length() - 1).getDouble(GooglePlace.PLACE_LAT)
+                        , jsonArrayPoints.getJSONObject(jsonArrayPoints.length() - 1).getDouble(GooglePlace.PLACE_LNG));
 
 
                 PolylineOptions options = new PolylineOptions().width(10).color(Color.parseColor("#0361AD")).geodesic(true);
@@ -694,13 +682,13 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                 }
                 for (int index = 0; index < jsonArrayPoints.length(); index++) {
 //                Add marker on first and last point.
-                    LatLng point = new LatLng(jsonArrayPoints.getJSONObject(index).getDouble(PLACE_LAT)
-                            , jsonArrayPoints.getJSONObject(index).getDouble(PLACE_LNG));
+                    LatLng point = new LatLng(jsonArrayPoints.getJSONObject(index).getDouble(GooglePlace.PLACE_LAT)
+                            , jsonArrayPoints.getJSONObject(index).getDouble(GooglePlace.PLACE_LNG));
                     options.add(point);
                 }
                 Polyline line = mGoogleMap.addPolyline(options);
-                addMarkerOnMap(latLngSource, "", SOURCE);
-                addMarkerOnMap(latLngDestination, "", DESTINATION);
+                addMarkerOnMap(latLngSource, "", GooglePlace.SOURCE);
+                addMarkerOnMap(latLngDestination, "", GooglePlace.DESTINATION);
 
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -844,7 +832,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                                 "");
                         subMenu.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
                         subMenu.getItem().setIcon(Utility.getImageDrawableFromAssetsBySize(this,
-                                Utility.getStringObjectValue(headerButtonsItems, PLACE_ICON), size, size));
+                                Utility.getStringObjectValue(headerButtonsItems, TeacherPlace.PLACE_ICON), size, size));
                     }
 
                     if ((anchorBottomSheetBehavior != null && anchorBottomSheetBehavior.getState() == AnchorBottomSheetBehavior.STATE_EXPANDED)) {
@@ -1754,10 +1742,10 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                     public void onMapAsyncTaskResult(JSONObject object) {
                         try {
                             if (object != null) {
-                                JSONObject resultObject = object.getJSONObject(googlePlace.PLACE_RESPONSE_RESULT);
-                                JSONObject locationObject = resultObject.getJSONObject(googlePlace.PLACE_GEOMETRY).getJSONObject(googlePlace.PLACE_LOCATION);
+                                JSONObject resultObject = object.getJSONObject(GooglePlace.PLACE_RESPONSE_RESULT);
+                                JSONObject locationObject = resultObject.getJSONObject(GooglePlace.PLACE_GEOMETRY).getJSONObject(GooglePlace.PLACE_LOCATION);
 
-                                LatLng originLatLng = new LatLng(locationObject.getDouble(PLACE_LAT), locationObject.getDouble(googlePlace.PLACE_LNG));
+                                LatLng originLatLng = new LatLng(locationObject.getDouble(GooglePlace.PLACE_LAT), locationObject.getDouble(GooglePlace.PLACE_LNG));
                                 clickLatitude = originLatLng.latitude;
                                 clickLongitude = originLatLng.longitude;
 
@@ -2002,8 +1990,8 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
         mGoogleMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickListener);
 
         //Uncomment To Show Google Location Blue Pointer
-        if (mMap != null && mMap.findViewById(Integer.parseInt(google_location_blue_pointer.LOCATION_ONE)) != null) {
-            View locationButton = ((View) mMap.findViewById(Integer.parseInt(google_location_blue_pointer.LOCATION_ONE)).getParent()).findViewById(Integer.parseInt(google_location_blue_pointer.LOCATION_TWO));
+        if (mMap != null && mMap.findViewById(Integer.parseInt(GoogleLocationBluePointer.LOCATION_ONE)) != null) {
+            View locationButton = ((View) mMap.findViewById(Integer.parseInt(GoogleLocationBluePointer.LOCATION_ONE)).getParent()).findViewById(Integer.parseInt(GoogleLocationBluePointer.LOCATION_TWO));
             RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
             // position on right bottom
             rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
@@ -2470,7 +2458,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
             String headerButtonColor = Utility.getStringObjectValue(Utility.configJson, HEADER_BUTTON_COLOR);
             if (MapConstant.LOAD_HTML_DIRECTLY && !TextUtils.isEmpty(headerButtonColor)) {
                 ToolbarColorizeHelper.colorizeToolbar(toolbar, Color.parseColor(headerButtonColor), this);
-            } else if (THEME_ID == themeId.THEME_GRAY) {
+            } else if (THEME_ID == ThemeId.THEME_GRAY) {
                 ToolbarColorizeHelper.colorizeToolbar(toolbar, Color.BLACK, this);
             } else {
 
@@ -2864,7 +2852,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                             double latitude = Double.parseDouble(Utility.getStringObjectValue(placeJsonObj, LAT));
                             int iconFlag = Utility.getJsonObjectIntValue(placeJsonObj, ICON);
 
-                            String icon = Utility.getStringObjectValue(placeJsonObj, PLACE_ICON);
+                            String icon = Utility.getStringObjectValue(placeJsonObj, TeacherPlace.PLACE_ICON);
 
                             LatLng latLng = new LatLng(latitude, longitude);
 
@@ -2935,7 +2923,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                             double longitude = coordinateArr.getDouble(0);
                             double latitude = coordinateArr.getDouble(1);
 
-                            String icon = Utility.getStringObjectValue(placeJsonObj, PLACE_ICON);
+                            String icon = Utility.getStringObjectValue(placeJsonObj, TeacherPlace.PLACE_ICON);
 
                             LatLng latLng = new LatLng(latitude, longitude);
 
@@ -3114,7 +3102,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
      * @return returns string url
      */
     public String getLatLongFromPlaceIdUrl(String placeId) {
-        String url = google_LatLongFromPlaceId.BASE_PATH_lAT_LONG_FROM_PLACE_ID + placeId +
+        String url = GoogleLatLongFromPlaceId.BASE_PATH_lAT_LONG_FROM_PLACE_ID + placeId +
                 "&key=" + API_KEY;
         return url;
     }
@@ -3131,7 +3119,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
      */
     public String getNearByPlacesUrl(double lat, double lng, String radius, String namePlace, String type) {
 
-        String url = google_NearBy_place.BASE_PATH_NEAR_BY_PLACE
+        String url = GoogleNearByPlace.BASE_PATH_NEAR_BY_PLACE
                 + "location=" + lat
                 + "," + lng
                 + "&radius=" + radius
@@ -3161,7 +3149,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
         String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
         String output = "json";
 
-        String url = google_DirectionsUrl.BASE_URL + output + "?key=" + API_KEY + "&" + parameters;
+        String url = GoogleDirectionsUrl.BASE_URL + output + "?key=" + API_KEY + "&" + parameters;
         return url;
     }
 
@@ -3691,63 +3679,13 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
     }
 
-
-    /**
-     * Cancle sending current latitude and longitude to Api
-     */
-    private void cancelSendCurLatLongCallApiTimer() {
-        if (mSendCurLatLongInTimeInterval != null) {
-            mSendCurLatLongInTimeInterval.cancel();
-            mSendCurLatLongInTimeInterval = null;
-        }
-    }
-
-
-    /**
-     * sending current latitude and longitude to Api
-     *
-     * @param numberOfMs Time interval to call API
-     */
-    private void liveSendCurLatLongCallApiTimer(final int numberOfMs) {
-        mSendCurLatLongInTimeInterval = new CountDownTimer(numberOfMs * 1000, DateUtils.SECOND_IN_MILLIS) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-
-                if (!isOnline) {
-                    cancelSendCurLatLongCallApiTimer();
-                }
-
-                if (location != null) {
-
-                    UpdateCurrentLocationClientEvent.callUpdateCurrentLocationAPI(MapsAppCompactActivity.this,
-                            location.getLatitude(), location.getLongitude(),
-                            updateLocationApi, status, new IWebSocketClientEvent() {
-                                @Override
-                                public void onFinish(Error error, Object process, WebSocketClientEvent socketClientEvent) {
-                                    cancelSendCurLatLongCallApiTimer();
-                                    liveSendCurLatLongCallApiTimer(numberOfMs);
-                                }
-                            }, false, new JSONObject());
-                } else {
-                    liveSendCurLatLongCallApiTimer(numberOfMs);
-                }
-            }
-        };
-        mSendCurLatLongInTimeInterval.start();
-    }
-
     @Override
     public void handleNewLocation(Location location) {
         try {
             mCurrentLocation = location;
             //Give current location call to webview
             currentLocationCallback(location);
-//            Show current location on header view.
+            // Show current location on header view.
             if (!TextUtils.isEmpty(Utility.getStringObjectValue(mResponseJson, SELECTED_LOCATION_FROM_SEARCH))) {
                 StringBuilder address = mLocationProvider.getCompleteAddressString(Utility.getJsonObjectDoubleValue(mResponseJson, LAT), Utility.getJsonObjectDoubleValue(mResponseJson, LONG));
                 setToolbarTitle(address.toString());
@@ -3770,31 +3708,10 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                 });
             }
 
-            if (isOnline && !TextUtils.isEmpty(updateLocationApi)) {
-
-                if (isStartSendUpdate) {
-                    UpdateCurrentLocationClientEvent.callUpdateCurrentLocationAPI(MapsAppCompactActivity.this,
-                            location.getLatitude(), location.getLongitude(),
-                            updateLocationApi, status, new IWebSocketClientEvent() {
-                                @Override
-                                public void onFinish(Error error, final Object process, WebSocketClientEvent socketClientEvent) {
-                                    liveSendCurLatLongCallApiTimer(timerInterval);
-                                }
-                            }, false, new JSONObject());
-
-                    isStartSendUpdate = false;
-                }
-            } else {
-                cancelSendCurLatLongCallApiTimer();
-                isStartSendUpdate = true;
-                if (mLocationProvider != null) {
-                    mLocationProvider.stopLocationUpdates();
-                }
-            }
 
             if (Utility.getJsonObjectBooleanValue(mResponseJson, CAN_EDIT_MY_LOCATION_ON_CARD)) {
                 loadLatLongOnMap(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
-//                Show destination address
+                // Show destination address
                 showDestinationAddress(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
                 mLocationProvider.stopLocationUpdates();
                 return;
@@ -3848,14 +3765,14 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
                 }
 
-                //Updated current location
+                // Updated current location
                 if (mLocationMapModel.getIsLiveTracking() == 1) {
                     addOrMoveSelectedLocationMarker(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
                 }
 
                 if (mLocationMapModel.getIsSelectLocation() == 1) {
                     mLocationProvider.stopLocationUpdates();
-//            Load location model lat/lng on map and move camera to there.
+                    // Load location model lat/lng on map and move camera to there.
                     if (Utility.getJsonObjectDoubleValue(mResponseJson, LAT) > 0 &&
                             Utility.getJsonObjectDoubleValue(mResponseJson, LONG) > 0) {
                         loadLatLongOnMap(new LatLng(Utility.getJsonObjectDoubleValue(mResponseJson, LAT), Utility.getJsonObjectDoubleValue(mResponseJson, LONG)));
@@ -3875,10 +3792,9 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
                     mLocationProvider.stopLocationUpdates();
                 }
 
-                if (mLocationMapModel.getIsNavigationOn() == 1) {
-                }
 
-//                Handle new location for Fix my ride.
+
+                 // Handle new location for Fix my ride.
                 if (mLocationMapModel.getIsNavFromCurLoc() == 1) {
                     showMyLocationAddress(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
                 }

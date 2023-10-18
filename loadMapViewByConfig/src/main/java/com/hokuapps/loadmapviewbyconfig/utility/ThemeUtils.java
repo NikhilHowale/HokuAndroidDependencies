@@ -58,38 +58,38 @@ public class ThemeUtils {
 
         int primaryColor = R.color.color_primary;
         switch (curThemeId) {
-            case MapConstant.themeId.THEME_DEFAULT:
+            case MapConstant.ThemeId.THEME_DEFAULT:
                 break;
-            case MapConstant.themeId.THEME_GRAY:
+            case MapConstant.ThemeId.THEME_GRAY:
                 primaryColor = R.color.color_gray_primary;
                 break;
-            case MapConstant.themeId.THEME_DARK_BLUE:
+            case MapConstant.ThemeId.THEME_DARK_BLUE:
                 primaryColor = R.color.color_dark_blue_primary;
                 break;
-            case MapConstant.themeId.THEME_RED:
+            case MapConstant.ThemeId.THEME_RED:
                 primaryColor = R.color.color_red_primary;
                 break;
 
-            case MapConstant.themeId.THEME_PURPLE:
+            case MapConstant.ThemeId.THEME_PURPLE:
                 primaryColor = R.color.color_purple_primary;
                 break;
-            case MapConstant.themeId.THEME_CYNA:
+            case MapConstant.ThemeId.THEME_CYNA:
                 primaryColor = R.color.color_cyna_primary;
                 break;
-            case MapConstant.themeId.THEME_GREEN:
+            case MapConstant.ThemeId.THEME_GREEN:
                 primaryColor = R.color.color_green_primary;
                 break;
-            case MapConstant.themeId.THEME_BLUE:
+            case MapConstant.ThemeId.THEME_BLUE:
                 primaryColor = R.color.color_blue_primary;
                 break;
-            case MapConstant.themeId.THEME_PINK:
+            case MapConstant.ThemeId.THEME_PINK:
                 primaryColor = R.color.color_pink_primary;
                 break;
 
-            case MapConstant.themeId.THEME_YELLOW:
+            case MapConstant.ThemeId.THEME_YELLOW:
                 primaryColor = R.color.color_yellow_primary;
                 break;
-            case MapConstant.themeId.THEME_DARK:
+            case MapConstant.ThemeId.THEME_DARK:
                 primaryColor = R.color.color_dark_primary;
                 break;
         }

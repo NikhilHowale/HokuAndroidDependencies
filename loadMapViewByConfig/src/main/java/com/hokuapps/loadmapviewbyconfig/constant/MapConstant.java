@@ -37,7 +37,7 @@ public class MapConstant {
 
     }
 
-    public interface themeId {
+    public interface ThemeId {
         int THEME_DEFAULT = 1;
         int THEME_GRAY = 2;
         int THEME_DARK_BLUE = 3;
@@ -51,13 +51,13 @@ public class MapConstant {
         int THEME_DARK = 11;
     }
 
-    public interface google_location_blue_pointer {
+    public interface GoogleLocationBluePointer {
         // integer values for the blue pointer location on the google map to show the current location pointer
         String LOCATION_ONE = "1";
         String LOCATION_TWO = "2";
     }
 
-    public interface googlePlace {
+    public interface GooglePlace {
 
         // google Map places Near by you..
 
@@ -70,18 +70,18 @@ public class MapConstant {
         String DESTINATION = "Destination";
     }
 
-    public interface google_DirectionsUrl {
+    public interface GoogleDirectionsUrl {
         // this is link of the google api for the map the route on the source and destination location
         String BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
 
     }
 
-    public interface google_LatLongFromPlaceId {
+    public interface GoogleLatLongFromPlaceId {
         // google api link for getting the Lat and Long of the place
         String BASE_PATH_lAT_LONG_FROM_PLACE_ID = "https://maps.googleapis.com/maps/api/place/details/json?placeid=";
     }
 
-    public interface google_NearBy_place {
+    public interface GoogleNearByPlace {
         // getting the google api link for the places list of the near by places
         String BASE_PATH_NEAR_BY_PLACE = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
     }

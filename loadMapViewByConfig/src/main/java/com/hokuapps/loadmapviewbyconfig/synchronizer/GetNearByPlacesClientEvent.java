@@ -1,11 +1,11 @@
 package com.hokuapps.loadmapviewbyconfig.synchronizer;
 
-import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.DataListener;
-import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.STATUS_TIMEOUT;
-import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.getErrorMessage;
-import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.getLoginHeaders;
-import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.getRefreshTokenHeaders;
-import static com.hokuapps.loadmapviewbyconfig.services.SocketManager.getTokenAndVersionHeaders;
+import static com.hokuapps.loadmapviewbyconfig.services.ApiHandler.DataListener;
+import static com.hokuapps.loadmapviewbyconfig.services.ApiHandler.STATUS_TIMEOUT;
+import static com.hokuapps.loadmapviewbyconfig.services.ApiHandler.getErrorMessage;
+import static com.hokuapps.loadmapviewbyconfig.services.ApiHandler.getLoginHeaders;
+import static com.hokuapps.loadmapviewbyconfig.services.ApiHandler.getRefreshTokenHeaders;
+import static com.hokuapps.loadmapviewbyconfig.services.ApiHandler.getTokenAndVersionHeaders;
 
 import android.content.Context;
 import android.os.Handler;
