@@ -233,6 +233,7 @@ dependencies {
     implementation project(":loadMapViewByConfig")
     implementation project(path: ':uikit')
     implementation project(path: ':GetLocalImage')
+    implementation project(path: ':loadNativeQRCodeScannerUpload')
 }
 
 apply plugin: 'com.google.gms.google-services'

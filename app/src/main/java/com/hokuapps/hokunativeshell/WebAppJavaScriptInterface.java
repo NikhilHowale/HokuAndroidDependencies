@@ -11,6 +11,7 @@ import android.webkit.WebView;
 import androidx.activity.result.ActivityResultLauncher;
 
 import com.cometchat.pro.uikit.CometChatStart;
+import com.hokuapps.Loadnativeqrcodescannerupload.ScanBarcode;
 import com.hokuapps.biometricauthentication.AuthenticateWithTouch;
 import com.hokuapps.calendaroprations.CalendarOperations;
 import com.hokuapps.getcurrentlocationdetails.LocationDetails;
@@ -276,6 +277,11 @@ public class WebAppJavaScriptInterface {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @JavascriptInterface
+    public void loadNativeQRCodeScannerUpload(final String resData) {
+        ScanBarcode.getInstance().launchQRCodeScanner(mWebAppActivity,resData);
     }
 
     @JavascriptInterface
