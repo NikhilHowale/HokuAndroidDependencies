@@ -37,9 +37,9 @@ public class ShareUtility {
 
     /**
      * Open the given pdf file in suitable app
-     * @param context
-     * @param filePath
-     * @param type
+     * @param context- context of activity
+     * @param filePath - path of file
+     * @param type- type of file
      */
     public static void showPdfFileInApp(Context context, String filePath, String type) {
 
@@ -75,25 +75,7 @@ public class ShareUtility {
         return getRootDir() + File.separator + new ShareAppData().applicationName;
     }
 
-    /**
-     * Check if the application already installed
-     * @param context
-     * @param targetPackage
-     * @return
-     */
-    @SuppressLint("QueryPermissionsNeeded")
-    public static boolean isPackageExists(Context context, String targetPackage) {
-        List<ApplicationInfo> packages;
-        PackageManager pm;
 
-        pm = context.getPackageManager();
-        packages = pm.getInstalledApplications(0);
-        for (ApplicationInfo packageInfo : packages) {
-            if (packageInfo.packageName.equals(targetPackage))
-                return true;
-        }
-        return false;
-    }
 
     /**
      * Get root directory
@@ -103,22 +85,6 @@ public class ShareUtility {
         return Environment.getExternalStorageDirectory();
     }
 
-    /**
-     * Launch the application
-     * @param context
-     * @param packageNameTobeLaunch
-     */
-    public static void launchApplication(Context context, String packageNameTobeLaunch) {
-        try {
-            if (!TextUtils.isEmpty(packageNameTobeLaunch)) {
-                Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageNameTobeLaunch);
-                launchIntent.putExtra(context.getString(R.string.page_name), "index.html");
-                context.startActivity(launchIntent);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Show toast message to user
@@ -133,8 +99,8 @@ public class ShareUtility {
 
     /**
      * Save to calender
-     * @param context
-     * @param calEvtString
+     * @param context - context of thr activity
+     * @param calEvtString json object string
      */
     public static void saveToCalendar(Context context, String calEvtString) {
         if (context == null) return;
@@ -210,8 +176,8 @@ public class ShareUtility {
 
     /**
      * Get the string value from json object
-     * @param obj
-     * @param fieldName
+     * @param obj-JsonObject
+     * @param fieldName-key Value
      * @return
      */
     public static String getStringObjectValue(JSONObject obj, String fieldName) {
@@ -242,8 +208,8 @@ public class ShareUtility {
 
     /**
      * Get the required value from json object
-     * @param obj
-     * @param fieldName
+     * @param obj - jsonObject
+     * @param fieldName- key value
      * @return
      */
     public static Object getJsonObjectValue(JSONObject obj, String fieldName) {
@@ -349,8 +315,8 @@ public class ShareUtility {
 
     /**
      * Share text via mail
-     * @param context
-     * @param email
+     * @param context - context to activity
+     * @param email- msg to share
      * @param message
      * @param data
      */
@@ -369,7 +335,7 @@ public class ShareUtility {
     /**
      * Open dial pad with provided number
      * @param context
-     * @param mobileNo
+     * @param mobileNo - mobile no to open in dialer
      */
     public static void openDialer(Context context, String mobileNo) {
         Intent dialIntent = new Intent(Intent.ACTION_DIAL);
@@ -438,7 +404,7 @@ public class ShareUtility {
     /**
      * open browser with given url
      * @param context
-     * @param url
+     * @param url-open url on default browser
      */
     public static void openBrowserIntent(Context context, String url) {
         if (context == null) return;

@@ -1,4 +1,4 @@
-package com.hokuapps.shareappdata;
+package com.hokuapps.getbackgroundlocationupdates;
 
 import org.junit.Test;
 

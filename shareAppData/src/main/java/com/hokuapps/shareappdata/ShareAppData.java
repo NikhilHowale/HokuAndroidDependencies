@@ -40,42 +40,35 @@ public class ShareAppData {
 
     public String applicationName = "";
     public Context context = null;
-    public File htmlDirectory;
     private ProgressDialog downloadProgressDialog;
 
-    private Activity mActivity;
 
 
     public ShareAppData() {
     }
 
     /**
-     * Entry point of the shareAppData module
+     * share different type of data from the application (msg,file,mail etc)
      *
-     * @param mContext
-     * @param shareJSON
-     * @param v1
-     * @param appName
-     * @param htmlDir
-     * @param progressDialog
-     * @param activity
+     * @param mContext- calling activity context
+     * @param shareJSON - json String to get different types
+     * @param appName - app Name
      */
-    public void shareAppData(Context mContext, String shareJSON, View v1, String appName, File htmlDir, ProgressDialog progressDialog, final Activity activity) {
+    public void shareAppData(Context mContext, String shareJSON, String appName) {
         try {
 
-            if (mContext == null || shareJSON == null || v1 == null || progressDialog == null) {
+            if (mContext == null || shareJSON == null) {
                 return;
             }
 
-            this.mActivity = activity;
+
             JSONObject shareJSONObj = new JSONObject(shareJSON);
             String type = ShareUtility.getStringObjectValue(shareJSONObj, "type");
             Object dataShare = ShareUtility.getJsonObjectValue(shareJSONObj, "data");
 
             applicationName = appName;
             context = mContext;
-            htmlDirectory = htmlDir;
-            downloadProgressDialog = progressDialog;
+            downloadProgressDialog = new ProgressDialog(context);
 
 
             if (!TextUtils.isEmpty(type) && dataShare != null) {
@@ -141,9 +134,9 @@ public class ShareAppData {
     /**
      * Download file according to the type(Image, Document,Video)
      *
-     * @param mUrl
-     * @param fileName
-     * @param type
+     * @param mUrl - url from where file will download
+     * @param fileName - name of the file to be download
+     * @param type- type of the file to be download
      */
     private void downloadFileIfRequired(final String mUrl, final String fileName, final String type) {
 
@@ -180,14 +173,14 @@ public class ShareAppData {
 
     /**
      * Download file according to type
-     * @param mUrl
-     * @param fileName
-     * @param type
+     * @param mUrl - download url
+     * @param fileName- filename to be downloaded
+     * @param type - type of file
      */
 
     private void downloadFile(String mUrl, String fileName, String type) {
         final DownloadFile downloadFile = new DownloadFile();
-        downloadFile.setDownloadFolderPath(FileUtility.getDownloadFileParentDir(type, false));
+        downloadFile.setDownloadFolderPath(FileUtility.getDownloadFileParentDir(type));
         downloadFile.setOriginalFileName(fileName);
         downloadFile.setDownloadUrl(mUrl);
         downloadFile.setDownloadCallback(new DownloadFile.DownloadCallback() {

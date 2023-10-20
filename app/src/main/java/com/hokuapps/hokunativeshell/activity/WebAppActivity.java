@@ -36,6 +36,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cometchat.pro.uikit.CometChatStart;
+import com.hokuapps.Loadnativeqrcodescannerupload.ScanBarcode;
 import com.hokuapps.biometricauthentication.AuthenticateWithTouch;
 import com.hokuapps.getnetworkstatus.GetNetworkStatus;
 import com.hokuapps.hokunativeshell.BuildConfig;
@@ -333,6 +334,11 @@ public class WebAppActivity extends AppCompatActivity {
                         case AppConstant.ActivityResultCode.ACTION_MAP_GET_ADDRESS:
                             new LoadMapViewByConfig(this).handleMapResult(resultCode,intent,mWebView);
                             break;
+
+                        case AppConstant.ActivityResultCode.RC_BARCODE_CAPTURE:
+                            ScanBarcode.getInstance().handleScanResult(this,mWebView,intent);
+                            break;
+
 
                     }
                 } else if(resultCode == RESULT_CANCELED){

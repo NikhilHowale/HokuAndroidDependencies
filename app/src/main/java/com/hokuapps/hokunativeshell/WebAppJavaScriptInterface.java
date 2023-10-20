@@ -3,10 +3,12 @@ package com.hokuapps.hokunativeshell;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+
 
 import androidx.activity.result.ActivityResultLauncher;
 
@@ -14,6 +16,7 @@ import com.cometchat.pro.uikit.CometChatStart;
 import com.hokuapps.Loadnativeqrcodescannerupload.ScanBarcode;
 import com.hokuapps.biometricauthentication.AuthenticateWithTouch;
 import com.hokuapps.calendaroprations.CalendarOperations;
+import com.hokuapps.getbackgroundlocationupdates.Locations.BackgroundLocation;
 import com.hokuapps.getcurrentlocationdetails.LocationDetails;
 import com.hokuapps.getlocalimage.GetLocalImage;
 import com.hokuapps.getnetworkstatus.GetNetworkStatus;
@@ -156,7 +159,7 @@ public class WebAppJavaScriptInterface {
     public void shareAppData(final String shareObj) {
         try {
             ShareAppData shareAppData = new ShareAppData();
-            shareAppData.shareAppData(mContext, shareObj, mWebView, Utility.getResString(R.string.app_name), Utility.getHtmlDirFromSandbox(), new ProgressDialog(mContext), mWebAppActivity);
+            shareAppData.shareAppData(mContext, shareObj, Utility.getResString(R.string.app_name));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -261,8 +264,6 @@ public class WebAppJavaScriptInterface {
         }
     }
 
-
-
     @JavascriptInterface
     public void openCometChatDashBoard(final String data){
         try {
@@ -294,5 +295,20 @@ public class WebAppJavaScriptInterface {
     @JavascriptInterface
     public void getLocalImage(final String response){
         new GetLocalImage(mWebView,mWebAppActivity).getLocalImage(response);
+    }
+
+    @JavascriptInterface
+    public void sendBackgroundLocationToServer(String responseData){
+        try {
+            mWebAppActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    BackgroundLocation backgroundLocation = BackgroundLocation.getInstance();
+                    backgroundLocation.startBackgroundLocationService(responseData,mContext,Utility.getResString(R.string.app_name),Utility.getBytes(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher)) );
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

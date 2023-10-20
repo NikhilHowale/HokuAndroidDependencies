@@ -1,6 +1,7 @@
 package com.hokuapps.shareappdata;
 
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -82,13 +83,11 @@ public class FileUtility {
 
     /**
      * Get the Downloaded file parent directory
-     * @param folderName
-     * @param isSandboxDir
+     * @param folderName - make a folder with this name
      * @return
      */
-    public static String getDownloadFileParentDir(String folderName, boolean isSandboxDir) {
+    public static String getDownloadFileParentDir(String folderName) {
         File fileRootDir = new File(ShareUtility.getRootDirPath());
-        if (!isSandboxDir) {
 
             if (!fileRootDir.exists()) {
                 fileRootDir.mkdir();
@@ -102,10 +101,9 @@ public class FileUtility {
 
             return pdfFolder.getAbsolutePath();
 
-        } else {
-            return new ShareAppData().htmlDirectory.getAbsolutePath();
-        }
     }
+
+
 
 
 }

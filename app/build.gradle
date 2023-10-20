@@ -88,6 +88,8 @@ android {
             versionCode 23
             versionName "1.0.22"
 
+            manifestPlaceholders = [file_provider: applicationId]
+
             buildConfigField 'String', 'COFIG_REST_API_HOST', '"https://milestoneorg.hokuapps.com"'
             buildConfigField 'String', 'SOCKET_HOST', '"https://socket.hokuapps.com"'
             buildConfigField 'String', 'FILE_HOST', '"https://files.hokuapps.com"'
@@ -234,6 +236,7 @@ dependencies {
     implementation project(path: ':uikit')
     implementation project(path: ':GetLocalImage')
     implementation project(path: ':loadNativeQRCodeScannerUpload')
+    implementation project(path: ':getBackgroundLocationUpdates')
 }
 
 apply plugin: 'com.google.gms.google-services'

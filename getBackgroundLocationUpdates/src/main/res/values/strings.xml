@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">App Name</string>
+    <string name="app_notification_description">App is Updating location in Background…</string>
+    <string name="prominent_message">application collects your device’s precise or approximate location when you open and use the app, including while the app is running in the background. The app collects location data in order to enhance the use of our apps, including to improve pick-up locations and tracking.</string>
+
+    <string name="network_connection_unavailable">Network Connection Unavailable</string>
+    <string name="timeout_error_message">Request timeout, please try again.</string>
+    <string name="err_occurred_msg">An error occurred while loading, Please try again...</string>
+    <string name="pref_name">LocPref</string>
+</resources>

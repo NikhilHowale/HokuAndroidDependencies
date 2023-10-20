@@ -65,5 +65,8 @@ public class AppConstant {
         int ACTION_REQUEST_EDIT_IMAGE = 9006;
 
         int ACTION_MAP_GET_ADDRESS = 2400;
+
+        int RC_BARCODE_CAPTURE = 9001;
+
     }
 }
