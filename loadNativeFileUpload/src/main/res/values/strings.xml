@@ -22,6 +22,7 @@
     <string name="lbl_confirmation">Are you sure want to clear annotation.</string>
     <string name="lbl_text_recognizer">Text recognizer could not be set up on your device</string>
     <string name="label_delete">Are you sure want to delete this annotation.</string>
+    <string name="lbl_downloading_file">Downloading file…</string>
 
     <!-- Error message -->
     <string name="lbl_error_loading">An error occurred while loading, Please try again…</string>

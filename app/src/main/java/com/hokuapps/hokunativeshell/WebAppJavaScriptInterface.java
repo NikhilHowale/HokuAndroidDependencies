@@ -1,6 +1,5 @@
 package com.hokuapps.hokunativeshell;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -8,7 +7,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
-
 
 import androidx.activity.result.ActivityResultLauncher;
 
@@ -26,6 +24,7 @@ import com.hokuapps.hokunativeshell.constants.IntegrationManager;
 import com.hokuapps.hokunativeshell.pref.MybeepsPref;
 import com.hokuapps.hokunativeshell.utils.Utility;
 import com.hokuapps.loadmapviewbyconfig.LoadMapViewByConfig;
+import com.hokuapps.loadnativefileupload.DownloadPhoto;
 import com.hokuapps.loadnativefileupload.GetAllFileStatus;
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
 import com.hokuapps.loadnativefileupload.SendOfflineMediaDetails;
@@ -295,6 +294,12 @@ public class WebAppJavaScriptInterface {
     @JavascriptInterface
     public void getLocalImage(final String response){
         new GetLocalImage(mWebView,mWebAppActivity).getLocalImage(response);
+    }
+
+    @JavascriptInterface
+    public void downloadPhoto(final String downloadPhoto) {
+        DownloadPhoto.getInstance().initialize(mWebAppActivity);
+        DownloadPhoto.getInstance().downloadPhoto(downloadPhoto);
     }
 
     @JavascriptInterface

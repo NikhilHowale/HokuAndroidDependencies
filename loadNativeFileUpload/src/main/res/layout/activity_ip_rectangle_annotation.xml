@@ -152,7 +152,7 @@
                     android:layout_height="40dp"
                     android:contentDescription="@null"
                     android:src="@drawable/text_icon"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
                 <ImageView
                     android:id="@+id/iv_colour_selector"
@@ -160,7 +160,7 @@
                     android:layout_height="40dp"
                     android:contentDescription="@null"
                     android:src="@drawable/color_picker_icon"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
                 <ImageView
                     android:id="@+id/iv_undo"
@@ -181,7 +181,7 @@
                 android:orientation="horizontal"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <com.hokuapps.loadnativefileupload.colorseekbar.ColorSeekBar
                     android:id="@+id/colorSlider"

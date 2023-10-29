@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
@@ -213,6 +214,7 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
         it.putExtra(IPRectangleAnnotationActivity.EXTRA_OUTPUT, outputPath);
         it.putExtra(IPRectangleAnnotationActivity.EXTRA_TOOLBAR_COLOR, colorCode);
         it.putExtra(IPRectangleAnnotationActivity.EXTRA_TOOLBAR_TITLE, title);
+        it.putExtra(IPRectangleAnnotationActivity.ANNOTATION_TYPE, "Rectangle");
         bank.clear();
         straightLinePoints.clear();
         cirRectPoints.clear();
@@ -764,13 +766,24 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
                 }
             };
 
-            TedPermission.create()
-                    .setPermissionListener(permissionListener)
-                    .setPermissions(
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                    )
-                    .check();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                TedPermission.create()
+                        .setPermissionListener(permissionListener)
+                        .setPermissions(
+
+                                Manifest.permission.READ_MEDIA_IMAGES,
+                                Manifest.permission.READ_MEDIA_VIDEO
+
+                        )
+                        .check();
+            }else {
+                TedPermission.create()
+                        .setPermissionListener(permissionListener)
+                        .setPermissions(
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .check();
+            }
 
         }
     }// end inner class
