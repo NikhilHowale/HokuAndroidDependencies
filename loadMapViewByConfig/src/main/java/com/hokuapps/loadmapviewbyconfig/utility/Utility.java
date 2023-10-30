@@ -40,7 +40,6 @@ import com.hokuapps.loadmapviewbyconfig.R;
 import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
 import com.hokuapps.loadmapviewbyconfig.models.Error;
 import com.hokuapps.loadmapviewbyconfig.services.ApiHandler;
-import com.hokuapps.loadmapviewbyconfig.widgets.bottomsheetshare.AppAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,23 +58,6 @@ public class Utility {
     public static boolean isWhiteColor = false;
     public static JSONObject configJson = new JSONObject();
 
-    public static void openDirectionVia(AppAdapter.AppInfo appInfo, Context context, double latitude, double longitude, double destLatitude, double destLongitude) {
-        switch (appInfo.packageName) {
-            case "com.waze":
-                Utility.openWazeMapDirection(context, destLatitude, destLongitude);
-                break;
-            case "com.google.android.apps.maps":
-            default:
-                Utility.openGoogleMapDirection(context, latitude,
-                        longitude, destLatitude, destLongitude);
-                break;
-        }
-    }
-
-    public static void openWazeMapDirection(Context context,  double dstLat, double dstLong) {
-        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("waze://?ll=" + dstLat + "," + dstLong + "&navigate=yes&zoom=17"));
-        context.startActivity(intent);
-    }
 
 
     /**

@@ -332,7 +332,7 @@ public class WebAppActivity extends AppCompatActivity {
                             break;
 
                         case AppConstant.ActivityResultCode.ACTION_MAP_GET_ADDRESS:
-                            new LoadMapViewByConfig(this).handleMapResult(resultCode,intent,mWebView);
+                            new LoadMapViewByConfig(this).handleMapResult(intent,mWebView);
                             break;
 
                         case AppConstant.ActivityResultCode.RC_BARCODE_CAPTURE:
@@ -344,12 +344,6 @@ public class WebAppActivity extends AppCompatActivity {
                             break;
 
 
-                    }
-                } else if(resultCode == RESULT_CANCELED){
-                    switch (requestCode) {
-                        case AppConstant.ActivityResultCode.ACTION_MAP_GET_ADDRESS:
-                            new LoadMapViewByConfig(this).handleMapResult(resultCode, intent, mWebView);
-                            break;
                     }
                 }
 
@@ -537,7 +531,7 @@ public class WebAppActivity extends AppCompatActivity {
 
     /**
      * This method handles background notification when an app is in the background or kill state
-     * @param notificationData notification data when notification is clicked
+     * @param notificationData notification data received when notification is clicked
      */
     public void handleNotificationDataBackground(String notificationData) {
         if (!TextUtils.isEmpty(notificationData) && BuildConfig.LOAD_HTML_DIRECTLY) {

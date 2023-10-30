@@ -112,7 +112,6 @@ public class LocationMapModel implements Parcelable {
     private int mapType = 2;
     private int getMapSnapShot = 1;
     private int openMapApp = 0;
-    private int isShowDirection = 0;
 
     private String mapFileName;
 
@@ -675,13 +674,6 @@ public class LocationMapModel implements Parcelable {
         this.isPlotAddressLocation = isPlotAddressLocation ? 1 : 0;
     }
 
-    public int getIsShowDirection() {
-        return isShowDirection;
-    }
-
-    public void setIsShowDirection(int isShowDirection) {
-        this.isShowDirection = isShowDirection;
-    }
 
     @Override
     public int describeContents() {
