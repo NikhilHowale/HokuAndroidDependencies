@@ -42,4 +42,5 @@ include ':GetLocalImage'
 include ':loadNativeQRCodeScannerUpload'
 include ':getBackgroundLocationUpdates'
 include ':ShowNativeCarousel'
+include ':loginWithGoogle'
 

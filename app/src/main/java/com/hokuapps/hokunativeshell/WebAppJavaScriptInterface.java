@@ -30,6 +30,7 @@ import com.hokuapps.loadnativefileupload.NativeFileUpload;
 import com.hokuapps.loadnativefileupload.SendOfflineMediaDetails;
 import com.hokuapps.loadnativefileupload.UploadPendingFiles;
 import com.hokuapps.loginnativecall.LoginNativeCall;
+import com.hokuapps.loginwithgoogle.SignInWithGoogle;
 import com.hokuapps.logoutnativecall.LogoutNativeCall;
 import com.hokuapps.shareappdata.ShareAppData;
 import com.hokuapps.shownativecarousel.ShowNativeCarousel;
@@ -327,5 +328,16 @@ public class WebAppJavaScriptInterface {
     @JavascriptInterface
     public void getAppVersion(final String data){
 
+    }
+
+    @JavascriptInterface
+    public void loginWithGoogle(final String googleLogin) {
+        mWebAppActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SignInWithGoogle.googleSignOut();
+                SignInWithGoogle.googleSignIn(mWebAppActivity,googleLogin);
+            }
+        });
     }
 }

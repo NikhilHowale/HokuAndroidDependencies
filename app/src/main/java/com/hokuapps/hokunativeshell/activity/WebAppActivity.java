@@ -48,6 +48,7 @@ import com.hokuapps.hokunativeshell.receivers.NotificationReceiver;
 import com.hokuapps.hokunativeshell.utils.Utility;
 import com.hokuapps.loadmapviewbyconfig.LoadMapViewByConfig;
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
+import com.hokuapps.loginwithgoogle.SignInWithGoogle;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -242,6 +243,7 @@ public class WebAppActivity extends AppCompatActivity {
 
         if (loadWebpageFromFileNameOrURL(getIntent())) return;
 
+        SignInWithGoogle.initGoogleSignIn(this);
     }
 
     private void initView() {
@@ -341,6 +343,10 @@ public class WebAppActivity extends AppCompatActivity {
 
                         case AppConstant.ActivityResultCode.ACTION_REQUEST_EDIT_IMAGE_MAP_PLAN:
                             NativeFileUpload.getInstance().handleEditImagePlan(intent);
+                            break;
+
+                        case AppConstant.ActivityResultCode.RC_SIGN_IN:
+                            SignInWithGoogle.handleGoogleSignResult(this,mWebView, intent);
                             break;
 
 

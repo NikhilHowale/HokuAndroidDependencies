@@ -70,5 +70,7 @@ public class AppConstant {
 
         int ACTION_REQUEST_EDIT_IMAGE_MAP_PLAN = 9008;
 
+        int RC_SIGN_IN = 9122;
+
     }
 }
