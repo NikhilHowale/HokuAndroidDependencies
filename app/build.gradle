@@ -237,6 +237,7 @@ dependencies {
     implementation project(path: ':GetLocalImage')
     implementation project(path: ':loadNativeQRCodeScannerUpload')
     implementation project(path: ':getBackgroundLocationUpdates')
+    implementation project(path: ':ShowNativeCarousel')
 }
 
 apply plugin: 'com.google.gms.google-services'

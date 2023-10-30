@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_name">CarouselPref</string>
+    <string name="app_name">library</string>
+
+    <string name="lbl_download_complete">Download complete.</string>
+    <string name="lbl_download_failed">Download failed.</string>
+    <string name="lbl_donwloading_file">Downloading file...</string>
+    <string name="image_list_empty">Image list is empty.</string>
+</resources>

@@ -41,3 +41,5 @@ include ':uikit:imageeditlibrary'
 include ':GetLocalImage'
 include ':loadNativeQRCodeScannerUpload'
 include ':getBackgroundLocationUpdates'
+include ':ShowNativeCarousel'
+

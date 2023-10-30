@@ -1,6 +1,5 @@
 package com.hokuapps.hokunativeshell;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -33,6 +32,7 @@ import com.hokuapps.loadnativefileupload.UploadPendingFiles;
 import com.hokuapps.loginnativecall.LoginNativeCall;
 import com.hokuapps.logoutnativecall.LogoutNativeCall;
 import com.hokuapps.shareappdata.ShareAppData;
+import com.hokuapps.shownativecarousel.ShowNativeCarousel;
 import com.hokuapps.updateappversion.UpdateAppVersion;
 
 import org.json.JSONObject;
@@ -47,7 +47,7 @@ public class WebAppJavaScriptInterface {
     private String appAuthToken = "";
     private String appSecretKey = "";
 
-    private Context mContext = null;
+    private Context mContext;
 
     ActivityResultLauncher webAppResultLauncher;
 
@@ -310,5 +310,20 @@ public class WebAppJavaScriptInterface {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @JavascriptInterface
+    public void showNativeCarousel(final String resData) {
+        ShowNativeCarousel showNativeCarousel = new ShowNativeCarousel(mContext, mWebAppActivity,
+                BuildConfig.LOAD_HTML_DIRECTLY,
+                BuildConfig.IS_DEFAULT_USER_LOGIN,
+                BuildConfig.APPLICATION_ID,
+                BuildConfig.FLAVOR);
+        showNativeCarousel.showNativeCarousel(resData);
+    }
+
+    @JavascriptInterface
+    public void getAppVersion(final String data){
+
     }
 }

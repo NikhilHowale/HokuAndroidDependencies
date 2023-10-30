@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingLeft="16dp">
+
+        <TextView
+            android:id="@+id/headerTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:paddingRight="@dimen/toolbar_height"
+            android:textColor="@color/white"
+            android:maxLines="4"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/btn_download"
+            android:layout_width="@dimen/toolbar_height"
+            android:layout_height="@dimen/toolbar_height"
+            android:layout_marginRight="80dp"
+            android:layout_gravity="right|center_vertical"
+            android:clickable="true"
+            android:padding="10dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_file_bubble_download" />
+
+        <ImageView
+            android:id="@+id/btn_close"
+            android:layout_width="@dimen/toolbar_height"
+            android:layout_height="@dimen/toolbar_height"
+            android:layout_gravity="right|center_vertical"
+            android:clickable="true"
+            android:padding="10dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_clear_black_24dp" />
+    </FrameLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/imageSlidingViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btn_close"
+        android:animateLayoutChanges="true" />
+
+
+</LinearLayout>
