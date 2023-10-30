@@ -7,29 +7,28 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.hokuapps.shownativecarousel.adapter.ImageSliderAdapter;
 import com.hokuapps.shownativecarousel.backgroundtask.DownloadFile;
 import com.hokuapps.shownativecarousel.pref.CarouselPref;
-import com.hokuapps.shownativecarousel.service.IntegrationManager;
 import com.hokuapps.shownativecarousel.utility.Utility;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.List;
 
-public class ImageSliderActivity extends BaseCompatActivity {
+public class ImageSliderActivity extends AppCompatActivity {
     private JSONArray imageSlidingJsonArr;
     private TextView headerTitle;
     private int index = 0;
@@ -82,15 +81,7 @@ public class ImageSliderActivity extends BaseCompatActivity {
     private void initHeaderLayout() {
         try {
             headerTitle = findViewById(R.id.headerTitle);
-            FrameLayout headerLayout = findViewById(R.id.headerLayout);
-
-            if (!TextUtils.isEmpty(IntegrationManager.appHeaderColor)) {
-                headerLayout.setBackgroundColor(Color.parseColor(IntegrationManager.appHeaderColor));
-                setStatusBarColor(Color.parseColor(IntegrationManager.appHeaderColor));
-            }
-
             setHeaderTitle(0);
-
             ImageView btnClose = findViewById(R.id.btn_close);
             ImageView btnDownload = findViewById(R.id.btn_download);
             if (isShowDownload) {
@@ -98,11 +89,9 @@ public class ImageSliderActivity extends BaseCompatActivity {
             } else {
                 btnDownload.setVisibility(View.GONE);
             }
-            String headerButtonColor = Utility.getStringObjectValue(IntegrationManager.configJson, KeyConstants.HEADER_BUTTON_COLOR);
-            if (!TextUtils.isEmpty(headerButtonColor)) {
-                btnClose.setImageDrawable(Utility.getColorDrawable(this, R.drawable.ic_clear_white_24dp,
-                        Utility.getStringObjectValue(IntegrationManager.configJson, KeyConstants.HEADER_BUTTON_COLOR)));
-            }
+
+            btnClose.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_clear_white_24dp));
+
             btnClose.setOnClickListener(view -> ImageSliderActivity.this.finish());
 
             btnDownload.setOnClickListener(view -> {

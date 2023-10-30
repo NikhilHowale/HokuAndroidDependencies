@@ -85,9 +85,6 @@ public class DownloadFile extends AsyncTask<Void, String, Boolean> {
             fileName = originalFileName;
         }
 
-        if (Utility.isCampusAffairs()) {
-            fileName = TextUtils.isEmpty(Utility.getExtensionWithDot(fileName)) ? fileName + ".pdf" : fileName;
-        }
 
         File downLoadedFolderDir = new File(downloadFolderPath);
 

@@ -30,11 +30,6 @@ public class ImageSliderAdapter extends PagerAdapter {
     private final Context mContext;
     private final JSONArray imageSliderJsonArr;
 
-    public ImageSliderAdapter(Context mContext) {
-        this.mContext = mContext;
-        this.imageSliderJsonArr = new JSONArray();
-    }
-
 
     /**
      * constructor

@@ -20,7 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.hokuapps.shownativecarousel.R;
 import com.hokuapps.shownativecarousel.constants.CarouselConstant;
-import com.hokuapps.shownativecarousel.service.IntegrationManager;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,10 +74,6 @@ public class Utility {
             ex.printStackTrace();
         }
         return false;
-    }
-    public static boolean isCampusAffairs() {
-        return (CarouselConstant.APPLICATION_ID.equals("com.hokucampusaffairs"))
-                || (CarouselConstant.FLAVOR.equalsIgnoreCase("BeepupCampusAffairs") && (CarouselConstant.APPLICATION_ID.equals("com.beepup")));
     }
 
 
@@ -226,30 +222,6 @@ public class Utility {
         return true;
     }
 
-    /**
-     * Change color to primary color
-     *
-     * @param color - String color as #FFFFFF
-     */
-    public static int changeColorToPrimaryHSB(String color) {
-        float[] hsv = new float[3];
-        int brandColor = Color.parseColor(color);
-        Color.colorToHSV(brandColor, hsv);
-        hsv[1] = hsv[1] + 0.1f;
-        hsv[2] = hsv[2] - 0.1f;
-        int argbColor = Color.HSVToColor(hsv);
-        String hexColor = String.format("#%07X", argbColor);
-        return Color.parseColor(hexColor);
-    }
-
-
-    /**
-     * check if the application is RoofingSouthwest
-     */
-    public static boolean isRoofingSouthwest() {
-        return (CarouselConstant.APPLICATION_ID.equals("com.roofingsouthwest"))
-                || (CarouselConstant.FLAVOR.equalsIgnoreCase("RoofingSouthwestBeepup") && (CarouselConstant.APPLICATION_ID.equals("com.beepup")));
-    }
 
 
     /**
@@ -274,21 +246,6 @@ public class Utility {
     }
 
 
-    /**
-     * get the color from given drawable
-     * @param activity activity reference
-     * @param drawableResId drawable resource id
-     * @param colorId color id
-     */
-    public static Drawable getColorDrawable(Activity activity, int drawableResId, String colorId) {
-        @SuppressLint("UseCompatLoadingForDrawables") final Drawable drawable = activity.getResources().getDrawable(drawableResId);
-
-        if (isEmpty(colorId)) return drawable;
-
-        drawable.setColorFilter(Color.parseColor(colorId), PorterDuff.Mode.SRC_ATOP);
-        return drawable;
-    }
-
 
     /**
      * change toolbar text color based on theme
@@ -297,17 +254,7 @@ public class Utility {
     public static void changedToolbarTextColorByTheme(View toolbar) {
         if (toolbar != null) {
             try {
-                String headerTextColor = Utility.getStringObjectValue(IntegrationManager.configJson, "headerTextColor");
-                if (isEmpty(headerTextColor)) {
-                    headerTextColor = "#000000";
-                }
-                if (CarouselConstant.LOAD_HTML_DIRECTLY && !isEmpty(headerTextColor)) {
-                    if (toolbar instanceof TextView) {
-                        ((TextView) toolbar).setTextColor(Color.parseColor(headerTextColor));
-                    } else if (toolbar instanceof Toolbar) {
-                        ((Toolbar) toolbar).setTitleTextColor(Color.parseColor(headerTextColor));
-                    }
-                }
+                ((Toolbar) toolbar).setTitleTextColor(Color.parseColor("#000000"));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

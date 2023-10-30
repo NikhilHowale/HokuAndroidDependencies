@@ -320,11 +320,7 @@ public class WebAppJavaScriptInterface {
 
     @JavascriptInterface
     public void showNativeCarousel(final String resData) {
-        ShowNativeCarousel showNativeCarousel = new ShowNativeCarousel(mContext, mWebAppActivity,
-                BuildConfig.LOAD_HTML_DIRECTLY,
-                BuildConfig.IS_DEFAULT_USER_LOGIN,
-                BuildConfig.APPLICATION_ID,
-                BuildConfig.FLAVOR);
+        ShowNativeCarousel showNativeCarousel = new ShowNativeCarousel(mContext, mWebAppActivity);
         showNativeCarousel.showNativeCarousel(resData);
     }
 

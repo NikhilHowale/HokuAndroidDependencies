@@ -22,19 +22,11 @@ public class ShowNativeCarousel {
      * Constructor
      * @param mContext context
      * @param mActivity activity reference
-     * @param loadHtml build variant
-     * @param isDefaultUserLogin build variant
-     * @param appId build variant
-     * @param flavour build variant
+
      */
-    public ShowNativeCarousel(Context mContext, Activity mActivity, boolean loadHtml,
-                              boolean isDefaultUserLogin,String appId,String flavour) {
+    public ShowNativeCarousel(Context mContext, Activity mActivity) {
         this.mContext = mContext;
         this.mActivity = mActivity;
-        LOAD_HTML_DIRECTLY = loadHtml;
-        IS_DEFAULT_USER_LOGIN = isDefaultUserLogin;
-        APPLICATION_ID = appId;
-        FLAVOR = flavour;
     }
 
 
