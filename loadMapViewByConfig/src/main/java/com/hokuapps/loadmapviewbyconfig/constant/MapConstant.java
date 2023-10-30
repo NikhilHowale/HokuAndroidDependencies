@@ -9,6 +9,7 @@ public class MapConstant {
     public static String AUTH_SECRET_KEY = "";
     public static final String FOLDER_NAME_WEB_HTML = "WebHtml";
     public static final String EXTRA_MAP_RESULT_CALLBACK = "extra_result_callback";
+    public static final String MAP_RESULT_CANCEL = "map_result_cancel";
     public static int UPDATE_INTERVAL = 5000; // 10 sec 10000
     public static int FASTEST_INTERVAL = 2000; // 05 sec 5000
     public static int DISPLACEMENT = 0;       // 10 meters
@@ -139,7 +140,7 @@ public class MapConstant {
         String M_DEST_LATITUDE = "mDestLatitude";
         String M_DEST_LONGITUDE = "mDestLongitude";
         String OPEN_MAP_APP = "openMapApp";
-        String IS_SHOW_DIRECTIONS = "isShowDirections";
+
         String IS_PLOT_ADDRESS_LOCATION = "isPlotAddressLocation";
         String ADDRESS_STRING = "addressString";
         String SHOW_SEARCHBAR = "showSearchbar";

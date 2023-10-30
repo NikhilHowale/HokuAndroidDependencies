@@ -1,9 +1,6 @@
 package com.hokuapps.loadmapviewbyconfig;
 
 import static com.hokuapps.loadmapviewbyconfig.MapsAppCompactActivity.REQUEST_CHECK_SETTINGS;
-import static com.hokuapps.loadmapviewbyconfig.R.string.label_loading;
-import static com.hokuapps.loadmapviewbyconfig.R.string.navigation;
-import static com.hokuapps.loadmapviewbyconfig.R.string.navigation_via;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.ADDRESS_STRING;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.API_NAME;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.BOTTOM_BUTTON_TEXT;
@@ -27,7 +24,6 @@ import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.IS_SEAR
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.IS_SELECT_LOCATION;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.IS_SHOW_BOTTOM_BUTTON;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.IS_SHOW_CURRENT_MARKER;
-import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.IS_SHOW_DIRECTIONS;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.IS_SHOW_OVERLAY;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.IS_SHOW_TAB;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.IS_SHOW_WAZE;
@@ -70,8 +66,6 @@ import android.text.TextUtils;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -80,7 +74,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
@@ -89,7 +82,6 @@ import com.hokuapps.loadmapviewbyconfig.constant.MapConstant;
 import com.hokuapps.loadmapviewbyconfig.models.JSResponseData;
 import com.hokuapps.loadmapviewbyconfig.models.LocationMapModel;
 import com.hokuapps.loadmapviewbyconfig.utility.Utility;
-import com.hokuapps.loadmapviewbyconfig.widgets.BottomSheetShare;
 
 import org.json.JSONObject;
 
@@ -185,45 +177,7 @@ public class LoadMapViewByConfig {
 
                 if (locationMapModel.isOpenMapApp()) {
                     //open google default map application
-                    if (locationMapModel.getIsShowDirection() == 1) {
-
-                        if (!TextUtils.isEmpty(locationMapModel.getAddressString())) {
-
-                            destinationAddress = locationMapModel.getAddressString();
-                            if (location != null) {
-                                handleShowDirectionFromCur();
-                            } else {
-                                if (isGPSInfo()) {
-                                    if (isGooglePlayServicesAvailable()) {
-                                        mLocationProvider.connect();
-                                    }
-                                } else {
-                                    gpsSettingsRequestPopup();
-                                }
-                            }
-                        } else {
-//                            Show direction bottom sheet chooser if showWaze == 1 else go with GoogleMapDirection default.
-                            if (isShowWase == 1) {
-                                BottomSheetShare bottomSheetShare = new BottomSheetShare();
-                                bottomSheetShare.setNavigation(true);
-                                bottomSheetShare.setAppSelectedListener(appInfo -> {
-                                    destinationAddress = null;
-                                    Utility.openDirectionVia(appInfo, mContext, locationMapModel.getLatitude(),
-                                            locationMapModel.getLongitude(), locationMapModel.getDestLatitude(), locationMapModel.getDestLongitude());
-                                });
-                                bottomSheetShare.setTitle(mContext.getString(navigation_via));
-                                bottomSheetShare.show(((AppCompatActivity) mContext).getSupportFragmentManager(), mContext.getString(navigation));
-                                return;
-                            }
-                            if (locationMapModel.getIsNavFromCurLoc() == 1)
-                                Utility.openGoogleMapDirection(mContext, locationMapModel.getDestLatitude(),
-                                        locationMapModel.getDestLongitude());
-                            else
-                                Utility.openGoogleMapDirection(mContext, locationMapModel.getLatitude(),
-                                        locationMapModel.getLongitude(), locationMapModel.getDestLatitude(), locationMapModel.getDestLongitude());
-                        }
-
-                    } else if (locationMapModel.getIsPlotAddressLocation() || !TextUtils.isEmpty(locationMapModel.getAddressString())) {
+                    if (locationMapModel.getIsPlotAddressLocation() || !TextUtils.isEmpty(locationMapModel.getAddressString())) {
                         Utility.openInExternalMapByAddress(mContext, locationMapModel.getAddressString());
                     } else {
                         Utility.openInExternalMapByLatLong(mContext, locationMapModel.getLatitude(), locationMapModel.getLongitude());
@@ -304,7 +258,7 @@ public class LoadMapViewByConfig {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(mContext, R.style.AppCompatAlertDialogStyle);
             progressDialog.setCancelable(false);
-            progressDialog.setMessage(mContext.getResources().getString(label_loading));
+            progressDialog.setMessage(mContext.getResources().getString(R.string.label_loading));
         }
 
         if (shown) {
@@ -343,40 +297,6 @@ public class LoadMapViewByConfig {
         return locationmanager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    /**
-     * Opens external map and show direction given latitude and longitude
-     */
-    private void handleShowDirectionFromCur() {
-        try {
-            if (!TextUtils.isEmpty(destinationAddress)) {
-
-                final LatLng destLoc = Utility.getLocationFromAddress(destinationAddress, mContext);
-
-                if (location != null && destLoc != null) {
-
-                    if (isShowWase == 1) {
-                        BottomSheetShare bottomSheetShare = new BottomSheetShare();
-                        bottomSheetShare.setNavigation(true);
-                        bottomSheetShare.setAppSelectedListener(appInfo -> {
-                            isShowWase = 0;
-                            Utility.openDirectionVia(appInfo, mContext, location.getLatitude(),
-                                    location.getLongitude(), destLoc.latitude, destLoc.longitude);
-                        });
-                        bottomSheetShare.setTitle(mContext.getString(navigation_via));
-                        bottomSheetShare.show(((AppCompatActivity) mContext).getSupportFragmentManager(), mContext.getString(navigation));
-                        destinationAddress = null;
-                        return;
-                    }
-
-                    Utility.openGoogleMapDirection(mContext, location.getLatitude(),
-                            location.getLongitude(), destLoc.latitude, destLoc.longitude);
-                }
-                destinationAddress = null;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
     /**
      * Set response data to json object
@@ -387,12 +307,14 @@ public class LoadMapViewByConfig {
     }
 
 
-    public void handleMapResult(int resultCode, Intent intent, WebView mWebView){
+    public void handleMapResult( Intent intent, WebView mWebView){
         try {
             if (intent != null && intent.getExtras() != null ) {
                 LocationMapModel locationMapModel = intent.getExtras().getParcelable(MapConstant.MAP_LOCATION_MODEL);
+                int resultCode = intent.getIntExtra(MapConstant.MAP_RESULT_CANCEL,-1);
 
                 if(locationMapModel == null) return;
+
                 if (resultCode == Activity.RESULT_OK) {
 
                     JSONObject jsonObjResponse = new JSONObject();
@@ -495,7 +417,7 @@ public class LoadMapViewByConfig {
             locationMapModel.setmDestLatitude(Utility.getJsonObjectDoubleValue(responseJsonObj, M_DEST_LATITUDE));
             locationMapModel.setmDestLongitude(Utility.getJsonObjectDoubleValue(responseJsonObj, M_DEST_LONGITUDE));
             locationMapModel.setOpenMapApp(Utility.getJsonObjectBooleanValue(responseJsonObj, OPEN_MAP_APP));
-            locationMapModel.setIsShowDirection(Utility.getJsonObjectBooleanValue(responseJsonObj, IS_SHOW_DIRECTIONS) ? 1 : 0);
+
             locationMapModel.setIsPlotAddressLocation(Utility.getJsonObjectBooleanValue(responseJsonObj, IS_PLOT_ADDRESS_LOCATION));
             locationMapModel.setAddressString(Utility.getStringObjectValue(responseJsonObj, ADDRESS_STRING));
             //For Search View hide or show

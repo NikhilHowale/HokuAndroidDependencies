@@ -2,6 +2,8 @@ package com.hokuapps.loadnativefileupload.constants;
 
 public class KeyConstants {
 
+    public static final int ACTION_REQUEST_EDIT_IMAGE_MAP_PLAN = 9008;
+
     public interface keyConstants {
         String STEP = "step";
         String FILE_NM = "fileNm";
@@ -17,6 +19,7 @@ public class KeyConstants {
         String NEXT_BUTTON_CALLBACK = "nextButtonCallback";
         String CALLBACK_FUNCTION = "callbackFunction";
         String OFFLINE_DATA_ID = "offlineDataID";
+        String OFFLINE_ID = "offlineID";
         String FILE_NAME = "fileName";
         String APP_ID = "appID";
         String FILE_PATH = "filePath";
@@ -59,6 +62,7 @@ public class KeyConstants {
         String ORIGINAL_IMAGE_PATH = "originalImagePath";
         String USED_FOR_ANNOTATION = "usedForAnnotation";
         String LOCAL_IMAGE_NAME = "localImageName";
+        String IMAGE_TYPE = "imageType";
         String SCANNED_TEXT = "scannedText";
         String IMAGE_PATH = "imagePath";
         String MAP_FILE_STATUS = "mapFileStatus";

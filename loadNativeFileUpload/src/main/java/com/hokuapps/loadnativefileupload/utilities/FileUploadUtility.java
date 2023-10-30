@@ -8,6 +8,7 @@ import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConsta
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.COLOR_CODE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.DRAW_TYPE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.EXTENSION;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IMAGE_TYPE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IMAGE_URL;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.INSTRUCTION_TEXT;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_AUDIO_RECORDING;
@@ -30,6 +31,7 @@ import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConsta
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LOCAL_IMAGE_NAME;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAX_FILE_SIZE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_DATA_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_ID;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.ORIGINAL_IMAGE_PATH;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.PAGE_TITLE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SHOW_CAPTION;
@@ -489,7 +491,17 @@ public class FileUploadUtility {
             jsResponseDataModel.setExtension((String) FileUploadUtility.getJsonObjectValue(responseJsonObj, EXTENSION));
             jsResponseDataModel.setShowCaption(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, SHOW_CAPTION));
             jsResponseDataModel.setCaption(FileUploadUtility.getStringObjectValue(responseJsonObj, CAPTION));
-            String offlineDataID = FileUploadUtility.getStringObjectValue(responseJsonObj, OFFLINE_DATA_ID);
+            String offlineDataID = "";
+
+            if(responseJsonObj.has(OFFLINE_DATA_ID)){
+                offlineDataID = FileUploadUtility.getStringObjectValue(responseJsonObj, OFFLINE_DATA_ID);
+            }
+
+            if(responseJsonObj.has(OFFLINE_ID)){
+                offlineDataID = FileUploadUtility.getStringObjectValue(responseJsonObj, OFFLINE_DATA_ID);
+            }
+
+
             jsResponseDataModel.setWaitForResponse(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, IS_WAIT_FOR_RESPONSE));
             jsResponseDataModel.setDefaultCamera(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, IS_DEFAULT_CAMERA));
             jsResponseDataModel.setDocumentsOnly(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, IS_DOCUMENTS_ONLY));
@@ -504,6 +516,7 @@ public class FileUploadUtility {
             jsResponseDataModel.setOriginalImagePath(FileUploadUtility.getStringObjectValue(responseJsonObj, ORIGINAL_IMAGE_PATH));
             jsResponseDataModel.setUsedForAnnotation(FileUploadUtility.getJsonObjectBooleanValue(responseJsonObj, USED_FOR_ANNOTATION));
             jsResponseDataModel.setLocalImageName(FileUploadUtility.getStringObjectValue(responseJsonObj, LOCAL_IMAGE_NAME));
+            jsResponseDataModel.setImageType(responseJsonObj.has(IMAGE_TYPE)? getJsonObjectIntValue(responseJsonObj, IMAGE_TYPE) : 1);
             jsResponseDataModel.setOfflineID(offlineDataID);
             jsResponseDataModel.setResponseData(responseData);
 
@@ -550,5 +563,9 @@ public class FileUploadUtility {
             return "Default";
         }
 
+    }
+
+    public static String getDownloadFileParentDir(Context context) {
+        return getHtmlDirFromSandbox(context).getAbsolutePath();
     }
 }

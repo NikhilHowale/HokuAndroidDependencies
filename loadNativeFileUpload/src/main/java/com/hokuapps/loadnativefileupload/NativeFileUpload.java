@@ -45,6 +45,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.model.Image;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.hokuapps.loadnativefileupload.annotate.AnnotateActivity;
@@ -148,16 +150,15 @@ public class NativeFileUpload {
      * Entry point of the NativeFileUpload module
      *
      * @param responseData provide option and require data for that option
-     * @throws  JSONException occur when key mis match
      */
-    public void loadNativeFileUpload(final String responseData) throws JSONException {
+    public void loadNativeFileUpload(final String responseData) {
 
         JSResponseData jsResponseDataModel = FileUploadUtility.parseLoadNativeFileUploadJsResponseData(responseData);
         setJsResponseData(jsResponseDataModel);
         offlineID = jsResponseDataModel.getOfflineID();
 
         if (jsResponseData == null) return;
-        JSONObject jsonObject = null;
+        JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(responseData);
             String option = FileUploadUtility.getOption(jsResponseData);
@@ -235,7 +236,7 @@ public class NativeFileUpload {
     private void startFreeDrawingActivity(JSResponseData jsResponseData) {
         File outputFile = new File(FileUploadUtility.getHtmlDirFromSandbox(mContext) + File.separator +
                 "draw_" + System.currentTimeMillis() + ".png");
-        String filePath = null;
+        String filePath;
         try {
             filePath =jsResponseData.getImageURL();
 
@@ -363,13 +364,21 @@ public class NativeFileUpload {
      */
     public void handleImageResultIntent(Intent intent) {
 
+        boolean isMultipleImage = intent.getBooleanExtra(CameraConfiguration.Arguments.IS_MULTIPLE_IMAGES,false);
+
+        if(isMultipleImage){
+            List<Image> images = ImagePicker.INSTANCE.getImages(intent);
+            handleMultipleImagesHere(images);
+            return;
+        }
+
         String filePath = intent.getStringExtra(CameraConfiguration.Arguments.FILE_PATH);
         if(filePath == null) return;
 
         caption = intent.getStringExtra(CameraConfiguration.Arguments.CAPTION);
         boolean isFromGallery = intent.getBooleanExtra(CameraConfiguration.Arguments.IS_FROM_GALLERY, false);
 
-        if(isFromGallery){
+        if(isFromGallery) {
             Intent previewActivityIntent = PreviewActivity.newIntent(mActivity,
                     CameraConfiguration.MEDIA_ACTION_PHOTO, filePath, false,
                     getJsResponseData().isShowCaption(), getJsResponseData().getCaption(),
@@ -383,6 +392,32 @@ public class NativeFileUpload {
 
         saveImageToSyncHtmlFilesDir(mImageCaptureUri, mContext, null);
 
+    }
+
+    /**
+     * This method handle uploading of multiple images selected from gallery
+     * @param images list of images
+     */
+    private void handleMultipleImagesHere(List<Image> images) {
+
+        if (images != null && images.size() > 0) {
+            String filePath = "";
+            for (int index = 0; index < images.size(); index++) {
+                filePath = images.get(index).getPath();
+                if (filePath != null) {
+                    mImageCaptureUri = Uri.fromFile(new File(filePath));
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    saveImageToSyncHtmlFilesDir(mImageCaptureUri,mContext,null);
+
+                } else {
+                    Toast.makeText(mContext, "error while capture photo.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
 
@@ -790,6 +825,33 @@ public class NativeFileUpload {
     }
 
     /**
+     * Handle onActivity result of edit map plan and upload it
+     * @param intent contain image path of edited map plan
+     */
+    public void handleEditImagePlan(Intent intent) {
+        try {
+            if (intent != null) {
+
+                if (DownloadPhoto.getInstance().getJsResponseData() == null) return;
+
+                String newFilePath = intent.getStringExtra(IPRectangleAnnotationActivity.SAVE_FILE_PATH);
+                String destFileName = FileUtility.getFileName(newFilePath);
+                if (newFilePath != null) {
+                    mImageCaptureUri = Uri.fromFile(new File(newFilePath));
+                }
+                JSResponseData responseData = DownloadPhoto.getInstance().getJsResponseData();
+                setNativeSelectedPhotoCallbackFunction(newFilePath,responseData.getOfflineID(), responseData.getCallbackFunction());
+                startImageUpload(destFileName, responseData.getOfflineID(),
+                        responseData.getAppID(),
+                        responseData.getSrcImageName(), responseData.getImageType());
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * compress captured image and save captured image to web html folder
      *
      * @param imageCaptureUri file uri of capture image
@@ -832,8 +894,8 @@ public class NativeFileUpload {
 
                 } else {
 
-                    boolean isMoved = false;
-                    File uploadFilePath = null;
+                    boolean isMoved;
+                    File uploadFilePath;
                     isMoved = moveFile(from, to);
                     uploadFilePath = isMoved ? to : from;
 

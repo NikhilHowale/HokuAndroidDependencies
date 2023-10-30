@@ -59,6 +59,8 @@ public class JSResponseData {
     private String extension;
     private String localImageName;
 
+    private int imageType = 1;
+
     public String getLocalImageName() {
         return localImageName;
     }
@@ -403,5 +405,13 @@ public class JSResponseData {
     }
     public void setLocationMapModel(LocationMapModel locationMapModel) {
         this.locationMapModel = locationMapModel;
+    }
+
+    public int getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(int imageType) {
+        this.imageType = imageType;
     }
 }

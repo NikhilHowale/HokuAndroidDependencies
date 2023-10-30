@@ -6,13 +6,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.text.Editable;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.WebView;
 
 import com.hokuapps.hokunativeshell.App;
@@ -22,7 +17,6 @@ import com.hokuapps.hokunativeshell.pref.MybeepsPref;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.XMLReader;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -32,21 +26,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Utility {
 
-    private static final String TAG = "Utility";
 
+    /**
+     * This method extracts web html zip( patch ) into a sandbox directory
+     * @param context context
+     * @param fromAssetPath asset directory path
+     * @param toPath directory path for extract file
+     */
     public static void copyAssetDirToSandbox(Context context, String fromAssetPath, String toPath) {
         AssetManager assetManager = context.getAssets();
         String[] files = null;
         try {
             files = assetManager.list(fromAssetPath);
         } catch (IOException e) {
-            Log.e(TAG,e.getMessage());
+            e.printStackTrace();
         }
 
         if (files != null) {
@@ -65,6 +63,12 @@ public class Utility {
         }
     }
 
+    /**
+     * This method copy file from asset folder to sandbox folder
+     * @param assetManager assetManager reference
+     * @param fromAssetPath asset folder path
+     * @param toPath sandbox path
+     */
     private static void copyAssetFile(AssetManager assetManager, String fromAssetPath, String toPath) {
         InputStream in = null;
         OutputStream out = null;
@@ -73,19 +77,15 @@ public class Utility {
             out = new FileOutputStream(toPath);
             copyFile(in, out);
             out.flush();
-        } catch (IOException ex) {
-            ex.printStackTrace();
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             try {
                 if (in != null) {
                     in.close();
-                    in = null;
                 }
                 if (out != null) {
                     out.close();
-                    out = null;
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -93,6 +93,11 @@ public class Utility {
         }
     }
 
+    /**
+     * This method write bytes
+     * @param in input stream
+     * @param out output stream
+     */
     private static void copyFile(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[4096];
         int read;
@@ -101,12 +106,19 @@ public class Utility {
         }
     }
 
+    /**
+     * This method extract file to Html directory
+     * @param context context
+     * @param fromAssetPath asset file path
+     * @param sFile file for extract
+     * @param filePathToExtract sandbox directory path
+     */
     private static void extractFileToHtmlDir(Context context, String fromAssetPath, String sFile, String filePathToExtract) {
         InputStream in = null;
         try {
             AssetManager assetManager = context.getAssets();
             in = assetManager.open(fromAssetPath + "/" + sFile);
-            writeZipAndExctractFileToLocal(in, filePathToExtract);
+            writeZipAndExtractFileToLocal(in, filePathToExtract);
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
@@ -121,17 +133,20 @@ public class Utility {
         }
     }
 
-    public static void writeZipAndExctractFileToLocal(InputStream in, String path) throws Exception {
+    /**
+     * This method zip file to extract to sandbox directory path
+     * @param in zip file input stream
+     * @param path sandbox directory path
+     */
+    public static void writeZipAndExtractFileToLocal(InputStream in, String path) {
 
-        ArrayList<String> data = new ArrayList<>();
         ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(in));
         ZipEntry zipEntry = null;
         try {
             /** Iterate over all the files and folders*/
             for (zipEntry = zipInputStream.getNextEntry(); zipEntry != null; zipEntry = zipInputStream.getNextEntry()) {
 
-                String innerFileName = path + File.separator
-                        + zipEntry.getName();
+                String innerFileName = path + File.separator + zipEntry.getName();
                 File innerFile = new File(innerFileName);
 
                 try {
@@ -184,6 +199,12 @@ public class Utility {
         }
     }
 
+    /**
+     * This method ensures zip files are safe through path traversal attacks, allowing access to files and locations that shouldn't be available.
+     * @param innerFile inner file of zip
+     * @param innerFileName name of inner file
+     * @throws Exception when file path passed without validation
+     */
     private static void ensureZipPathSafety(File innerFile, String innerFileName) throws Exception {
 
         String destDirCanonicalPath = (new File(innerFileName)).getCanonicalPath();
@@ -193,6 +214,9 @@ public class Utility {
         }
     }
 
+    /**
+     * This method return webHtml folder file
+     */
     public static File getHtmlDirFromSandbox() {
         File htmlDir = new File(App.getInstance().getFilesDir() + File.separator + AppConstant.FOLDER_NAME_WEB_HTML);
 
@@ -206,7 +230,7 @@ public class Utility {
     /**
      * Create the storage directory if it does not exist
      *
-     * @param mediaStorageDir
+     * @param mediaStorageDir media store directory
      * @return true if directory created successfully
      * false Otherwise
      */
@@ -220,6 +244,9 @@ public class Utility {
     }
 
 
+    /**
+     * This method reads the appsetting.json file from the webHtml folder and retrieves essential parameters for the app to perform work.
+     */
     public static void setNativeCallbackSettingFlag() {
         try {
             String fileContents = FileUtility.readAllFileContent(
@@ -285,6 +312,12 @@ public class Utility {
 
     }
 
+    /**
+     * This method retrieves String from jsonObject
+     * @param obj jsonObject
+     * @param fieldName key in jsonObject
+     * @return return String from jsonObject
+     */
     public static String getStringObjectValue(JSONObject obj, String fieldName) {
         try {
             if (obj == null) return "";
@@ -303,6 +336,12 @@ public class Utility {
         return null;
     }
 
+    /**
+     * This method retrieves boolean from jsonObject
+     * @param obj jsonObject
+     * @param fieldName key in jsonObject
+     * @return return boolean from jsonObject
+     */
     public static boolean getJsonObjectBooleanValue(JSONObject obj, String fieldName) {
         if (obj == null) return false;
 
@@ -317,6 +356,12 @@ public class Utility {
         return false;
     }
 
+    /**
+     * This method return reDirectional url from local webHtml folder
+     * @param filename webpage file name
+     * @param queryMode queryMode
+     * @return return reDirectional url
+     */
     public static String getRedirectedUrl(String filename, String queryMode, boolean isExistsCheck) {
 
         MybeepsPref mybeepsPref = new MybeepsPref(App.getInstance().getApplicationContext());
@@ -343,6 +388,12 @@ public class Utility {
         return "";
     }
 
+    /**
+     * This method retrieves object from jsonObject
+     * @param obj jsonObject
+     * @param fieldName key in jsonObject
+     * @return return object from jsonObject
+     */
     public static Object getJsonObjectValue(JSONObject obj, String fieldName) throws JSONException {
         try {
             if (obj == null) return null;
@@ -358,7 +409,7 @@ public class Utility {
     /**
      * Check string is null or empty by trim
      *
-     * @param string
+     * @param string string value
      * @return status
      */
     public static boolean isEmpty(String string) {
@@ -368,6 +419,10 @@ public class Utility {
         return TextUtils.isEmpty(string);
     }
 
+    /**
+     * This method check path of web page path in local directory
+     * @param url path of web page
+     */
     public static boolean isLoadFromLocalHtmlDir(String url) {
 
         boolean result = false;
@@ -387,14 +442,11 @@ public class Utility {
     /**
      * To get external chache dir "/Android/data/packageName/cache/";
      *
-     * @param context
-     * @return
+     * @param context context
+     * @return return cache file directory
      */
     public static File getExternalCacheDir(Context context) {
-        File file = null;
-        if (hasExternalCacheDir()) {
-            file = context.getExternalCacheDir();
-        }
+        File file = context.getExternalCacheDir();
 
         if (file == null) {
             final String cacheDir = "/Android/data/" + context.getPackageName() + "/cache/";
@@ -404,7 +456,10 @@ public class Utility {
     }
 
 
-
+    /**
+     * This method cancel all notification from notification trey
+     * @param context context
+     */
     public static void cancelNotification(Context context) {
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -412,19 +467,13 @@ public class Utility {
     }
 
 
-
     /**
-     * check and return if external cache dir is status
-     *
-     * @return true, if external cache is available
-     * false, Otherwise
+     * This method call java script function in web page loaded into webView
+     * @param activity activity reference
+     * @param webView webView reference
+     * @param callingJavaScriptFn java script function
+     * @param response jsonObject
      */
-    public static boolean hasExternalCacheDir() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
-    }
-
-
-
 
     public static void callJavaScriptFunction(Activity activity, final WebView webView, final String callingJavaScriptFn, final JSONObject response) {
 
@@ -435,11 +484,7 @@ public class Utility {
             @Override
             public void run() {
                 try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        webView.evaluateJavascript(String.format("javascript:" + callingJavaScriptFn + "(%s)", response), null);
-                    } else {
-                        webView.loadUrl(String.format("javascript:" + callingJavaScriptFn + "(%s)", response));
-                    }
+                    webView.evaluateJavascript(String.format("javascript:" + callingJavaScriptFn + "(%s)", response), null);
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -449,6 +494,10 @@ public class Utility {
         });
     }
 
+    /**
+     * This method retrieves bytes from bitmap
+     * @param bitmap bitmap
+     */
     public static byte[] getBytes(Bitmap bitmap) {
         if (bitmap == null) {
             return null;

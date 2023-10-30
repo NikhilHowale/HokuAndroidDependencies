@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.RectF;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -169,7 +168,7 @@ public class StickerView extends View {
                 item.draw(canvas, isDraw);
             }// end for each
 
-            drawCircleRect(canvas, null, isDraw);
+           // drawCircleRect(canvas, null, isDraw);
 
         } else if (isDraw.equalsIgnoreCase("Path")) {
             for (Path path : paths) {

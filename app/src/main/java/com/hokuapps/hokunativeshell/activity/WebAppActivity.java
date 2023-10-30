@@ -332,20 +332,18 @@ public class WebAppActivity extends AppCompatActivity {
                             break;
 
                         case AppConstant.ActivityResultCode.ACTION_MAP_GET_ADDRESS:
-                            new LoadMapViewByConfig(this).handleMapResult(resultCode,intent,mWebView);
+                            new LoadMapViewByConfig(this).handleMapResult(intent,mWebView);
                             break;
 
                         case AppConstant.ActivityResultCode.RC_BARCODE_CAPTURE:
                             ScanBarcode.getInstance().handleScanResult(this,mWebView,intent);
                             break;
 
-
-                    }
-                } else if(resultCode == RESULT_CANCELED){
-                    switch (requestCode) {
-                        case AppConstant.ActivityResultCode.ACTION_MAP_GET_ADDRESS:
-                            new LoadMapViewByConfig(this).handleMapResult(resultCode, intent, mWebView);
+                        case AppConstant.ActivityResultCode.ACTION_REQUEST_EDIT_IMAGE_MAP_PLAN:
+                            NativeFileUpload.getInstance().handleEditImagePlan(intent);
                             break;
+
+
                     }
                 }
 
@@ -486,14 +484,16 @@ public class WebAppActivity extends AppCompatActivity {
     private void setupDebuggingModeForWebView() {
         // debug web view on chrome
         if (BuildConfig.DEBUG) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-                    WebView.setWebContentsDebuggingEnabled(true);
-                }
+            if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+                WebView.setWebContentsDebuggingEnabled(true);
             }
         }
     }
 
+    /**
+     * This method get values from intent that are stored in bundle
+     * @param intent intent
+     */
     private void loadBundleData(Intent intent) {
 
         if (intent.getExtras() != null) {
@@ -529,6 +529,10 @@ public class WebAppActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * This method handles background notification when an app is in the background or kill state
+     * @param notificationData notification data received when notification is clicked
+     */
     public void handleNotificationDataBackground(String notificationData) {
         if (!TextUtils.isEmpty(notificationData) && BuildConfig.LOAD_HTML_DIRECTLY) {
 
@@ -584,6 +588,17 @@ public class WebAppActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * This method calls activity with the webpage URL to load it into the web view
+     * @param context context
+     * @param filenameOrUrl webpage name or url
+     * @param isScanQrCode if true when file is downloaded from aws otherwise false
+     * @param isLoadLocalHtml if true then load a web page from the local directory
+     * @param isHideMobileHeader if true then hide the toolbar otherwise false
+     * @param isAuth if true load page with authorization otherwise false
+     * @param activityClass activity
+     * @param launchPageName launch page name
+     */
     public static void loadWebPageForURLWithOrWithoutAuth(Context context,
                                                           String filenameOrUrl,
                                                           boolean isScanQrCode,
@@ -607,7 +622,7 @@ public class WebAppActivity extends AppCompatActivity {
      * Webview client for internal url loading
      * callback url: ""
      */
-    class AuthWebViewClient extends WebViewClient {
+    static class AuthWebViewClient extends WebViewClient {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {

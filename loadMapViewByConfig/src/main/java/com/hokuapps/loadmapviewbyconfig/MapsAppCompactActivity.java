@@ -12,6 +12,7 @@ import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.GoogleNearBy
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.GooglePlace;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.Keys.*;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.MAP_LOCATION_MODEL;
+import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.MAP_RESULT_CANCEL;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.THEME_ID;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.TeacherPlace;
 import static com.hokuapps.loadmapviewbyconfig.constant.MapConstant.ThemeId;
@@ -3223,6 +3224,11 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
         Bundle bundle = new Bundle();
         bundle.putParcelable(MAP_LOCATION_MODEL, mLocationMapModel);
         bundle.putString(EXTRA_MAP_RESULT_CALLBACK, jsonObject.toString());
+
+        if(resultCode == RESULT_CANCELED){
+            bundle.putInt(MAP_RESULT_CANCEL, 0);
+        }
+
         intent.putExtras(bundle);
         setResult(resultCode, intent);
         finish();
@@ -3377,7 +3383,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
             locationMapModel.setmDestLongitude(Utility.getJsonObjectDoubleValue(responseJsonObj, M_DEST_LONGITUDE));
 
             locationMapModel.setOpenMapApp(Utility.getJsonObjectBooleanValue(responseJsonObj, OPEN_MAP_APP));
-            locationMapModel.setIsShowDirection(Utility.getJsonObjectBooleanValue(responseJsonObj, IS_SHOW_DIRECTIONS) ? 1 : 0);
+
             locationMapModel.setIsPlotAddressLocation(Utility.getJsonObjectBooleanValue(responseJsonObj, IS_PLOT_ADDRESS_LOCATION));
 
             locationMapModel.setAddressString(Utility.getStringObjectValue(responseJsonObj, ADDRESS_STRING));
@@ -3929,29 +3935,7 @@ public class MapsAppCompactActivity extends AppCompatActivity implements OnMapRe
 
                 if (locationMapModel.isOpenMapApp()) {
                     //open google default map application
-                    if (locationMapModel.getIsShowDirection() == 1) {
-
-                        if (!TextUtils.isEmpty(locationMapModel.getAddressString())) {
-
-                            destinationAddress = locationMapModel.getAddressString();
-                            if (location != null) {
-
-                            } else {
-                                if (isGPSInfo()) {
-                                    if (isGooglePlayServicesAvailable()) {
-                                        mLocationProvider.connect();
-                                    }
-
-                                } else {
-                                }
-                            }
-                        } else {
-                            Utility.openGoogleMapDirection(MapsAppCompactActivity.this, locationMapModel.getLatitude(),
-                                    locationMapModel.getLongitude(), locationMapModel.getDestLatitude(),
-                                    locationMapModel.getDestLongitude());
-                        }
-
-                    } else if (locationMapModel.getIsPlotAddressLocation() || !TextUtils.isEmpty(locationMapModel.getAddressString())) {
+                    if (locationMapModel.getIsPlotAddressLocation() || !TextUtils.isEmpty(locationMapModel.getAddressString())) {
                         Utility.openInExternalMapByAddress(this, locationMapModel.getAddressString());
                     } else {
                         Utility.openInExternalMapByLatLong(MapsAppCompactActivity.this, locationMapModel.getLatitude(), locationMapModel.getLongitude());
