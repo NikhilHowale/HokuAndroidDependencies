@@ -64,6 +64,24 @@ public class Utility {
     }
 
     /**
+     * This method retrieves int from jsonObject
+     * @param obj jsonObject
+     * @param fieldName key from jsonObject
+     * @return return int value from jsonObject
+     */
+    public static int getJsonObjectIntValue(JSONObject obj, String fieldName) {
+        if (obj == null) return 0;
+        if (obj.has(fieldName)) {
+            try {
+                return obj.getInt(fieldName);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    /**
      * This method call java script function
      * @param activity activity
      * @param webView webView reference

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- call status-->
+    <string name="status_ringing">Ringing…</string>
+    <string name="status_connecting">Connecting…</string>
+    <string name="status_dis_connected">Call Decline</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_calling">Calling…</string>
+    <string name="status_cut">Call Disconnected…</string>
+    <string name="participant_video_off">Video Off</string>
+    <string name="voice_message">This Voice Call will be recorded solely for the future reference purposes</string>
+    <string name="voice_message_warning">Click Okay to proceed with the voice call</string>
+    <string name="video_message">This Video Call will be recorded solely for the future reference purposes</string>
+    <string name="video_message_warning">Click Okay to proceed with the video call</string>
+
+    <string name="network_connection_unavailable">Network connection is unavailable, Please try again later.</string>
+    <string name="err_occurred_msg">An error occurred while loading, Please try again...</string>
+    <string name="timeout_error_message">Request timeout, please try again.</string>
+
+    <string name="call_channel_name">Call Notifications</string>
+    <string name="call_notification_type">%1$s Missed Call</string>
+    <string name="Incoming_call_notification">Incoming %1$s Call..</string>
+
+    <!-- Pref keys -->
+    <string name="pref_name">ITaskChatPref</string>
+    <string name="user_token_pref_key">token</string>
+    <string name="secret_pref_key">secretkey</string>
+
+</resources>

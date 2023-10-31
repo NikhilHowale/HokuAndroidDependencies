@@ -25,7 +25,9 @@ import com.hokuapps.hokunativeshell.App;
 import com.hokuapps.hokunativeshell.R;
 import com.hokuapps.hokunativeshell.activity.WebAppActivity;
 import com.hokuapps.hokunativeshell.constants.AppConstant;
+import com.hokuapps.hokunativeshell.pref.MybeepsPref;
 import com.hokuapps.hokunativeshell.utils.Utility;
+import com.hokuapps.startvideocall.StartVideoCall;
 import com.koushikdutta.ion.Ion;
 
 import org.json.JSONObject;
@@ -88,6 +90,12 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
     public static void showNotification(Context context, JSONObject jsonObject) {
         try {
+
+
+            MybeepsPref pref = new MybeepsPref(context);
+            String appAuthToken = pref.getValue(AppConstant.AppPref.AUTH_TOKEN);
+            String appSecretKey = pref.getValue(AppConstant.AppPref.AUTH_SECRET_KEY);
+            if(StartVideoCall.getInstance().handleCallNotification(context,jsonObject, appSecretKey, appAuthToken)) return;
 
             final int notifyID = (int) System.currentTimeMillis();
             NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

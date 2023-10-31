@@ -34,6 +34,7 @@ import com.hokuapps.loginwithgoogle.SignInWithGoogle;
 import com.hokuapps.logoutnativecall.LogoutNativeCall;
 import com.hokuapps.shareappdata.ShareAppData;
 import com.hokuapps.shownativecarousel.ShowNativeCarousel;
+import com.hokuapps.startvideocall.StartVideoCall;
 import com.hokuapps.updateappversion.UpdateAppVersion;
 
 import org.json.JSONObject;
@@ -137,6 +138,7 @@ public class WebAppJavaScriptInterface {
     public void logoutNativeCall(final String logoutNativeRes) {
         LogoutNativeCall logoutNativeCall = new LogoutNativeCall(mWebView,mWebAppActivity,mContext);
         logoutNativeCall.doLogout(logoutNativeRes);
+        SignInWithGoogle.socialMediaLogout(logoutNativeRes);
     }
 
     @JavascriptInterface
@@ -328,6 +330,14 @@ public class WebAppJavaScriptInterface {
     @JavascriptInterface
     public void getAppVersion(final String data){
 
+    }
+
+    @JavascriptInterface
+    public void startVideoCall(final String data) {
+
+        String appAuthToken = mybeepsPref.getValue(AppConstant.AppPref.AUTH_TOKEN);
+        String appSecretKey = mybeepsPref.getValue(AppConstant.AppPref.AUTH_SECRET_KEY);
+        StartVideoCall.getInstance().start(mWebAppActivity,data,appSecretKey,appAuthToken);
     }
 
     @JavascriptInterface

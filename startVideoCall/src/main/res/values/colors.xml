@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="red">#eecc0000</color>
+    <color name="semi_transparent_color">#40000000</color>
+    <color name="black">#000000</color>
+    <color name="grey_200">#9E9C9C</color>
+    <color name="grey">#B96B6B6B</color>
+
+    <color name="lobbyColorPrimary">#757575</color>
+    <color name="lobbyColorPrimaryDark">#424242</color>
+    <color name="lobbyColorAccent">#9E9E9E</color>
+
+    <color name="lobbyToolbar">#66000000</color>
+    <color name="lobbyHint">#80ffffff</color>
+
+</resources>

@@ -239,6 +239,7 @@ dependencies {
     implementation project(path: ':getBackgroundLocationUpdates')
     implementation project(path: ':ShowNativeCarousel')
     implementation project(path: ':loginWithGoogle')
+    implementation project(path: ':startVideoCall')
 }
 
 apply plugin: 'com.google.gms.google-services'

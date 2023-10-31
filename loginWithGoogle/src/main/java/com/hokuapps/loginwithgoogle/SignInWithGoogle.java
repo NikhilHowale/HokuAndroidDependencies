@@ -69,6 +69,24 @@ public class SignInWithGoogle {
     }
 
     /**
+     * This method checks social media login type. according to type log out from the app
+     * @param response jsonObject in string format
+     */
+    public static void socialMediaLogout(String response) {
+        try {
+            JSONObject object = new JSONObject(response);
+            int socialMediaType = Utility.getJsonObjectIntValue(object, "socialMediaType");
+
+            if (socialMediaType == 1) {
+                //google logout
+                googleSignOut();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
      * This method signs out if the user login with google
      */
     public static void googleSignOut() {
