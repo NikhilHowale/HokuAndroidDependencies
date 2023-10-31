@@ -48,6 +48,7 @@ import com.hokuapps.hokunativeshell.receivers.NotificationReceiver;
 import com.hokuapps.hokunativeshell.utils.Utility;
 import com.hokuapps.loadmapviewbyconfig.LoadMapViewByConfig;
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
+import com.hokuapps.loginwithfb.LoginWithFB;
 import com.hokuapps.loginwithgoogle.SignInWithGoogle;
 
 import org.json.JSONException;
@@ -243,7 +244,7 @@ public class WebAppActivity extends AppCompatActivity {
 
         if (loadWebpageFromFileNameOrURL(getIntent())) return;
 
-        SignInWithGoogle.initGoogleSignIn(this);
+
     }
 
     private void initView() {
@@ -305,6 +306,7 @@ public class WebAppActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
             try {
+                LoginWithFB.getInstance().handleFaceBookSignIn(requestCode,resultCode,intent);
                 if (resultCode == Activity.RESULT_OK) {
                     switch (requestCode) {
                         case AppConstant.ActivityResultCode.BIOMETRIC_RESULT_CODE:

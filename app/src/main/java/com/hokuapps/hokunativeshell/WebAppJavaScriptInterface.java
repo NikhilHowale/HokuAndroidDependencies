@@ -30,6 +30,7 @@ import com.hokuapps.loadnativefileupload.NativeFileUpload;
 import com.hokuapps.loadnativefileupload.SendOfflineMediaDetails;
 import com.hokuapps.loadnativefileupload.UploadPendingFiles;
 import com.hokuapps.loginnativecall.LoginNativeCall;
+import com.hokuapps.loginwithfb.LoginWithFB;
 import com.hokuapps.loginwithgoogle.SignInWithGoogle;
 import com.hokuapps.logoutnativecall.LogoutNativeCall;
 import com.hokuapps.shareappdata.ShareAppData;
@@ -345,9 +346,16 @@ public class WebAppJavaScriptInterface {
         mWebAppActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                SignInWithGoogle.initGoogleSignIn(mWebAppActivity);
                 SignInWithGoogle.googleSignOut();
                 SignInWithGoogle.googleSignIn(mWebAppActivity,googleLogin);
             }
         });
+    }
+
+    @JavascriptInterface
+    public void loginWithFB(final String googleLogin) {
+        LoginWithFB.getInstance().init(mWebAppActivity,mWebView);
+        LoginWithFB.getInstance().loginWithFB(googleLogin);
     }
 }

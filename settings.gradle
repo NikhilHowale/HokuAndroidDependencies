@@ -44,4 +44,5 @@ include ':getBackgroundLocationUpdates'
 include ':ShowNativeCarousel'
 include ':loginWithGoogle'
 include ':startVideoCall'
+include ':LoginWithFB'
 
