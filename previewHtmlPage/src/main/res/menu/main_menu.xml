@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_pdf"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_baseline_pdf"
+        android:title="Settings">
+    </item>
+    <item
+        android:id="@+id/action_share"
+        android:icon="@drawable/ic_baseline_share"
+        app:showAsAction="always"
+        android:title="Add">
+
+    </item>
+
+</menu>

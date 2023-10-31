@@ -33,6 +33,7 @@ import com.hokuapps.loginnativecall.LoginNativeCall;
 import com.hokuapps.loginwithfb.LoginWithFB;
 import com.hokuapps.loginwithgoogle.SignInWithGoogle;
 import com.hokuapps.logoutnativecall.LogoutNativeCall;
+import com.hokuapps.previewhtmlpage.LoadPreviewHtml;
 import com.hokuapps.shareappdata.ShareAppData;
 import com.hokuapps.shownativecarousel.ShowNativeCarousel;
 import com.hokuapps.startvideocall.StartVideoCall;
@@ -357,5 +358,15 @@ public class WebAppJavaScriptInterface {
     public void loginWithFB(final String googleLogin) {
         LoginWithFB.getInstance().init(mWebAppActivity,mWebView);
         LoginWithFB.getInstance().loginWithFB(googleLogin);
+    }
+
+    @JavascriptInterface
+    public void previewHtmlPage(final String targetData){
+        mWebAppActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LoadPreviewHtml.getInstance().showPreview(mWebAppActivity,targetData);
+            }
+        });
     }
 }
