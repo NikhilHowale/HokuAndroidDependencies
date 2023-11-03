@@ -302,7 +302,7 @@
                     <com.cometchat.pro.uikit.ui_components.shared.cometchatSharedMedia.CometChatSharedMedia
                         android:id="@+id/shared_media_view"
                         android:layout_width="match_parent"
-                        android:layout_height="500dp" />
+                        android:layout_height="match_parent" />
                 </LinearLayout>
                 <!-- End of Shared Media-->
                 <TextView

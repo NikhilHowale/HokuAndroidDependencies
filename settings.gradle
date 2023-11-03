@@ -47,3 +47,4 @@ include ':startVideoCall'
 include ':LoginWithFB'
 
 include ':previewHtmlPage'
+include ':writeShareLog'

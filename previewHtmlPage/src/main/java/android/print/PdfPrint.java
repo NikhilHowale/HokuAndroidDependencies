@@ -37,7 +37,7 @@ public class PdfPrint {
     }
 
     /**
-     * This method create output file for padf
+     * This method create output file for pdf
      * @param path file path
      * @param fileName file name
      * @return return FileDescriptor

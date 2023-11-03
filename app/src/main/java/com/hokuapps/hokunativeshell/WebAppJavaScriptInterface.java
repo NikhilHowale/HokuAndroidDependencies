@@ -38,6 +38,7 @@ import com.hokuapps.shareappdata.ShareAppData;
 import com.hokuapps.shownativecarousel.ShowNativeCarousel;
 import com.hokuapps.startvideocall.StartVideoCall;
 import com.hokuapps.updateappversion.UpdateAppVersion;
+import com.hokuapps.writesharelog.WriteShareLog;
 
 import org.json.JSONObject;
 
@@ -366,6 +367,26 @@ public class WebAppJavaScriptInterface {
             @Override
             public void run() {
                 LoadPreviewHtml.getInstance().showPreview(mWebAppActivity,targetData);
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public void writeLogs(final String data) {
+        mWebAppActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                WriteShareLog.getInstance().writeLogs(mWebAppActivity, data);
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public void shareLog(final String data) {
+        mWebAppActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                WriteShareLog.getInstance().shareLogs(mWebAppActivity, data);
             }
         });
     }
