@@ -46,6 +46,7 @@ public class KeyConstants {
         String IS_MAP_PLAN = "isMapPlan";
         String CAN_CROP_IMAGE = "canCropImage";
         String PAGE_TITLE = "pageTitle";
+        String NEXT_BUTTON_TITLE = "nextButtonTitle";
         String EXTENSION = "extention";
         String SHOW_CAPTION = "showCaption";
         String IS_WAIT_FOR_RESPONSE = "isWaitForResponse";
@@ -75,6 +76,19 @@ public class KeyConstants {
         String ANNOTATIONS_ARRAY = "annotaionsArray";
         String IMAGE_NAME ="imageName";
         String SELECTED_IMAGE_NAME = "selectedImageName";
+        String NEXT_REDIRECT_URL = "nextRedirectionURL";
+        String IS_READ_ONLY = "isReadOnly";
+        String IS_LOAD_ADDRESS = "isLoadAddress";
+        String IS_WITHOUT_EDITOR = "isWithoutEditor";
+        String LATITUDE = "Latitude";
+        String LONGITUDE = "Longitude";
+        String CANCEL_BUTTON_CALLBACK = "cancelButtonCallback";
+        String ADDRESS_STRING = "addressString";
+        String MAP_TYPE = "mapType";
+        String GET_MAP_SNAPSHOT = "getMapSnapShot";
+        String OPEN_MAP_APP = "openMapApp";
+        String IS_RESULT_CANCEL = "isResultCancel";
+
         String TITLE = "title";
         String METADATA = "metadata";
 

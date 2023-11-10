@@ -351,6 +351,10 @@ public class WebAppActivity extends AppCompatActivity {
                             SignInWithGoogle.handleGoogleSignResult(this,mWebView, intent);
                             break;
 
+                        case AppConstant.ActivityResultCode.LOCATION_SERVICE_REQUEST_CODE:
+                            SignInWithGoogle.handleGoogleSignResult(this,mWebView, intent);
+                            break;
+
 
                     }
                 }

@@ -1,0 +1,107 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/rootlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/googleMapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            map:cameraZoom="19"
+            map:mapType="normal"/>
+
+            <RelativeLayout
+                android:id="@+id/marker_view_incl"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerInParent="true"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/marker_icon_view"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/drop_location"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/progress_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:id="@+id/loading_wheel"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:visibility="visible"
+                    app:matProg_barColor="@color/holo_blue_light"
+                    app:matProg_progressIndeterminate="true"
+                    app:matProg_spinSpeed="0.820" />
+
+                <TextView
+                    android:id="@+id/loading_address_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="12dp"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:text="Loading address"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_size_medium" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/invalid_address_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:text="@string/err_address_invalid"
+                android:textColor="@color/holo_red_dark"
+                android:textSize="22sp"
+                android:visibility="gone" />
+       <!-- </fragment>-->
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:contentInsetStart="@dimen/second_keyline"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:subtitleTextAppearance="@style/TextAppearance.Subtitle"
+            app:titleTextAppearance="@style/TextAppearance.Title">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+        </androidx.appcompat.widget.Toolbar>
+    </FrameLayout>
+</LinearLayout>

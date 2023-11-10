@@ -1,13 +1,16 @@
 package com.hokuapps.loadnativefileupload.utilities;
 
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.ADDRESS_STRING;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.APP_ID;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CALLBACK_FUNCTION;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CANCEL_BUTTON_CALLBACK;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAN_CROP_IMAGE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.CAPTION;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.COLOR;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.COLOR_CODE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.DRAW_TYPE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.EXTENSION;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.GET_MAP_SNAPSHOT;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IMAGE_TYPE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IMAGE_URL;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.INSTRUCTION_TEXT;
@@ -18,45 +21,61 @@ import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConsta
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_DOCUMENTS_ONLY;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_DOCUMENTS_UPLOAD;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_DRAWING;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_LOAD_ADDRESS;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_MAP_PLAN;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_PROFILE_IMAGE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_PROFILE_UPLOAD_START;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_READ_ONLY;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_RECTANGLE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_SCAN_DOCUMENT;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_SCAN_TEXT;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_SELECT_VIDEO;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_WAIT_FOR_RESPONSE;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_WITHOUT_EDITOR;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LANGUAGE_PREF;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LATITUDE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LOAD_PHOTO_EDITOR;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LOCAL_IMAGE_NAME;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.LONGITUDE;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAP_TYPE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.MAX_FILE_SIZE;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.NEXT_BUTTON_CALLBACK;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.NEXT_BUTTON_TITLE;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.NEXT_REDIRECT_URL;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_DATA_ID;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OFFLINE_ID;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.OPEN_MAP_APP;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.ORIGINAL_IMAGE_PATH;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.PAGE_TITLE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SHOW_CAPTION;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SKIP_CAMERA;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SKIP_LIBRARY;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SRC;
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.STEP;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.SUPPORTED_FORMAT;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.TYPE;
 import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.USED_FOR_ANNOTATION;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.hokuapps.loadnativefileupload.backgroundtask.FileUploader;
 import com.hokuapps.loadnativefileupload.constants.FileUploadConstant;
 import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 import com.hokuapps.loadnativefileupload.models.JSResponseData;
+import com.hokuapps.loadnativefileupload.models.LocationMapModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,6 +88,7 @@ import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -527,6 +547,49 @@ public class FileUploadUtility {
         return jsResponseDataModel;
     }
 
+    /**
+     * This method parse json into model class
+     * @param responseJsonObj JSON data
+     * @return return location map model
+     */
+    public static  LocationMapModel getLocationMapModel(JSONObject responseJsonObj) {
+        LocationMapModel locationMapModel = null;
+        try {
+            locationMapModel = new LocationMapModel();
+            locationMapModel.setPageTitle(getStringObjectValue(responseJsonObj, PAGE_TITLE));
+            locationMapModel.setNextButtonTitle(getStringObjectValue(responseJsonObj, NEXT_BUTTON_TITLE));
+            locationMapModel.setNextRedirectionURL(getStringObjectValue(responseJsonObj, NEXT_REDIRECT_URL));
+            locationMapModel.setNextButtonCallback(getStringObjectValue(responseJsonObj, NEXT_BUTTON_CALLBACK));
+            locationMapModel.setOfflineDataID(getStringObjectValue(responseJsonObj, OFFLINE_DATA_ID));
+            locationMapModel.setAppID(getStringObjectValue(responseJsonObj, APP_ID));
+            locationMapModel.setIsReadOnly(getJsonObjectBooleanValue(responseJsonObj, IS_READ_ONLY));
+            locationMapModel.setIsLoadAddress(getJsonObjectBooleanValue(responseJsonObj, IS_LOAD_ADDRESS));
+            locationMapModel.setIsWithoutEditor(getJsonObjectBooleanValue(responseJsonObj, IS_WITHOUT_EDITOR));
+            locationMapModel.setLatitude(responseJsonObj.has(LATITUDE) ? responseJsonObj.getDouble(LATITUDE) : 0.0);
+            locationMapModel.setLongitude(responseJsonObj.has(LONGITUDE) ? responseJsonObj.getDouble(LONGITUDE) : 0.0);
+            locationMapModel.setColorCode(responseJsonObj.has(COLOR_CODE) ? responseJsonObj.getString(COLOR_CODE) : "#448aff");
+            locationMapModel.setCancelButtonCallback((String) getJsonObjectValue(responseJsonObj, CANCEL_BUTTON_CALLBACK));
+
+            locationMapModel.setAddressString(getStringObjectValue(responseJsonObj, ADDRESS_STRING));
+            locationMapModel.setMapType(LocationMapModel.getValidMapType(responseJsonObj.has(MAP_TYPE) ? getJsonObjectIntValue(responseJsonObj, MAP_TYPE) : 2));
+
+            locationMapModel.setImageType(responseJsonObj.has(IMAGE_TYPE) ? getJsonObjectIntValue(responseJsonObj, IMAGE_TYPE) : 1);
+            locationMapModel.setGetMapSnapShot(!responseJsonObj.has(GET_MAP_SNAPSHOT) || getJsonObjectBooleanValue(responseJsonObj, GET_MAP_SNAPSHOT));
+            locationMapModel.setOpenMapApp(getJsonObjectBooleanValue(responseJsonObj, OPEN_MAP_APP));
+            locationMapModel.setMapSrcName(getStringObjectValue(responseJsonObj, SRC));
+
+            String step = getStringObjectValue(responseJsonObj, STEP);
+
+            if (!TextUtils.isEmpty(step)) {
+                locationMapModel.setInstucationNumberClockIn(Integer.parseInt(step));
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return locationMapModel;
+    }
+
     public static String getOption(JSResponseData jsResponseData) {
         if (jsResponseData.isScanText()) {
             return FileUploadConstant.options.IS_SCAN_TEXT;
@@ -565,6 +628,63 @@ public class FileUploadUtility {
 
     }
 
+
+    /**
+     * This method return lat and long value from address string
+     * @param context context
+     * @param strAddress address string
+     * @return return lat long value
+     */
+    public static LatLng getLocationFromAddress(Context context, String strAddress) {
+
+        Geocoder coder = new Geocoder(context);
+        List<Address> address;
+        LatLng latLng = null;
+
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address == null) {
+                return null;
+            }
+
+            Address location = address.get(0);
+            latLng = new LatLng(location.getLatitude(), location.getLongitude() );
+
+        } catch (IOException ex) {
+
+            ex.printStackTrace();
+        }
+
+        return latLng;
+    }
+
+    /**
+     * This method open External map using lat long
+     * @param context context
+     * @param latitude latitude
+     * @param longitude longitude
+     * @param markerTitle title for marker
+     */
+    public static void openInExternalMapByLatLong(Context context, double latitude, double longitude, String markerTitle) {
+        try {
+
+
+            final Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW,
+                    Uri.parse("geo:0,0?q="+latitude+","+longitude+"&z=16 (" + markerTitle + ")"));
+
+            mapIntent.setPackage("com.google.android.apps.maps");
+            if (mapIntent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(mapIntent);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * This method provide directory path for download file
+     */
     public static String getDownloadFileParentDir(Context context) {
         return getHtmlDirFromSandbox(context).getAbsolutePath();
     }

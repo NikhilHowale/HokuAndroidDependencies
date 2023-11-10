@@ -1330,6 +1330,18 @@ public class CometChatMessageList extends Fragment implements View.OnClickListen
                 else
                     showPermissionSnackBar(view.findViewById(R.id.message_box), getResources().getString(R.string.grant_location_permission));
                 break;
+
+            case UIKitConstants.RequestCode.RECORD:
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED){
+                    showPermissionSnackBar(view.findViewById(R.id.message_box), getResources().getString(R.string.grant_mic_permission));
+                }
+
+                break;
+            case UIKitConstants.RequestCode.AUDIO:
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED ){
+                    showPermissionSnackBar(view.findViewById(R.id.message_box), getResources().getString(R.string.grant_audio_permission));
+                }
+                break;
         }
     }
 
@@ -3753,19 +3765,17 @@ public class CometChatMessageList extends Fragment implements View.OnClickListen
         String[] permission;
         switch (attachmentOption.getId()) {
 
-            case AttachmentOption.DOCUMENT_ID: //Ids for default Attachment Options
-               // showToast("Document Clicked");
+            case AttachmentOption.DOCUMENT_ID:
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     permission = new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO};
                 } else {
-                    permission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    permission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
                 }
                 if (Utils.hasPermissions(getContext(), permission)) {
                     startActivityForResult(MediaUtils.getFileIntent(UIKitConstants.IntentStrings.EXTRA_MIME_DOC), UIKitConstants.RequestCode.FILE);
                 } else {
-                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO},
-                            UIKitConstants.RequestCode.FILE);
+                    requestPermissions(permission, UIKitConstants.RequestCode.FILE);
 
                 }
                 break;
@@ -3782,7 +3792,7 @@ public class CometChatMessageList extends Fragment implements View.OnClickListen
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     permission = new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO};
                 } else {
-                    permission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    permission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE , Manifest.permission.READ_EXTERNAL_STORAGE };
                 }
 
                 if (Utils.hasPermissions(getContext(),permission)) {
@@ -3795,40 +3805,33 @@ public class CometChatMessageList extends Fragment implements View.OnClickListen
                     }
 
                 } else {
-                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO},
-                            UIKitConstants.RequestCode.GALLERY);
+                    requestPermissions(permission, UIKitConstants.RequestCode.GALLERY);
                 }
                 break;
             case AttachmentOption.AUDIO_ID:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    permission = new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO};
+                    permission = new String[]{Manifest.permission.READ_MEDIA_AUDIO};
                 } else {
-                    permission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    permission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
                 }
                 if (Utils.hasPermissions(getContext(), permission)) {
                     startActivityForResult(MediaUtils.openAudio(getActivity()), UIKitConstants.RequestCode.AUDIO);
                 } else {
-                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO},
-                            UIKitConstants.RequestCode.AUDIO);
+                    requestPermissions(permission, UIKitConstants.RequestCode.AUDIO);
                 }
                 break;
             case AttachmentOption.LOCATION_ID:
-                //showToast("Location Clicked");
-                if (Utils.hasPermissions(getContext(), Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                permission = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+                if (Utils.hasPermissions(getContext(), permission)) {
                     initLocation();
-//                    locationManager = (LocationManager) Objects.requireNonNull(getContext()).getSystemService(Context.LOCATION_SERVICE);
-                    boolean gpsprovider = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                    if (!gpsprovider) {
+                    boolean gpsProvider = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    if (!gpsProvider) {
                         turnOnLocation();
                     } else {
                         getLocation();
                     }
                 } else {
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, UIKitConstants.RequestCode.LOCATION);
-//                    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
-//                        checkBackgroundLocationPermissionAPI30(UIKitConstants.RequestCode.LOCATION);
-//                    }
+                    requestPermissions(permission, UIKitConstants.RequestCode.LOCATION);
                 }
                 break;
             case AttachmentOption.CONTACT_ID:
@@ -3842,18 +3845,19 @@ public class CometChatMessageList extends Fragment implements View.OnClickListen
 
         String[] permission;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permission = new String[]{Manifest.permission.READ_MEDIA_IMAGES,Manifest.permission.READ_MEDIA_AUDIO,Manifest.permission.READ_MEDIA_VIDEO};
-        } else {
-            permission = new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            permission = new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_MEDIA_AUDIO};
+        }
+        else {
+            permission = new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE };
         }
 
         if (Utils.hasPermissions(context, permission)) {
             startRecording();
-        } else {
+        }
+        else {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_VIDEO},
-                        UIKitConstants.RequestCode.RECORD);
+                requestPermissions(permission, UIKitConstants.RequestCode.RECORD);
             }
         }
     }

@@ -115,6 +115,10 @@ public class UploadPendingFiles {
 
         AppMediaDetails appMediaDetails = AppMediaDetailsDAO.getAppMediaDetailsByFileName(mContext, offlineID, fileName);
 
+        if(appMediaDetails.getUploadStatus() == AppMediaDetails.UPLOAD_SUCCESS){
+            return;
+        }
+        
         //save as in progress
         appMediaDetails.setUploadStatus(AppMediaDetails.UPLOAD_IN_PROGRESS);
 

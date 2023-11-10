@@ -123,8 +123,6 @@ public class UpdateAppVersion {
                                 }
                             });
 
-                } else {
-
                 }
             }
         } catch (Exception e) {

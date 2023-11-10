@@ -14,6 +14,7 @@ import com.cometchat.pro.uikit.CometChatStart;
 import com.hokuapps.Loadnativeqrcodescannerupload.ScanBarcode;
 import com.hokuapps.biometricauthentication.AuthenticateWithTouch;
 import com.hokuapps.calendaroprations.CalendarOperations;
+import com.hokuapps.getappversion.GetAppVersion;
 import com.hokuapps.getbackgroundlocationupdates.Locations.BackgroundLocation;
 import com.hokuapps.getcurrentlocationdetails.LocationDetails;
 import com.hokuapps.getlocalimage.GetLocalImage;
@@ -141,7 +142,12 @@ public class WebAppJavaScriptInterface {
     public void logoutNativeCall(final String logoutNativeRes) {
         LogoutNativeCall logoutNativeCall = new LogoutNativeCall(mWebView,mWebAppActivity,mContext);
         logoutNativeCall.doLogout(logoutNativeRes);
+
+        //This method called when we sign with google
         SignInWithGoogle.socialMediaLogout(logoutNativeRes);
+
+        //Logout from comet chat
+        CometChatStart.getInstance().cometChatLogout();
     }
 
     @JavascriptInterface
@@ -332,7 +338,7 @@ public class WebAppJavaScriptInterface {
 
     @JavascriptInterface
     public void getAppVersion(final String data){
-
+        GetAppVersion.getInstance().getVersion(mWebAppActivity,mWebView,data);
     }
 
     @JavascriptInterface

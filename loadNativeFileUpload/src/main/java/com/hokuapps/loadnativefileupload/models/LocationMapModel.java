@@ -81,6 +81,9 @@ public class LocationMapModel implements Parcelable {
             locationMapModel.showSearchbar = source.readInt();
             locationMapModel.markerData = source.readInt();
             locationMapModel.searchByCountriesList = source.readString();
+            locationMapModel.imageType = source.readInt();
+            locationMapModel.instucationNumberClockIn = source.readInt();
+            locationMapModel.isLoadAddress = source.readInt();
             return locationMapModel;
         }
 
@@ -164,6 +167,11 @@ public class LocationMapModel implements Parcelable {
     private int markerData = 0;
     private String selectedLocationFromSearch ="";
     private String searchByCountriesList;
+
+    private int instucationNumberClockIn = 0;
+
+    private int isLoadAddress;
+    private int imageType = 1;
 
     public LocationMapModel() {
     }
@@ -688,6 +696,30 @@ public class LocationMapModel implements Parcelable {
         return 0;
     }
 
+    public int getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(int imageType) {
+        this.imageType = imageType;
+    }
+
+    public int getInstucationNumberClockIn() {
+        return instucationNumberClockIn;
+    }
+
+    public void setInstucationNumberClockIn(int instucationNumberClockIn) {
+        this.instucationNumberClockIn = instucationNumberClockIn;
+    }
+
+    public boolean getIsLoadAddress() {
+        return isLoadAddress == 1 ? true : false;
+    }
+
+    public void setIsLoadAddress(boolean isLoadAddress) {
+        this.isLoadAddress = isLoadAddress ? 1 : 0;
+    }
+
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
 
@@ -753,6 +785,9 @@ public class LocationMapModel implements Parcelable {
 		parcel.writeInt(isPlotAddressLocation);
         parcel.writeInt(showSearchbar);
         parcel.writeInt(markerData);
+        parcel.writeInt(imageType);
+        parcel.writeInt(instucationNumberClockIn);
+        parcel.writeInt(isLoadAddress);
         parcel.writeString(searchByCountriesList);
     }
 }

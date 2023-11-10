@@ -45,6 +45,6 @@ include ':ShowNativeCarousel'
 include ':loginWithGoogle'
 include ':startVideoCall'
 include ':LoginWithFB'
-
 include ':previewHtmlPage'
 include ':writeShareLog'
+include ':getAppVersion'

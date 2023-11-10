@@ -72,5 +72,7 @@ public class AppConstant {
 
         int RC_SIGN_IN = 9122;
 
+        int LOCATION_SERVICE_REQUEST_CODE = 8000;
+
     }
 }

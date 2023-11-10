@@ -181,7 +181,7 @@ public class UIKitConstants {
 
         public static final int READ_STORAGE = 001;
 
-        public static final int RECORD = 003;
+        public static final int RECORD = 4;
 
         public static final int LOCATION = 14;
     }

@@ -118,6 +118,8 @@
     <!--Permission Error-->
     <string name="grant_camera_permission">Please grant camera permission from app setting</string>
     <string name="grant_storage_permission">Please grant storage permission from app setting</string>
+    <string name="grant_audio_permission" translatable="false">Please grant Audio permission from app setting</string>
+    <string name="grant_mic_permission" translatable="false">Please grant Microphone and Audio permission from app setting</string>
     <string name="file_not_exist">File doesn\'t exists</string>
 
     <!--Calls-->

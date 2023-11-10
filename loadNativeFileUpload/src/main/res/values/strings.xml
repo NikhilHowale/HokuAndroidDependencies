@@ -26,5 +26,6 @@
 
     <!-- Error message -->
     <string name="lbl_error_loading">An error occurred while loading, Please try again…</string>
-
+    <string name="err_address_invalid">Invalid address</string>
+    <string name="err_no_address_found" translatable="false">Sorry, no address found.</string>
 </resources>

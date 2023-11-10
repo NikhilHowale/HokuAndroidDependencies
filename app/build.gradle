@@ -16,6 +16,11 @@ android {
 
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            moduleName = 'uikit'
+            abiFilters 'arm64-v8a', moduleName
+        }
     }
 
     buildTypes {
@@ -246,6 +251,7 @@ dependencies {
     implementation project(path: ':previewHtmlPage')
     implementation project(path: ':writeShareLog')
     implementation project(path: ':authenticateWithTouchID')
+    implementation project(path: ':getAppVersion')
 }
 
 apply plugin: 'com.google.gms.google-services'
