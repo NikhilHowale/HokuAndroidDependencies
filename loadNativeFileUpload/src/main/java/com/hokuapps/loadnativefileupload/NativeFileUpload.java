@@ -53,7 +53,9 @@ import com.hokuapps.loadnativefileupload.annotate.AnnotateActivity;
 import com.hokuapps.loadnativefileupload.annotate.FreeDrawingActivity;
 import com.hokuapps.loadnativefileupload.backgroundtask.FileUploader;
 import com.hokuapps.loadnativefileupload.backgroundtask.ImageCompression;
+import com.hokuapps.loadnativefileupload.backgroundtask.ImageUpload;
 import com.hokuapps.loadnativefileupload.constants.FileUploadConstant;
+import com.hokuapps.loadnativefileupload.constants.KeyConstants;
 import com.hokuapps.loadnativefileupload.database.FileContentProvider;
 import com.hokuapps.loadnativefileupload.imageEditor.IPRectangleAnnotationActivity;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
@@ -96,7 +98,7 @@ public class NativeFileUpload {
 
     private String serverAuthToken;
     private static NativeFileUpload Instance;
-    public static String APP_FILE_URL = "";
+
 
     public NativeFileUpload() {
 
@@ -127,7 +129,7 @@ public class NativeFileUpload {
         this.mWebView = mWebView;
         NativeFileUpload.mActivity = mActivity;
         NativeFileUpload.mContext = mContext;
-        APP_FILE_URL = uploadUrl;
+        KeyConstants.APP_FILE_URL = uploadUrl;
         FileContentProvider.getInstance().setUpDatabase(authority);
     }
 
@@ -155,6 +157,9 @@ public class NativeFileUpload {
 
         JSResponseData jsResponseDataModel = FileUploadUtility.parseLoadNativeFileUploadJsResponseData(responseData);
         setJsResponseData(jsResponseDataModel);
+
+        ImageUpload.getInstance().initUpload(mActivity, mWebView, jsResponseDataModel, serverAuthToken);
+
         offlineID = jsResponseDataModel.getOfflineID();
 
         if (jsResponseData == null) return;
@@ -390,7 +395,9 @@ public class NativeFileUpload {
 
         mImageCaptureUri = Uri.fromFile(new File(filePath));
 
-        saveImageToSyncHtmlFilesDir(mImageCaptureUri, mContext, null);
+       ImageUpload.getInstance().saveImageToSyncHtmlFilesDir(mImageCaptureUri,null);
+
+     //  saveImageToSyncHtmlFilesDir(mImageCaptureUri, mContext, null);
 
     }
 
@@ -411,7 +418,8 @@ public class NativeFileUpload {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    saveImageToSyncHtmlFilesDir(mImageCaptureUri,mContext,null);
+                    ImageUpload.getInstance().saveImageToSyncHtmlFilesDir(mImageCaptureUri,null);
+                    //saveImageToSyncHtmlFilesDir(mImageCaptureUri,mContext,null);
 
                 } else {
                     Toast.makeText(mContext, "error while capture photo.", Toast.LENGTH_SHORT).show();
@@ -766,10 +774,18 @@ public class NativeFileUpload {
     private void uploadFileAndCallback(String filePath) {
         try {
             if (!jsResponseData.isWaitForResponse()) {
-                setNativeSelectedPhotoCallbackFunction(FileUtility.getFileNameWithoutExists(filePath), offlineID);
+                ImageUpload.getInstance().setNativeSelectedPhotoCallbackFunction(FileUtility.getFileNameWithoutExists(filePath), getJsResponseData().getOfflineID());
             }
-            startImageUpload(filePath, getJsResponseData().getOfflineID(), getJsResponseData().getAppID(),
+
+            ImageUpload.getInstance().startImageUpload(filePath, getJsResponseData().getOfflineID(), getJsResponseData().getAppID(),
                     FileUtility.getFileNameWithoutExists(filePath), AppMediaDetails.FILE_TYPE);
+
+           /* if (!jsResponseData.isWaitForResponse()) {
+                setNativeSelectedPhotoCallbackFunction(FileUtility.getFileNameWithoutExists(filePath), offlineID);
+            }*/
+
+           /* startImageUpload(filePath, getJsResponseData().getOfflineID(), getJsResponseData().getAppID(),
+                    FileUtility.getFileNameWithoutExists(filePath), AppMediaDetails.FILE_TYPE);*/
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -820,36 +836,11 @@ public class NativeFileUpload {
         String newFilePath = intent.getStringExtra(IPRectangleAnnotationActivity.SAVE_FILE_PATH);
         if (newFilePath != null) {
             mImageCaptureUri = Uri.fromFile(new File(newFilePath));
-            saveImageToSyncHtmlFilesDir(mImageCaptureUri, mContext, intent);
+            ImageUpload.getInstance().saveImageToSyncHtmlFilesDir(mImageCaptureUri, intent);
+          //  saveImageToSyncHtmlFilesDir(mImageCaptureUri, mContext, intent);
         }
     }
 
-    /**
-     * Handle onActivity result of edit map plan and upload it
-     * @param intent contain image path of edited map plan
-     */
-    public void handleEditImagePlan(Intent intent) {
-        try {
-            if (intent != null) {
-
-                if (DownloadPhoto.getInstance().getJsResponseData() == null) return;
-
-                String newFilePath = intent.getStringExtra(IPRectangleAnnotationActivity.SAVE_FILE_PATH);
-                String destFileName = FileUtility.getFileName(newFilePath);
-                if (newFilePath != null) {
-                    mImageCaptureUri = Uri.fromFile(new File(newFilePath));
-                }
-                JSResponseData responseData = DownloadPhoto.getInstance().getJsResponseData();
-                setNativeSelectedPhotoCallbackFunction(newFilePath,responseData.getOfflineID(), responseData.getCallbackFunction());
-                startImageUpload(destFileName, responseData.getOfflineID(),
-                        responseData.getAppID(),
-                        responseData.getSrcImageName(), responseData.getImageType());
-
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     /**
      * compress captured image and save captured image to web html folder

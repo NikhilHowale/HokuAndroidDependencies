@@ -540,6 +540,12 @@ public class FileUploadUtility {
             jsResponseDataModel.setOfflineID(offlineDataID);
             jsResponseDataModel.setResponseData(responseData);
 
+            String step = FileUploadUtility.getStringObjectValue(responseJsonObj, STEP);
+
+            if (!TextUtils.isEmpty(step) && !step.equalsIgnoreCase("null")) {
+                jsResponseDataModel.setInstructionNumberClockIn(Integer.parseInt(step));
+            }
+
 
         } catch (Exception ex) {
             ex.printStackTrace();

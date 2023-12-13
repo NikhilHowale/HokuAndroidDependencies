@@ -4,6 +4,10 @@ public class KeyConstants {
 
     public static final int ACTION_REQUEST_EDIT_IMAGE_MAP_PLAN = 9008;
 
+    public static final int ACTION_REQUEST_EDIT_IMAGE_MAP = 9004;
+
+    public static String APP_FILE_URL = "";
+
     public interface keyConstants {
         String STEP = "step";
         String FILE_NM = "fileNm";

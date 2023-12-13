@@ -1,5 +1,6 @@
 package com.hokuapps.loadnativefileupload.imageEditor;
 
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.IS_RESULT_CANCEL;
 import static com.xinlan.imageeditlibrary.editimage.view.StickerView.bank;
 import static com.xinlan.imageeditlibrary.editimage.view.StickerView.cirRectPoints;
 import static com.xinlan.imageeditlibrary.editimage.view.StickerView.startEndPoints;
@@ -187,6 +188,23 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
         }
     };
 
+
+    public static void start(Activity context, final String editImagePath, final String outputPath, String colorCode, String title, LocationMapModel locationMapModel, final int requestCode) {
+        if (TextUtils.isEmpty(editImagePath)) {
+            Toast.makeText(context, com.xinlan.imageeditlibrary.R.string.no_choose, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent it = new Intent(context, IPRectangleAnnotationActivity.class);
+        it.putExtra(IPRectangleAnnotationActivity.FILE_PATH, editImagePath);
+        it.putExtra(IPRectangleAnnotationActivity.EXTRA_OUTPUT, outputPath);
+        it.putExtra(IPRectangleAnnotationActivity.EXTRA_TOOLBAR_COLOR, colorCode);
+        it.putExtra(IPRectangleAnnotationActivity.EXTRA_TOOLBAR_TITLE, title);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("mapLocationModel", locationMapModel);
+        it.putExtras(bundle);
+        context.startActivityForResult(it, requestCode);
+    }
     public static void start(Activity context, String filePath, String outputFile, String colorCode, boolean usedForAnnotation, String annotateData) {
         Intent it = new Intent(context, IPRectangleAnnotationActivity.class);
         it.putExtra(IPRectangleAnnotationActivity.FILE_PATH, filePath);
@@ -467,6 +485,7 @@ public class IPRectangleAnnotationActivity extends com.xinlan.imageeditlibrary.B
         Intent returnIntent = new Intent();
         Bundle bundle = new Bundle();
         bundle.putParcelable("mapLocationModel", locationMapModel);
+        bundle.putInt(IS_RESULT_CANCEL, 0);
         returnIntent.putExtras(bundle);
         setResult(RESULT_CANCELED, returnIntent);
         super.onBackPressed();

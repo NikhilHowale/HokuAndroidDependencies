@@ -4,8 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.hokuapps.loadnativefileupload.NativeFileUpload;
 import com.hokuapps.loadnativefileupload.constants.FileUploadConstant;
+import com.hokuapps.loadnativefileupload.constants.KeyConstants;
 import com.hokuapps.loadnativefileupload.dao.AppMediaDetailsDAO;
 import com.hokuapps.loadnativefileupload.delegate.OnUploadListener;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
@@ -107,8 +107,8 @@ public class FileUploader implements OnUploadListener {
 
             ServiceRequest serviceRequest = new ServiceRequest();
 
-            if (!TextUtils.isEmpty(NativeFileUpload.APP_FILE_URL)) {
-                serviceRequest.setUrl(NativeFileUpload.APP_FILE_URL + File.separator + FileUploadConstant.REST_URLS.UPLOAD_MP_HELITRACK);
+            if (!TextUtils.isEmpty(KeyConstants.APP_FILE_URL)) {
+                serviceRequest.setUrl(KeyConstants.APP_FILE_URL + File.separator + FileUploadConstant.REST_URLS.UPLOAD_MP_HELITRACK);
             }
 
             serviceRequest.setFilePath(filePath);

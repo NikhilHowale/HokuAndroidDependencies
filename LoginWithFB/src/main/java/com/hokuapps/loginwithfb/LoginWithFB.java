@@ -1,6 +1,6 @@
 package com.hokuapps.loginwithfb;
 
-import static com.hokuapps.loginwithfb.constants.LoginConstants.*;
+import static com.hokuapps.loginwithfb.constants.LoginConstants.keyConstants;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -18,8 +18,10 @@ import com.facebook.GraphRequest;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.hokuapps.loginwithfb.utility.Utility;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -117,7 +119,9 @@ public class LoginWithFB {
      * @param intent The result data that's received by the Activity
      */
     public void handleFaceBookSignIn(int requestCode, int resultCode, Intent intent){
-        callbackManager.onActivityResult(requestCode,resultCode,intent);
+        if(callbackManager != null) {
+            callbackManager.onActivityResult(requestCode, resultCode, intent);
+        }
     }
 
     /**

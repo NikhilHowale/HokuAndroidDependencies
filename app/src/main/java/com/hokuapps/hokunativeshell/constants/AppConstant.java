@@ -74,5 +74,9 @@ public class AppConstant {
 
         int LOCATION_SERVICE_REQUEST_CODE = 8000;
 
+        int ACTION_REQUEST_EDIT_IMAGE_MAP = 9004;
+        int ACTION_CAPTURE_VIDEO_RESULT = 1011;
+
+
     }
 }

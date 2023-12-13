@@ -25,9 +25,11 @@ import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.hokuapps.loadnativefileupload.annotate.AnnotateActivity;
+import com.hokuapps.loadnativefileupload.constants.KeyConstants;
 import com.hokuapps.loadnativefileupload.imageEditor.IPRectangleAnnotationActivity;
 import com.hokuapps.loadnativefileupload.models.AppMediaDetails;
 import com.hokuapps.loadnativefileupload.models.JSResponseData;
+import com.hokuapps.loadnativefileupload.models.LocationMapModel;
 import com.hokuapps.loadnativefileupload.restrequest.ServiceRequest;
 import com.hokuapps.loadnativefileupload.utilities.FileUploadUtility;
 import com.hokuapps.loadnativefileupload.utilities.FileUtility;
@@ -65,6 +67,9 @@ public class ImageUpload {
         this.mWebview = mWebview;
         this.jsResponseData = mJSResponseData;
         this.serverAuthToken = serverAuthToken;
+
+        instructionNumberClockIn = jsResponseData.getInstructionNumberClockIn();
+        offlineID = jsResponseData.getOfflineID();
     }
 
 
@@ -72,7 +77,7 @@ public class ImageUpload {
      * @param filePath path of selected image
      * @param offlineID upload image against offlineID
      */
-    private void setNativeSelectedPhotoCallbackFunction(String filePath, String offlineID) {
+    public void setNativeSelectedPhotoCallbackFunction(String filePath, String offlineID) {
         setNativeSelectedPhotoCallbackFunction(filePath, offlineID, jsResponseData.getCallbackFunction());
     }
 
@@ -141,12 +146,44 @@ public class ImageUpload {
         }
     }
 
+    public void setNativeSelectedPhotoCallbackFunction(String filename, LocationMapModel locationMapModel) {
+        JSONObject responseJsonObj = setFileNameAndOfflineIDToResponseData(filename, offlineID);
+        try {
+            responseJsonObj.put("Latitude", locationMapModel.getLatitude());
+            responseJsonObj.put("Longitude", locationMapModel.getLongitude());
+            responseJsonObj.put("mapFileName", locationMapModel.getMapFileName());
+            responseJsonObj.put("mapFileMediaID", locationMapModel.getOfflineDataID());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mWebview.evaluateJavascript(String.format("javascript:" + locationMapModel.getNextButtonCallback() + "(%s)", responseJsonObj), null);
+    }
+
+    public void setNativeCaptureVideoCallbackFunction(File file, String callbackName, String caption) {
+        try {
+            String fileName = "";
+            if(file != null){
+                fileName = file.getName();
+            }
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("fileName", fileName);
+            jsonObject.put("offlineDataID", offlineID);
+            jsonObject.put("fileNameWithPath",file.getPath());
+            jsonObject.put("caption",caption);
+
+            mWebview.evaluateJavascript(String.format("javascript:" + callbackName + "(%s)", jsonObject), null);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * compress captured image and save captured image to web html folder
      *
      * @param imageCaptureUri file uri of capture image
-     * @param context context
      */
     public void saveImageToSyncHtmlFilesDir(Uri imageCaptureUri, Intent intent) {
         try {
@@ -244,7 +281,7 @@ public class ImageUpload {
      * @param filePath  filePath to upload server
      * @param offlineID upload image against offlineID
      */
-    private void startImageUpload(final String filePath, String offlineID) {
+    public void startImageUpload(final String filePath, String offlineID) {
         startImageUpload(filePath, offlineID, jsResponseData.getAppID(), jsResponseData.getSrcImageName(), AppMediaDetails.INSTRUCTION_IMAGE_TYPE);
     }
 
@@ -300,5 +337,9 @@ public class ImageUpload {
         roofingUploader.startUpload();
         System.out.println("UPLOAD STARTED:" + Calendar.getInstance().getTime());
 
+    }
+
+    public void setUploadUrl(String fileUploadUrl) {
+        KeyConstants.APP_FILE_URL = fileUploadUrl;
     }
 }

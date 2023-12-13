@@ -1,22 +1,29 @@
 package com.hokuapps.loadnativefileupload;
 
+import static com.hokuapps.loadnativefileupload.constants.KeyConstants.keyConstants.AUTH_TOKEN;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 import com.hokuapps.loadnativefileupload.backgroundtask.DownloadFile;
+import com.hokuapps.loadnativefileupload.backgroundtask.ImageUpload;
 import com.hokuapps.loadnativefileupload.constants.KeyConstants;
+import com.hokuapps.loadnativefileupload.database.FileContentProvider;
 import com.hokuapps.loadnativefileupload.imageEditor.IPRectangleAnnotationActivity;
 import com.hokuapps.loadnativefileupload.models.DownloadParams;
 import com.hokuapps.loadnativefileupload.models.JSResponseData;
 import com.hokuapps.loadnativefileupload.utilities.FileUploadUtility;
+import com.hokuapps.loadnativefileupload.utilities.FileUtility;
 
 import org.json.JSONObject;
 
@@ -28,8 +35,10 @@ public class DownloadPhoto {
     @SuppressLint("StaticFieldLeak")
     private static DownloadPhoto instance;
     private Activity activity;
+    private WebView mWebView;
 
     private JSResponseData jsResponseData;
+    private String serverAuthToken;
 
     private ProgressDialog downloadProgressDialog;
 
@@ -44,6 +53,25 @@ public class DownloadPhoto {
         this.activity = activity;
     }
 
+    public void initialize(WebView mWebView, Activity mActivity, String uploadUrl, String mAuthority){
+        this.mWebView = mWebView;
+        this.activity = mActivity;
+        KeyConstants.APP_FILE_URL = uploadUrl;
+        FileContentProvider.getInstance().setUpDatabase(mAuthority);
+    }
+
+    /**
+     *  set data for authorization
+     * @param responseData jsonObject for retrieve auth data
+     */
+    public void setAuthDetails(String responseData){
+        try {
+            JSONObject object = new JSONObject(responseData);
+            this.serverAuthToken = FileUploadUtility.getStringObjectValue(object, AUTH_TOKEN);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     /**
      * This method retrieves data from json and checks file exit in the download directory if they do not download it using the url
@@ -191,5 +219,34 @@ public class DownloadPhoto {
 
     private void setJsResponseData(JSResponseData jsResponseData) {
         this.jsResponseData = jsResponseData;
+    }
+
+
+    /**
+     * Handle onActivity result of edit map plan and upload it
+     * @param intent contain image path of edited map plan
+     */
+    public void handleEditImagePlan(Intent intent) {
+        try {
+            if (intent != null) {
+
+                if (DownloadPhoto.getInstance().getJsResponseData() == null) return;
+
+                String newFilePath = intent.getStringExtra(IPRectangleAnnotationActivity.SAVE_FILE_PATH);
+                String destFileName = FileUtility.getFileName(newFilePath);
+
+                JSResponseData responseData = DownloadPhoto.getInstance().getJsResponseData();
+
+                ImageUpload.getInstance().initUpload(activity,mWebView, getJsResponseData(),serverAuthToken);
+
+                ImageUpload.getInstance().setNativeSelectedPhotoCallbackFunction(newFilePath,responseData.getOfflineID(), responseData.getCallbackFunction());
+                ImageUpload.getInstance().startImageUpload(destFileName, responseData.getOfflineID(),
+                        responseData.getAppID(),
+                        responseData.getSrcImageName(), responseData.getImageType());
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

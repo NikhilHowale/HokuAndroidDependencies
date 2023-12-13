@@ -61,6 +61,8 @@ public class JSResponseData {
 
     private int imageType = 1;
 
+    private int instructionNumberClockIn = 0;
+
     public String getLocalImageName() {
         return localImageName;
     }
@@ -413,5 +415,13 @@ public class JSResponseData {
 
     public void setImageType(int imageType) {
         this.imageType = imageType;
+    }
+
+    public int getInstructionNumberClockIn() {
+        return instructionNumberClockIn;
+    }
+
+    public void setInstructionNumberClockIn(int instructionNumberClockIn) {
+        this.instructionNumberClockIn = instructionNumberClockIn;
     }
 }

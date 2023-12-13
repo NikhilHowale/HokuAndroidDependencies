@@ -2,4 +2,8 @@
 <resources>
     <dimen name="text_size_22">22sp</dimen>
     <dimen name="text_size_medium">16sp</dimen>
+
+    <dimen name="second_keyline">72dp</dimen>
+    <dimen name="text_size_subtitle_material_toolbar">16dp</dimen>
+    <dimen name="text_size_title_material_toolbar">20dp</dimen>
 </resources>

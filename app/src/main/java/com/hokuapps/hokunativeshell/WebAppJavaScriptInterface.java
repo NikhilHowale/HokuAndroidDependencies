@@ -14,6 +14,7 @@ import com.cometchat.pro.uikit.CometChatStart;
 import com.hokuapps.Loadnativeqrcodescannerupload.ScanBarcode;
 import com.hokuapps.biometricauthentication.AuthenticateWithTouch;
 import com.hokuapps.calendaroprations.CalendarOperations;
+import com.hokuapps.capturevideo.CaptureVideo;
 import com.hokuapps.getappversion.GetAppVersion;
 import com.hokuapps.getbackgroundlocationupdates.Locations.BackgroundLocation;
 import com.hokuapps.getcurrentlocationdetails.LocationDetails;
@@ -27,6 +28,7 @@ import com.hokuapps.hokunativeshell.utils.Utility;
 import com.hokuapps.loadmapviewbyconfig.LoadMapViewByConfig;
 import com.hokuapps.loadnativefileupload.DownloadPhoto;
 import com.hokuapps.loadnativefileupload.GetAllFileStatus;
+import com.hokuapps.loadnativefileupload.LoadMapView;
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
 import com.hokuapps.loadnativefileupload.SendOfflineMediaDetails;
 import com.hokuapps.loadnativefileupload.UploadPendingFiles;
@@ -311,8 +313,12 @@ public class WebAppJavaScriptInterface {
 
     @JavascriptInterface
     public void downloadPhoto(final String downloadPhoto) {
-        DownloadPhoto.getInstance().initialize(mWebAppActivity);
-        DownloadPhoto.getInstance().downloadPhoto(downloadPhoto);
+
+        DownloadPhoto photoDownload = DownloadPhoto.getInstance();
+        photoDownload.initialize(mWebView, mWebAppActivity, IntegrationManager.APP_FILE_URL,  BuildConfig.AUTHORITY);
+
+        photoDownload.setAuthDetails(downloadPhoto);
+        photoDownload.downloadPhoto(downloadPhoto);
     }
 
     @JavascriptInterface
@@ -395,5 +401,38 @@ public class WebAppJavaScriptInterface {
                 WriteShareLog.getInstance().shareLogs(mWebAppActivity, data);
             }
         });
+    }
+
+    @JavascriptInterface
+    public void LoadMapView(final String loadMapViewResponse) {
+        try {
+            LoadMapView loadMapView = LoadMapView.getInstance();
+            loadMapView.initMap(mWebView, mWebAppActivity, IntegrationManager.APP_FILE_URL, BuildConfig.AUTHORITY);
+            loadMapView.setAuthDetails(loadMapViewResponse);
+            loadMapView.showMapView(loadMapViewResponse);
+        }catch ( Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @JavascriptInterface
+    public void captureVideo(final String videoResponse) {
+        try {
+            CaptureVideo captureVideo = CaptureVideo.getInstance();
+            captureVideo.initialize(mWebView, mWebAppActivity, IntegrationManager.APP_FILE_URL,
+                    BuildConfig.AUTHORITY);
+            captureVideo.openCamera(videoResponse);
+        }catch ( Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @JavascriptInterface
+    public void nativedeletevideo(final String videoResponse) {
+        try {
+            CaptureVideo.getInstance().deleteVideoFile(videoResponse);
+        }catch ( Exception e){
+            e.printStackTrace();
+        }
     }
 }

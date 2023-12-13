@@ -252,6 +252,7 @@ dependencies {
     implementation project(path: ':writeShareLog')
     implementation project(path: ':authenticateWithTouchID')
     implementation project(path: ':getAppVersion')
+    implementation project(path: ':captureVideo')
 }
 
 apply plugin: 'com.google.gms.google-services'

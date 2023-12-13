@@ -38,6 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.cometchat.pro.uikit.CometChatStart;
 import com.hokuapps.Loadnativeqrcodescannerupload.ScanBarcode;
 import com.hokuapps.biometricauthentication.AuthenticateWithTouch;
+import com.hokuapps.capturevideo.CaptureVideo;
 import com.hokuapps.getnetworkstatus.GetNetworkStatus;
 import com.hokuapps.hokunativeshell.BuildConfig;
 import com.hokuapps.hokunativeshell.R;
@@ -47,6 +48,8 @@ import com.hokuapps.hokunativeshell.pref.MybeepsPref;
 import com.hokuapps.hokunativeshell.receivers.NotificationReceiver;
 import com.hokuapps.hokunativeshell.utils.Utility;
 import com.hokuapps.loadmapviewbyconfig.LoadMapViewByConfig;
+import com.hokuapps.loadnativefileupload.DownloadPhoto;
+import com.hokuapps.loadnativefileupload.LoadMapView;
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
 import com.hokuapps.loginwithfb.LoginWithFB;
 import com.hokuapps.loginwithgoogle.SignInWithGoogle;
@@ -344,7 +347,7 @@ public class WebAppActivity extends AppCompatActivity {
                             break;
 
                         case AppConstant.ActivityResultCode.ACTION_REQUEST_EDIT_IMAGE_MAP_PLAN:
-                            NativeFileUpload.getInstance().handleEditImagePlan(intent);
+                            DownloadPhoto.getInstance().handleEditImagePlan(intent);
                             break;
 
                         case AppConstant.ActivityResultCode.RC_SIGN_IN:
@@ -352,7 +355,15 @@ public class WebAppActivity extends AppCompatActivity {
                             break;
 
                         case AppConstant.ActivityResultCode.LOCATION_SERVICE_REQUEST_CODE:
-                            SignInWithGoogle.handleGoogleSignResult(this,mWebView, intent);
+                            LoadMapView.getInstance().handleLocationServiceResult(intent);
+                            break;
+
+                        case AppConstant.ActivityResultCode.ACTION_REQUEST_EDIT_IMAGE_MAP:
+                            LoadMapView.getInstance().handleEditMapImageResult(intent);
+                            break;
+
+                        case AppConstant.ActivityResultCode.ACTION_CAPTURE_VIDEO_RESULT:
+                            CaptureVideo.getInstance().handleVideoActivityResult(intent);
                             break;
 
 

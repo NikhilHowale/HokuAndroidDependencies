@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="control_panel_size">56dp</dimen>
+
+    <dimen name="record_view_radius">4dp</dimen>
+    <dimen name="record_view_stroke_size">1dp</dimen>
+    <dimen name="record_view_stroke_width">10dp</dimen>
+    <dimen name="layout_margin">8dp</dimen>
+    <dimen name="media_control_icon_size">46dp</dimen>
+</resources>
