@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="color_blue_secondary">#1565C0</color>
+    <color name="color_gray_primary_dark_700">#616161</color>
+
+    <color name="color_primary">#FFFFFF</color>
+    <color name="color_primary_dark_700">#00FFFFFF</color>
+    <color name="color_accent_700">#DD2C00</color>
+    <color name="color_dark_blue_secondary">#7986cb</color>
+    <color name="primary_light_red_color">#ec6056</color>
+</resources>

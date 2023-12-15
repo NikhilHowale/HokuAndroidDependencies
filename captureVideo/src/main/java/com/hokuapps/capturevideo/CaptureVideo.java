@@ -44,7 +44,7 @@ public class CaptureVideo {
     public void initialize(WebView mWebView, Activity activity, String uploadUrl, String mAuthority){
         this.mActivity = activity;
         this.mWebView = mWebView;
-        AppConstant.FILE_UPLOAD_URL = "https://appfiles.hokuapps.com";
+        AppConstant.FILE_UPLOAD_URL = uploadUrl;
         FileContentProvider.getInstance().setUpDatabase(mAuthority);
     }
 

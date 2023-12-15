@@ -253,6 +253,7 @@ dependencies {
     implementation project(path: ':authenticateWithTouchID')
     implementation project(path: ':getAppVersion')
     implementation project(path: ':captureVideo')
+    implementation project(':SearchLocationOnMap')
 }
 
 apply plugin: 'com.google.gms.google-services'

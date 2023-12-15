@@ -77,6 +77,8 @@ public class AppConstant {
         int ACTION_REQUEST_EDIT_IMAGE_MAP = 9004;
         int ACTION_CAPTURE_VIDEO_RESULT = 1011;
 
+        int RESULT_SEARCH_DROP_ACTIVITY = 2500;
+
 
     }
 }

@@ -53,6 +53,7 @@ import com.hokuapps.loadnativefileupload.LoadMapView;
 import com.hokuapps.loadnativefileupload.NativeFileUpload;
 import com.hokuapps.loginwithfb.LoginWithFB;
 import com.hokuapps.loginwithgoogle.SignInWithGoogle;
+import com.hokuapps.searchlocationonmap.SearchOnMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -364,6 +365,10 @@ public class WebAppActivity extends AppCompatActivity {
 
                         case AppConstant.ActivityResultCode.ACTION_CAPTURE_VIDEO_RESULT:
                             CaptureVideo.getInstance().handleVideoActivityResult(intent);
+                            break;
+
+                        case AppConstant.ActivityResultCode.RESULT_SEARCH_DROP_ACTIVITY:
+                            SearchOnMap.getInstance().handleSearchDropResult(intent);
                             break;
 
 

@@ -37,6 +37,7 @@ import com.hokuapps.loginwithfb.LoginWithFB;
 import com.hokuapps.loginwithgoogle.SignInWithGoogle;
 import com.hokuapps.logoutnativecall.LogoutNativeCall;
 import com.hokuapps.previewhtmlpage.LoadPreviewHtml;
+import com.hokuapps.searchlocationonmap.SearchOnMap;
 import com.hokuapps.shareappdata.ShareAppData;
 import com.hokuapps.shownativecarousel.ShowNativeCarousel;
 import com.hokuapps.startvideocall.StartVideoCall;
@@ -337,6 +338,11 @@ public class WebAppJavaScriptInterface {
     }
 
     @JavascriptInterface
+    public void stopBackgroundLocationToServer(String responseData){
+        BackgroundLocation.getInstance().stopLocationUpdateService();
+    }
+
+    @JavascriptInterface
     public void showNativeCarousel(final String resData) {
         ShowNativeCarousel showNativeCarousel = new ShowNativeCarousel(mContext, mWebAppActivity);
         showNativeCarousel.showNativeCarousel(resData);
@@ -434,5 +440,17 @@ public class WebAppJavaScriptInterface {
         }catch ( Exception e){
             e.printStackTrace();
         }
+    }
+
+    @JavascriptInterface
+    public void SearchLocationOnMap(final String response) {
+        mWebAppActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SearchOnMap searchOnMap = SearchOnMap.getInstance();
+                searchOnMap.initialize(mWebView,mWebAppActivity);
+                searchOnMap.openMapForSearch(response);
+            }
+        });
     }
 }

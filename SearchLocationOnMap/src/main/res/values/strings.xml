@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gps_error">GPS is not enabled.</string>
+
+    <string name="map_api_key_cp_client">AIzaSyDWdXscfNTF5kalttjdD24TIUdILuQmL60</string>
+    <string name="map_api_key">AIzaSyBVGjGd2Ho6TsGraUek984AJXWpcPJ5-To</string>
+    <string name="map_api_key_cp_driver">AIzaSyDWdXscfNTF5kalttjdD24TIUdILuQmL60</string>
+    <string name="map_api_key_restoration">AIzaSyCTK4lXSHXfjV2GnOSLrSdzrCVRFu7gcqg</string>
+</resources>
